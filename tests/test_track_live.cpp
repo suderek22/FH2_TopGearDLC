@@ -1,0 +1,169 @@
+#include "..\track_live.h"
+#include <cassert>
+#include <cstdio>
+#include <limits>
+#include <vector>
+
+int main() {
+    std::vector<unsigned char> image(0x365ad78);
+    uintptr_t base = reinterpret_cast<uintptr_t>(image.data());
+    std::vector<unsigned char> car(0x4c10), physics(0x400);
+    uintptr_t player = reinterpret_cast<uintptr_t>(car.data());
+    uintptr_t state = reinterpret_cast<uintptr_t>(physics.data() + 0x390);
+    uintptr_t table = base + TrackLive::CarVtable;
+    memcpy(car.data(), &table, sizeof table);
+    memcpy(car.data() + 0x4c08, &state, sizeof state);
+    table = base + TrackLive::PhysicsVtable;
+    memcpy(physics.data() + 0x390, &table, sizeof table);
+    uintptr_t positionGetter = base + 0x12cd150, facingGetter = base + 0x12cbed0;
+    memcpy(reinterpret_cast<void*>(table + 0x270), &positionGetter, sizeof positionGetter);
+    memcpy(reinterpret_cast<void*>(table + 0x970), &facingGetter, sizeof facingGetter);
+    const unsigned char positionBytes[] = {0xc5,0xf8,0x28,0x81,0x70,0xfc,0xff,0xff};
+    const unsigned char facingBytes[] = {0x49,0x63,0xc0,0x48,0x83,0xe8,0x38,0x48,0x03,0xc0};
+    memcpy(reinterpret_cast<void*>(positionGetter), positionBytes, sizeof positionBytes);
+    memcpy(reinterpret_cast<void*>(facingGetter), facingBytes, sizeof facingBytes);
+    TrackPose::Pose pose{{5787,124,-5929,1},{0,0,-1,0}};
+    memcpy(physics.data(), pose.position, sizeof pose.position);
+    memcpy(physics.data() + 0x30, pose.facing, sizeof pose.facing);
+    int manager[6] = {0,0,542,542,0,0};
+    uintptr_t managerAddress = reinterpret_cast<uintptr_t>(manager);
+    memcpy(image.data() + TrackLive::TrackManager, &managerAddress, sizeof managerAddress);
+    TrackLive::MapState map;
+    TrackLive::CarState departure;
+    std::string error;
+    assert(TrackLive::CaptureMap(base, map, error));
+    assert(map.manager == managerAddress && map.current == 542 && map.target == 542 && map.Settled());
+    assert(TrackLive::CaptureCar(base, player, departure, error));
+    assert(departure.car == player && departure.physics == state);
+    assert(!memcmp(&departure.pose, &pose, sizeof pose));
+    assert(!memcmp(physics.data(), pose.position, sizeof pose.position));
+    assert(!memcmp(physics.data() + 0x30, pose.facing, sizeof pose.facing));
+    for (float lane : {0.0f, 0.5f, 1.0f}) {
+        auto nativePose = pose;
+        nativePose.position[3] = lane;
+        memcpy(physics.data(), nativePose.position, sizeof nativePose.position);
+        TrackLive::CarState captured;
+        assert(TrackLive::CaptureCar(base, player, captured, error));
+        assert(!memcmp(&captured.pose, &nativePose, sizeof nativePose));
+        assert(TrackLive::VerifyReturn(departure, captured, map, error));
+        assert(TrackLive::VerifyReturn(captured, departure, map, error));
+    }
+    memcpy(physics.data(), pose.position, sizeof pose.position);
+    auto sentinel = departure;
+    assert(!TrackLive::CaptureCar(base, 1, departure, error));
+    assert(!memcmp(&departure, &sentinel, sizeof departure));
+    assert(!TrackLive::CaptureCar(0, player, departure, error));
+    for (int mode = 0; mode < 8; ++mode) {
+        auto changed = pose;
+        if (mode == 0) image[0x12cd150] ^= 1;
+        if (mode == 1) image[0x12cbed0] ^= 1;
+        if (mode == 2) changed.position[0] = std::numeric_limits<float>::quiet_NaN();
+        if (mode == 3) changed.position[3] = std::numeric_limits<float>::infinity();
+        if (mode == 4) changed.facing[2] = -2;
+        if (mode == 5) changed.facing[3] = 1;
+        if (mode == 6) car[0] ^= 1;
+        if (mode == 7) physics[0x390] ^= 1;
+        memcpy(physics.data(), changed.position, sizeof changed.position);
+        memcpy(physics.data() + 0x30, changed.facing, sizeof changed.facing);
+        assert(!TrackLive::CaptureCar(base, player, departure, error));
+        if (mode >= 2 && mode <= 5) {
+            assert(error.find("position=(") != std::string::npos);
+            assert(error.find("facing=(") != std::string::npos);
+        }
+        assert(!memcmp(&departure, &sentinel, sizeof departure));
+        unsigned char module[0x110] = {};
+        uintptr_t saveTable = base + TrackLive::MicroSaveVtable;
+        memcpy(module, &saveTable, sizeof saveTable);
+        auto moduleAddress = reinterpret_cast<uintptr_t>(module);
+        TrackLive::MicroSaveState save;
+        assert(TrackLive::CaptureMicroSave(base, moduleAddress, save, error) && save.Idle() && !save.enabled);
+        module[0xb0] = 1;
+        assert(TrackLive::CaptureMicroSave(base, moduleAddress, save, error) && save.Idle() && save.enabled);
+        uintptr_t job = 17, owner = 18;
+        memcpy(module + 0x100, &job, sizeof job);
+        auto unchanged = save;
+        assert(!TrackLive::CaptureMicroSave(base, moduleAddress, save, error));
+        assert(save.Idle() && save.enabled == unchanged.enabled);
+        memcpy(module + 0x108, &owner, sizeof owner);
+        assert(TrackLive::CaptureMicroSave(base, moduleAddress, save, error) && !save.Idle() && save.job == job);
+        job = 0;
+        memcpy(module + 0x100, &job, sizeof job);
+        assert(!TrackLive::CaptureMicroSave(base, moduleAddress, save, error));
+        unsigned char emptyControl[0x18] = {};
+        uintptr_t emptyTable = base + TrackLive::NullJobControlVtable;
+        LONG strong = 1;
+        memcpy(emptyControl, &emptyTable, sizeof emptyTable);
+        memcpy(emptyControl + 8, &strong, sizeof strong);
+        owner = reinterpret_cast<uintptr_t>(emptyControl);
+        memcpy(module + 0x108, &owner, sizeof owner);
+        assert(TrackLive::CaptureMicroSave(base, moduleAddress, save, error));
+        assert(save.Idle() && save.nullJobControl && save.control == owner && !save.job);
+        for (int malformed = 0; malformed < 3; ++malformed) {
+            emptyControl[malformed == 0 ? 0 : malformed == 1 ? 8 : 0x10] ^= 1;
+            auto before = save;
+            assert(!TrackLive::CaptureMicroSave(base, moduleAddress, save, error));
+            assert(!memcmp(&before, &save, sizeof save));
+            emptyControl[malformed == 0 ? 0 : malformed == 1 ? 8 : 0x10] ^= 1;
+        }
+        job = 17;
+        memcpy(module + 0x100, &job, sizeof job);
+        assert(TrackLive::CaptureMicroSave(base, moduleAddress, save, error));
+        assert(!save.Idle() && !save.nullJobControl);
+        module[0xb0] = 2;
+        assert(!TrackLive::CaptureMicroSave(base, moduleAddress, save, error));
+        module[0xb0] = 1;
+        module[0] ^= 1;
+        assert(!TrackLive::CaptureMicroSave(base, moduleAddress, save, error));
+        assert(!TrackLive::CaptureMicroSave(base, 1, save, error));
+        if (mode == 0) image[0x12cd150] ^= 1;
+        if (mode == 1) image[0x12cbed0] ^= 1;
+        if (mode == 6) car[0] ^= 1;
+        if (mode == 7) physics[0x390] ^= 1;
+    }
+    assert(!TrackLive::CaptureMap(0, map, error));
+    manager[2] = 0;
+    assert(!TrackLive::CaptureMap(base, map, error));
+    assert(map.current == 542);
+    manager[2] = 542; manager[3] = 10000;
+    assert(TrackLive::CaptureMap(base, map, error) && !map.Settled());
+    manager[3] = 542; manager[5] = -1;
+    assert(TrackLive::CaptureMap(base, map, error) && map.pendingJob == UINT32_MAX && !map.Settled());
+    manager[5] = 0;
+    assert(TrackLive::CaptureMap(base, map, error) && map.Settled());
+    auto current = departure;
+    current.car += 16; current.physics += 16;
+    assert(TrackLive::VerifyReturn(departure, current, map, error));
+    current.pose.position[0] += 0.25f;
+    assert(TrackLive::VerifyReturn(departure, current, map, error));
+    current.pose.position[0] = std::nextafter(current.pose.position[0], INFINITY);
+    assert(!TrackLive::VerifyReturn(departure, current, map, error));
+    current = departure;
+    current.pose.position[0] += 0.2f;
+    current.pose.position[2] += 0.2f;
+    assert(!TrackLive::VerifyReturn(departure, current, map, error));
+    current = departure;
+    current.pose.facing[0] = 0.009f;
+    current.pose.facing[2] = -std::sqrt(1 - 0.009f * 0.009f);
+    assert(TrackLive::VerifyReturn(departure, current, map, error));
+    current.pose.facing[0] = 0.011f;
+    current.pose.facing[2] = -std::sqrt(1 - 0.011f * 0.011f);
+    assert(!TrackLive::VerifyReturn(departure, current, map, error));
+    current = departure;
+    current.pose.facing[2] = 1;
+    assert(!TrackLive::VerifyReturn(departure, current, map, error));
+    current = departure;
+    map.current = map.target = 10000;
+    assert(!TrackLive::VerifyReturn(departure, current, map, error));
+    map.current = map.target = 542; map.pendingJob = 1;
+    assert(!TrackLive::VerifyReturn(departure, current, map, error));
+    map.pendingJob = 0;
+    current.physics = 0;
+    assert(!TrackLive::VerifyReturn(departure, current, map, error));
+    memcpy(physics.data(), pose.position, sizeof pose.position);
+    memcpy(physics.data() + 0x30, pose.facing, sizeof pose.facing);
+    facingGetter += 1;
+    memcpy(reinterpret_cast<void*>(table + 0x970), &facingGetter, sizeof facingGetter);
+    assert(!TrackLive::CaptureCar(base, player, departure, error));
+    assert(!memcmp(&departure, &sentinel, sizeof departure));
+    puts("Read-only native live pose/map capture and measured mainland return checks passed.");
+}
