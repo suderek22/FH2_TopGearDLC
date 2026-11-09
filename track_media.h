@@ -1,4 +1,5 @@
 #pragma once
+#include "track_lifecycle.h"
 #include "..\CarPackStudio\native\include\fh2mod.h"
 #include <windows.h>
 #include <bcrypt.h>
@@ -109,11 +110,7 @@ inline bool MediaPath(const std::string& name, const std::string& media) {
     return name.back() != '\\';
 }
 inline bool VisitPath(const std::string& name) {
-    return name == "stateflow\\trackloadercps.xml" ||
-        name == "EntityModel\\entities_trackloadercps_enter.xml" ||
-        name == "EntityModel\\entities_trackloadercps_return.xml" ||
-        name == "EntityModel\\entities_trackloadercps_static_route.xml" ||
-        name == "EntityModel\\entities_trackloadercps_mainland.xml";
+    return TrackLifecycle::Names{}.Contains(name);
 }
 
 class Package {
@@ -143,7 +140,12 @@ public:
         return paths;
     }
     bool Prepare(const std::wstring& directory, const std::string& media,
-                 const std::string& catalogHash, std::string& error, bool visit = false) {
+                 const std::string& catalogHash, std::string& error, bool visit = false,
+                 const TrackLifecycle::Names& lifecycle = {}) {
+        if (!TrackLifecycle::Valid(lifecycle.group)) {
+            error = "invalid native lifecycle namespace";
+            return false;
+        }
         if (!entries.empty() || published) {
             error = "media package was already prepared";
             return false;
@@ -193,7 +195,7 @@ public:
                 return c >= 'A' && c <= 'Z' ? static_cast<char>(c + ('a' - 'A')) : static_cast<char>(c);
             });
             if (sizeText.empty() || sizeText.find_first_not_of("0123456789") != std::string::npos ||
-                !(visit ? VisitPath(name) : MediaPath(name, media)) ||
+                !(visit ? lifecycle.Contains(name) : MediaPath(name, media)) ||
                 !names.insert(key).second || candidate.size() >= 4096) {
                 error = "invalid or duplicate media catalog path/size";
                 return false;

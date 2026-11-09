@@ -22,7 +22,17 @@ struct CarState {
     uintptr_t car = 0;
     uintptr_t physics = 0;
     TrackPose::Pose pose = {};
+    bool matchFacing = true;
 };
+inline CarState AirportReturn(const CarState& departure) {
+    CarState destination = departure;
+    destination.pose.position[0] = 425.574f;
+    destination.pose.position[1] = 110.821f;
+    destination.pose.position[2] = -1478.082f;
+    destination.pose.position[3] = 1;
+    destination.matchFacing = false;
+    return destination;
+}
 struct MicroSaveState {
     uintptr_t module = 0;
     uintptr_t job = 0;
@@ -134,12 +144,14 @@ inline bool CaptureCar(uintptr_t base, uintptr_t car, CarState& output, std::str
         memcmp(actual, positionBytes, sizeof positionBytes) ||
         !TrackOwnership::Read(facingGetter, actual, sizeof facingBytes) ||
         memcmp(actual, facingBytes, sizeof facingBytes) ||
-        !TrackOwnership::Read(state.physics - 0x390, state.pose.position, sizeof state.pose.position) ||
+        !TrackOwnership::Read(state.physics - 0x390, state.pose.position, 3 * sizeof(float)) ||
         !TrackOwnership::Read(state.physics - 0x360, state.pose.facing, sizeof state.pose.facing) ||
         !TrackOwnership::Read(car + 0x4c08, &after, sizeof after) || after != state.physics) {
         error = "native live pose cannot be read consistently or getter signatures changed";
         return false;
     }
+    // The position getter's fourth SIMD lane is not a coordinate and can contain NaN.
+    state.pose.position[3] = 1;
     if (!TrackPose::Valid(state.pose)) {
         error = "native live pose has invalid finite/unit coordinates; position=(" +
             std::to_string(state.pose.position[0]) + "," + std::to_string(state.pose.position[1]) + "," +
@@ -168,8 +180,9 @@ inline bool VerifyReturn(const CarState& departure, const CarState& current,
         facingDistance += facing * facing;
     }
     if (positionDistance > ReturnPositionTolerance * ReturnPositionTolerance ||
-        facingDistance > ReturnFacingDistance * ReturnFacingDistance) {
-        error = "native mainland car has not restored the captured departure position/facing";
+        (departure.matchFacing && facingDistance > ReturnFacingDistance * ReturnFacingDistance)) {
+        error = departure.matchFacing ? "native mainland car has not reached the expected return position/facing" :
+            "native mainland car has not reached the expected Airport return position";
         return false;
     }
     return true;

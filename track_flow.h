@@ -1,5 +1,6 @@
 #pragma once
 #include "track_ownership.h"
+#include "track_lifecycle.h"
 
 namespace TrackFlow {
 constexpr uintptr_t BuilderConstructor = 0x191fdf0;
@@ -97,10 +98,10 @@ public:
         ready = true;
         return true;
     }
-    bool Ensure(void* machine, std::string& error) {
+    bool Ensure(void* machine, std::string& error, const TrackLifecycle::Names& lifecycle = {}) {
         uintptr_t manager = 0, table = 0;
         uintptr_t registry[3] = {};
-        if (!ready || !machine) {
+        if (!ready || !machine || !TrackLifecycle::Valid(lifecycle.group)) {
             error = "owned state machine component is unavailable";
             return false;
         }
@@ -122,7 +123,7 @@ public:
             return false;
         }
         void* groups = reinterpret_cast<void*>(manager + 0x10);
-        void* loaded = functions.find(groups, "trackloadercps");
+        void* loaded = functions.find(groups, lifecycle.group.c_str());
         struct BuilderOwner {
             Builder value;
             void (*freeMemory)(void*);
@@ -137,8 +138,9 @@ public:
         functions.construct(&builder.value);
         builder.value.fields[0] = functions.builderVtable;
         // Mirror native group initialization, but load only our pinned additive file.
+        std::string path = "game:\\media\\StateFlow\\" + lifecycle.group + ".xml";
         if (!loaded) loaded = functions.load(reinterpret_cast<void*>(manager),
-            "game:\\media\\StateFlow\\trackloadercps.xml", &builder.value);
+            path.c_str(), &builder.value);
         if (CompilerFailed(builder.value, error)) return false;
         if (!loaded) {
             error = "native stateflow parser rejected the custom lifecycle resource";
@@ -149,7 +151,7 @@ public:
         functions.validate(loaded, &builder.value);
         builder.value.fields[2] = 0;
         if (CompilerFailed(builder.value, error)) return false;
-        if (functions.find(groups, "trackloadercps") != loaded) {
+        if (functions.find(groups, lifecycle.group.c_str()) != loaded) {
             error = "native custom stateflow registration could not be verified";
             return false;
         }

@@ -24,6 +24,31 @@ RESUME_CONTRACTS = {
         "id": "ClearMulliganKeyFrames", "start_recording_replay": "{start_recording_replay}"},
 }
 
+def validate_lifecycle_namespace(namespace):
+    if (not isinstance(namespace, str) or len(namespace) > 32 or
+            not re.fullmatch(r"trackloadercps(?:_[a-z0-9_]+)?", namespace)):
+        raise ValueError("Invalid native lifecycle namespace")
+    return namespace
+
+
+def lifecycle_paths(namespace=GROUP):
+    validate_lifecycle_namespace(namespace)
+    return {
+        "stateflow\\" + namespace + ".xml",
+        *("EntityModel\\entities_" + namespace + "_" + suffix + ".xml"
+          for suffix in ("enter", "return", "static_route", "mainland")),
+    }
+
+
+def namespace_resource(root, namespace):
+    validate_lifecycle_namespace(namespace)
+    for element in root.iter():
+        for key, value in list(element.attrib.items()):
+            if key in ("id", "value", "entity_group_file") and (
+                    value.startswith(GROUP) or value.startswith("entities_" + GROUP)):
+                element.set(key, value.replace(GROUP, namespace))
+    return root
+
 
 def node(state, target, **arguments):
     return ET.SubElement(state, "node", {"state": target, **arguments})
@@ -80,8 +105,13 @@ def flow(media_name):
     node(enter, "global.release_parking_brake_human")
 
     returned = transition(root, "return_mainland")
+    swap = returned.find("node[@state='track_swap.swap_track']")
+    index = list(returned).index(swap)
+    returned.insert(index, ET.Element("node", {"state": "global.unlock_destination"}))
+    returned.insert(index + 1, ET.Element("node", {"state": "career_swap.root_mainland"}))
     node(returned, "track_swap.load_navigation_world", track_name="Anthem", ribbon="0")
     node(returned, "wait_locators")
+    node(returned, "career_swap.finish_swap")
     node(returned, "global.load_entity_group",
          entity_group_file=MAINLAND_FILE,
          wait_for_state_machine_exit="false", allow_replace_if_group_exists="true")
@@ -145,6 +175,15 @@ def xml_bytes(root):
     return ET.tostring(root, encoding="utf-8", xml_declaration=True) + b"\n"
 
 
+def static_route_group():
+    root = ET.Element("entity_group", {"id": "track_route"})
+    entity = ET.SubElement(root, "entity", {"id": "trackloadercps_mainland_destination"})
+    component = ET.SubElement(entity, "component", {"type": "TrackSwapComponent", "id": "track_swap"})
+    ET.SubElement(component, "property", {"id": "TrackId", "value": "Mainland"})
+    ET.SubElement(component, "property", {"id": "WorldPosition", "value": "425.574,110.821,-1478.082"})
+    return root
+
+
 def validate_native(root, archive):
     groups = {}
     with zipfile.ZipFile(archive) as source:
@@ -152,7 +191,7 @@ def validate_native(root, archive):
             if not name.lower().endswith(".xml"):
                 continue
             group = ET.fromstring(source.read(name))
-            if group.tag == "stategroup" and group.get("id") in ("global", "track_swap", "ui_screens"):
+            if group.tag == "stategroup" and group.get("id") in ("global", "track_swap", "ui_screens", "career_swap"):
                 key = group.get("id")
                 if key in groups:
                     raise ValueError("Duplicate native state group " + key)
@@ -221,22 +260,33 @@ def validate_entitymodel(archive):
             "entity_template[@name='pause_flow']/component[@type='GameStateMachineComponent']")
         if component is None or component.find("property[@id='Autostart'][@value='true']") is None:
             raise ValueError("Native autostart state machine contract is missing")
+        locations = ET.fromstring(source.read("Templates/templates_locations.xml"))
+        destination = locations.find(
+            "entity_template[@name='activation_location_track_swap']/component[@type='TrackSwapComponent']")
+        if (destination is None or
+                destination.find("property[@id='TrackId'][@value='Mainland']") is None or
+                destination.find("property[@id='WorldPosition']") is None):
+            raise ValueError("Unsupported native mainland TrackSwapComponent destination contract")
 
 
-def build(stateflow, entitymodel, output, media_name="TopGearCPS"):
+def build(stateflow, entitymodel, output, media_name="TopGearCPS", lifecycle_namespace=GROUP):
+    validate_lifecycle_namespace(lifecycle_namespace)
     output = Path(output).resolve()
     if output.exists():
         raise ValueError("Choose a new native visit component directory: " + str(output))
     root = flow(media_name)
     calls = validate_native(root, stateflow)
     validate_entitymodel(entitymodel)
-    resources = {
-        "stateflow\\" + GROUP + ".xml": xml_bytes(root),
-        "EntityModel\\" + ENTER_FILE + ".xml": xml_bytes(machine_group("enter")),
-        "EntityModel\\" + RETURN_FILE + ".xml": xml_bytes(machine_group("return_mainland")),
-        "EntityModel\\" + ROUTE_FILE + ".xml": xml_bytes(ET.Element("entity_group", {"id": "track_route"})),
-        "EntityModel\\" + MAINLAND_FILE + ".xml": xml_bytes(mainland_group()),
+    documents = {
+        "stateflow\\" + GROUP + ".xml": root,
+        "EntityModel\\" + ENTER_FILE + ".xml": machine_group("enter"),
+        "EntityModel\\" + RETURN_FILE + ".xml": machine_group("return_mainland"),
+        "EntityModel\\" + ROUTE_FILE + ".xml": static_route_group(),
+        "EntityModel\\" + MAINLAND_FILE + ".xml": mainland_group(),
     }
+    resources = {path.replace(GROUP, lifecycle_namespace):
+                 xml_bytes(namespace_resource(document, lifecycle_namespace))
+                 for path, document in documents.items()}
     report = {
         "component": "native-static-visit-flow", "media_name": media_name,
         "engine_validated": False, "file_mount_enabled": False, "first_test_ready": False,
@@ -245,22 +295,26 @@ def build(stateflow, entitymodel, output, media_name="TopGearCPS"):
         "native_state_calls": calls,
         "enter_group": ENTER_FILE, "return_group": RETURN_FILE,
         "entry_flow": GROUP + ".enter", "return_flow": GROUP + ".return_mainland",
-        "career_swap_used": False, "custom_route_entities": 0,
+        "career_swap_used": True, "custom_route_entities": 1,
+        "stock_mainland_preparation": True,
+        "lifecycle_namespace": lifecycle_namespace,
         "return_startup": GROUP + ".resume_mainland",
         "return_route_group": MAINLAND_FILE,
         "stock_mainland_startup_used": False,
         "return_ai_enabled": False, "mulligan_recording_enabled": False,
         "required_runtime": [
             "Verify native save hooks and hold the save gate before dispatch; keep it held after flow abort.",
-            "Capture live mainland position/facing and verify original career data without writing it.",
+            "Capture live mainland facing and retain profile ownership; native return stages Mainland career location.",
             "Publish media, verify additive database registration and load this independent entity group.",
             "Scope SwapTrack local arguments and RestoreCarPosition facing/position to the visit.",
             "Keep stock travel/reloads unavailable during the visit; verify transition ownership.",
             "Observe custom driving readiness and restore pose during the dedicated mainland resume.",
-            "Release save protection only after verified idle mainland return and unchanged career data.",
+            "Release save protection only after verified idle mainland return with an explicit career-risk opt-in.",
         ],
         "files": [],
     }
+    for key in ("enter_group", "return_group", "entry_flow", "return_flow", "return_startup", "return_route_group"):
+        report[key] = report[key].replace(GROUP, lifecycle_namespace)
     for relative, data in resources.items():
         report["files"].append({"media_path": relative, "bytes": len(data),
                                 "sha256": hashlib.sha256(data).hexdigest()})
@@ -279,9 +333,11 @@ def main():
     parser.add_argument("--entitymodel", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--media-name", default="TopGearCPS")
+    parser.add_argument("--lifecycle-namespace", default=GROUP,
+                        help="Unique lowercase native flow namespace for this pack")
     args = parser.parse_args()
     try:
-        report = build(args.stateflow, args.entitymodel, args.output, args.media_name)
+        report = build(args.stateflow, args.entitymodel, args.output, args.media_name, args.lifecycle_namespace)
     except (OSError, ValueError, KeyError, zipfile.BadZipFile, ET.ParseError) as error:
         print("error: " + str(error), file=sys.stderr)
         return 1

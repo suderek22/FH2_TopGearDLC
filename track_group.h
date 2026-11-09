@@ -61,8 +61,8 @@ public:
         ready = true;
         return true;
     }
-    bool Submit(bool returning, std::string& error) {
-        if (!ready || receipt.control) {
+    bool Submit(bool returning, std::string& error, const TrackLifecycle::Names& lifecycle = {}) {
+        if (!ready || receipt.control || !TrackLifecycle::Valid(lifecycle.group)) {
             error = "native group loader unavailable or previous receipt is still held";
             return false;
         }
@@ -82,7 +82,7 @@ public:
             error = "native entity group manager unavailable";
             return false;
         }
-        const char* filename = returning ? "entities_trackloadercps_return" : "entities_trackloadercps_enter";
+        std::string filename = lifecycle.Entity(returning ? "return" : "enter");
         struct StringOwner {
             NativeString value;
             void (*freeMemory)(void*);
@@ -94,7 +94,7 @@ public:
                 }
             }
         } name{{}, functions.freeMemory};
-        functions.stringAssign(&name.value, filename, strlen(filename));
+        functions.stringAssign(&name.value, filename.c_str(), filename.size());
         // The native loader consumes/reset its filename and parent shared reference.
         functions.load(manager.object, &receipt, &name.value, &parent, true, false);
         if (!receipt.control) {

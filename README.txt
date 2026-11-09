@@ -1,12 +1,192 @@
-TrackLoaderCPS 0.2.0-test -- SESSION-ONLY NATIVE MAP TEST
+TrackLoader / TrackLoaderCPS 0.6.0-dev -- PERSISTENT EXPERIMENTAL MULTI-MAP TRAVEL
+
+STANDALONE RUNTIME
+
+build.bat produces both bin\TrackLoaderCPS.dll and bin\TrackLoader.dll.
+TrackLoaderCPS retains the CPS native dispatch/cooperation service.
+TrackLoader uses its own signature-checked WaitForPause free-roam dispatcher
+and native tick lease. It does not request CarPackStudio.TrackVisit or import
+a CPS DLL. Besides Windows system DLLs, only FH2 Mod Platform 2.8.0 is required.
+Keep only one loader variant enabled per game installation. New builds publish
+an exclusive runtime owner; the second variant refuses file/SQL/hook activation.
+Older TrackLoaderCPS DLLs predate that guard and must be disabled explicitly.
+
+Standalone installation:
+  E:\forza2port_win\azimuth\fh2-mods\TrackLoader.dll
+  E:\forza2port_win\azimuth\fh2-mods\CustomTracks\TopGear\track.ini
+The confirmed media-v32/visit-v9 pack was copied intact into CustomTracks.
+The old blocked TrackPacks\TopGear remains untouched and is skipped because
+CustomTracks takes precedence. The previous real-game TrackLoaderCPS.dll was
+preserved as TrackLoaderCPS.dll.standalone-disabled (not loaded).
+CPS tests/installations still use the separate CPS runtime fh2-mods directory.
+
+Both variants expose platform commands, alongside the local-development
+native DLC/Tracks browser described below:
+  fh2mod TrackLoader status
+  fh2mod TrackLoader list
+  fh2mod TrackLoader travel 10000
+  fh2mod TrackLoader return
+Use --pid <PID> before the mod name when multiple games run. Wait for native
+entry ready and settled mainland free roam before entering a custom track.
+Custom-track return targets Airport; valid facing need not match departure facing.
+Storm Island uses native mainland restoration without injected coordinates.
+The same verified map/car ownership, 0.25 m position and idle persistence-job
+checks guard saving restoration in both builds.
+
+Live standalone validation: two consecutive Top Gear entry/Airport-return
+cycles passed with CarPackStudio.dll AND TrackLoaderCPS.dll excluded from
+loading. Platform command enumeration confirmed neither CPS DLL was loaded;
+saving was released after both returns. Independent final position was within
+0.05 m of Airport. CPS DLLs were then restored to their normal test installation.
+The test used the existing CPS runtime executable/media, not the CPS mod.
+After restoring CPS, the 0.5.0-test CPS variant also passed two consecutive
+entry/Airport-return cycles with saving released after each return.
+47 targeted Python/native-host tests pass across both DLL variants, including
+mixed-variant exclusion, legacy pack compatibility and lifecycle collisions.
+tests\test_track_standalone.cpp checks thread/lease/eligibility/repeat ownership.
+
+NATIVE BROWSER DEVELOPMENT (local test build)
+
+The released platform supports only the Achievements tile. The local checkout
+at ..\FH2-Mod-Platform now also accepts FH2Page.tile = "IslandFeatured".
+This hides the Storm Island tab's far-right native live tile and replaces it
+with a platform-owned ordinary button using the existing pause-menu wiring.
+The native live control, template and callbacks remain intact but hidden;
+other featured tiles are unchanged. Its native text children are explicitly
+invalidated and refreshed on pause reuse; a separate template/binding alone
+did not prevent disappearing text. No Achievements substitution or shared-handler hook.
+The local platform and offline API/XAML regression tests build and pass with
+the documented LLVM-MinGW toolchain. The paired development platform and
+TrackLoaderCPS are installed in the CPS runtime; the CPS mod is restored.
+The standalone variant was tested there separately with CPS disabled.
+The real-game standalone installation now has TrackLoader 0.6.0-dev and the
+paired development platform; its previous 0.5.0-test DLL had no native browser.
+The checkout's API documentation and tests preserve the changes for a later
+PR. No commit or PR has been created.
+
+build_thumbnails.py reads TopGear.swatchbin from FM5's Track_Posters.zip and
+L_TRK_TopGear.swatchbin from Track_Logos.zip. Their RGBA8/tile14 descriptor is
+checked explicitly, rather than guessed from payload size. The existing
+Forza\SwatchbinConverter converts them to native FH2 BC7 using the game's
+StormIsland_Large/Small destination templates. Conversion and preview decoding
+verify an exact tiled/linear round trip; the native bundle header is preserved.
+Transparent letterboxing retains the poster/logo aspect ratio.
+Storm Island currently uses those unmodified native destination placeholders
+(the game's named StormIsland artwork actually shows generic mainland scenery).
+
+Generated output: work\browser-artwork-v1
+  TopGear_Large/Small.swatchbin, StormIsland_Large/Small.swatchbin
+  decoded PNG previews and thumbnails.json (hashes, logical paths, DXGI/tile mode)
+All four decoded previews and native runtime images were visually verified:
+Storm Island placeholder poster/logo and Top Gear poster/logo switch correctly.
+Assets are installed in both the CPS runtime and the real standalone installation.
+
+Tool arguments (all required):
+  --fm5-mount <FM5 Mount> --fh2-mount <FH2 Mount>
+  --cps-source <CarPackStudio source> --forzatech <ForzaTechStudio folder>
+  --converter <Forza\SwatchbinConverter\build.ps1> --output <staging folder>
+Requires the existing CPS swatch reader/XG, Pillow and converter dependencies.
+
+The 0.6.0-dev loader registers an autoshow-style gallery, publishes verified
+native artwork, renames the parent tab DLC, and displays author/version metadata.
+Use --install-pack <track.ini> --track TopGear|StormIsland --output <artwork>
+to install the staged browser images and their manifest hashes.
+Top Gear metadata is Author=suderek, Version=0.3.2-beta.
+Pressing A queues custom travel and automatically closes the gallery and pause
+menu through native Back; no manual B/resume step is needed. Stock Storm Island
+549 remains first and uses the native entitlement/install-gated travel flow.
+On maps other than 542 the featured tile reads "Return to mainland" and A
+returns directly, without opening the browser. Owned custom visits return to
+Airport through the existing dispatcher; 549 uses native mainland restoration
+without injecting Airport coordinates.
+Live CPS checks verified both map travel actions without manual B,
+the return caption outside mainland, direct
+native Storm Island return and direct custom Airport return with saving released.
+The standalone build also passed Top Gear entry/Airport return and Storm Island
+entry/native mainland return using only A, with CarPackStudio.dll and
+TrackLoaderCPS.dll excluded. Saving was released after its custom return.
+The real standalone browser also opens without Storm Island installed. Top Gear
+poster/logo and suderek / 0.3.2-beta metadata were visually verified there.
+Native caption persistence was checked through three consecutive gallery returns
+and full pause reopenings after adding explicit text invalidation; earlier
+template-only and unchanged-value setter attempts failed those repeat checks.
+Gallery text uses the native
+font style and typed Color resource (a literal hex FZTextBlock.Color rendered
+invisible). Platform file comparisons use bounded chunks to avoid allocating
+and reading the 1.2 GB track archive byte-by-byte during every startup.
+53 targeted loader tests and the isolated platform suite pass.
+GitHub update checking remains pending; repository
+metadata currently says "not checked". A fast/skip-launcher first boot can still
+cache pause XAML before pack validation finishes; restart after initial
+publication when installing/changing this development build.
+
+MULTI-TRACK CORE
+
+Discovery reads fh2-mods\CustomTracks first, then legacy fh2-mods\TrackPacks.
+Existing Top Gear packs do not need to move or change their confirmed media.
+Track IDs and environment IDs must be >= 10000; both IDs and case-insensitive
+media namespaces must be unique across the discovered packs.
+Each enabled map has its own arrival pose, saving policy and native lifecycle.
+Registration is checked for every enabled map in the actual override database;
+all verified map archives are mounted before custom travel is made available.
+
+New packs must set Experimental.LifecycleNamespace to a unique name such as
+trackloadercps_10001. Only trackloadercps or trackloadercps_<lowercase suffix>
+are accepted, with a 32-character total limit; stock flow names are forbidden.
+Omitting the setting retains the legacy trackloadercps namespace for Top Gear.
+Two enabled packs cannot share it. Five lifecycle resources remain required.
+The per-pack flow, entity filenames and ownership checks use the same namespace,
+so a second map cannot overwrite the first map's navigation or native startup.
+
+Generate an independent visit component with build_visit.py:
+  --media-name SecondMap --lifecycle-namespace trackloadercps_10001
+Assemble a verified world/visit package with build_session.py:
+  --track-id 10001 --environment-id 10001 --display-name "Second map"
+  --source-media-name <source Tracks.MediaName>
+Existing media/visit/database/source-database/output arguments remain required.
+This packages an already converted native world; it is not an automatic converter
+for arbitrary source maps. World and visit media namespaces must match.
+
+Use TrackLoaderCPS travel <ID> to select a map from settled mainland free roam.
+Return to mainland Airport and wait for verified return before selecting another
+map. Direct custom-map-to-custom-map swaps are deliberately refused.
+TrackLoaderCPS pack <ID> reports the selected lifecycle namespace and arrival.
+Top Gear's default lifecycle generation keeps the live-confirmed resource bytes.
+
+Validation: build.bat builds the CPS DLL. Compile tests\native_host.cpp into
+bin\native_host.exe with the existing MSVC environment, then run:
+  python -m unittest discover -s tests -p test_catalog_runtime.py
+  python -m unittest discover -s tests -p test_visit.py
+  python -m unittest discover -s tests -p test_session.py
+Native track_flow, track_group and track_binding tests cover independent second-map
+dispatch, ignored first-map parsing, arrival/target binding and mainland resume.
+The catalog host uses synthetic archive payloads; it verifies publication and
+fail-closed startup, not engine loading or rendering of a second map.
+The 0.4.0-test runtime completed two live Top Gear entry/Airport-return cycles.
+Both returns released save protection and retained Enabled=1. Independent final
+Airport position was within 0.05 m of the destination. Airport facing is no longer
+a completion requirement. A second real converted map still needs live validation.
+One attempted fresh launch exited during hook registration without a reported
+crash cause; a retry booted and completed both cycles. Startup stability remains
+part of release validation.
+Standalone runtime is implemented above; the native DLC/Tracks browser is next.
 
 CURRENT EXPERIMENTAL TEST SETUP
 
-The first test uses the user-approved session-only policy: all known
-offline profile/microsave submission and cleanup branches are suppressed
-for the entire game process. Saving remains disabled AFTER mainland
-return. The one-shot manifest is automatically disarmed before native
-activation, so the next restart resumes normal saving. This is not a
+LIVE RETURN VALIDATION (0.3.0-test, visit-v9):
+Two consecutive Top Gear entry/return cycles completed in the same game
+process. Native return verified mainland Airport position/facing and idle
+persistence jobs, released save protection and allowed another entry.
+An independent live pose read after return was within 0.05 m of Airport.
+This verifies the native travel/save-gate lifecycle, NOT long-term save
+integrity or visual correctness.
+The standalone runtime is implemented; the native DLC/Tracks browser is not yet.
+
+The runtime suppresses all known
+offline profile/microsave submission and cleanup branches
+until verified mainland return when RestoreSavingOnReturn=1 (explicit
+career-risk opt-in), otherwise for the entire game process.
+Enabled=1 persists across launches without disarming. This is not a
 general-purpose map-loader release.
 
 Run offline through the CPS wrapper. After entering settled mainland
@@ -18,16 +198,31 @@ and map rendering. Then use:
   TrackLoaderCPS return
   TrackLoaderCPS status
 
-One custom visit is allowed per game process. Do not continue normal career
-play in that test process after returning: restart first. Return checks the actual
-mainland map, new player car, departure position/facing and completed
+Repeated custom visits are allowed after verified return. Return checks the actual
+mainland map, new player car, Airport position and completed
 transition/resume machines before releasing CPS's exclusive lease.
-It NEVER releases the session save gate. AI/traffic/mulligan recording
+With RestoreSavingOnReturn=0 it never releases the session save gate.
+Career changes are not audited; back up your save before opting in.
+AI/traffic/mulligan recording
 remain disabled. Native pause/menu travel and CPS mutation commands are
 blocked during the custom visit; use the wrapper's Stop if a load fails.
 No engine failure is force-completed or crash-recovered into success.
 
-status must report session-only native entry armed before requesting
+Return uses the same native mainland staging as CPS's working track 542
+command: global.unlock_destination, career_swap.root_mainland, SwapTrack,
+navigation/locator readiness, then career_swap.finish_swap. The custom
+route publishes a single TrackSwapComponent destination (Mainland/Airport),
+as stock map destinations do, without activities, triggers or map markers.
+The previous empty route left SwapTrack with no destination component to
+visit. Adding only a route presentation entity or retaining the selected
+native entity did not solve that; those rejected workarounds are absent.
+Arrival remains the owned dedicated mainland resume so the Airport pose,
+job readiness and save gate are checked rather than assuming completion.
+Airport return accepts any valid car facing; it is not required to match the
+departure facing. Position must remain within 0.25 m of the Airport destination.
+Top Gear's recorded arrival facing and the other ownership/job checks are unchanged.
+
+status must report native entry ready before requesting
 travel. "native custom map/car/flow ready" is native lifecycle readiness,
 NOT proof of visible geometry/material correctness or successful driving.
 These require the first actual in-game observation. Engine material,
@@ -214,14 +409,39 @@ Media-copy caching is deferred until map entry works. Existing files or
 SQL rows do not establish native group/component ownership, so skipping
 publication cannot fix these pre-entry ownership failures.
 
-For another test launch, set Experimental.SessionOnly=1 in the installed
-TrackPacks\TopGear\track.ini before starting the game. Activation consumes
-that flag (sets it to 0); the in-memory save gate still stays held until
-process exit. A disarmed pack publishes no files/SQL or native hooks on
-the next launch. Failure to write the disarmed flag refuses activation.
+Experimental.Enabled=1 now keeps track activation enabled across launches;
+activation no longer modifies the manifest. Enabled=0 disables publication
+and native activation on the next launch. Legacy SessionOnly=0/1 is read
+only when Enabled is absent, for compatibility with older packs.
+Repeated custom-map visits are allowed after a verified mainland return.
+Returns always use CPS's Anthem Airport position:
+425.574,110.821,-1478.082. Facing is retained from the mainland departure,
+because CPS's fixed Airport destination specifies position only.
+
+Saving is protected from early profile construction until return.
+RestoreSavingOnReturn=1 explicitly permits re-enabling saving once native
+mainland transition/startup, Airport pose, unchanged owner identities,
+and idle persistence jobs/submissions are verified. Career/profile mutations
+are NOT audited or rolled back; the absence of activities on a custom map
+is not proof that its profile stayed unchanged. This opt-in was requested
+for testing. Back up your save before using it. The default remains 0,
+which retains save protection until process exit. Disable Enabled and restart
+to resume ordinary saving without completing a custom-map return.
+Failed or incomplete returns never release save protection.
+
+The captured Top Gear arrival is 283.592712,0.381009579,195.880096,
+facing -0.998773813,-0.0034530554,0.0496612005. It is persisted in the
+installed manifest and work\TopGear\session-v1\track.ini. Future pack builds
+can preserve it using build_session.py --arrival-position X Y Z
+--arrival-facing X Y Z; supply both, with finite XYZ and unit facing.
+--restore-saving-on-return enables the explicit save-restoration opt-in.
+Live position capture reads XYZ and supplies a homogeneous W=1: the fourth
+SIMD lane returned by native physics is non-spatial and can contain NaN.
+The finite XYZ and unit-facing checks remain mandatory; native memory is
+not changed by capture.
 
 build_session.py assembles media-v7 plus visit-v4 in work\TopGear\session-v1.
-The manifest explicitly selects State=experimental and SessionOnly=1,
+The manifest explicitly selects State=experimental and Enabled=1,
 and pins the SQL, world catalog and strict five-path lifecycle catalog.
 Normal State=blocked diagnostic packs still never publish or travel.
 
@@ -241,12 +461,12 @@ without asserting that arbitrary unrelated system persistence is covered.
 
 An armed pack now starts native protection on a separate code-ready worker
 BEFORE slow catalog hashing and media publication, without waiting for
-other mod initialization or database verification. It consumes the one-shot
-flag before enabling protection, so even a later pack-validation failure
-restores normal saving on restart. That worker installs and enables all
+other mod initialization or database verification. The
+activation flag remains unchanged. On a later pack-validation failure,
+disable Enabled and restart to restore normal saving. That worker installs and enables all
 native visit/persistence hooks itself; CPS initialization only verifies
 that protection is active and attaches the free-roam client. A failure there
-still restores normal saving on restart. The custom stateflow group is
+requires disabling Enabled and restarting to restore saving. The custom stateflow group is
 registered in the owning GameStateMachineModule exactly like native launch
 0x563F90: GameStateMachineComponent+0x100 weak owner (via 0x3EB640),
 verified module vtable 0x2CA1740, then its stateflow manager at +0x50.
@@ -1206,7 +1426,9 @@ from WaitForPause on the native game thread; acquire is accepted only
 inside that callback on an idle, settled mainland tick with no CPS event,
 spawn, car reload, teleport, stock travel, pad injection, animation request
 or input recording/playback/release operation pending. This is eligibility,
-not proof of unchanged career/save state; the client still validates those.
+not proof of unchanged career/save state. The client verifies owner identity
+and persistence-job readiness; RestoreSavingOnReturn opts in without a
+career-state audit.
 
 An acquired lease persists through transition completion and error paths.
 While held, CPS skips its own pause/event/spawn/travel/reload dispatch and

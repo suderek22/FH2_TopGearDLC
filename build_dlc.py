@@ -43,7 +43,8 @@ def insertion(table, row):
 
 
 def registration(connection, source_connection, track_id=10000,
-                 environment_id=10000, media_name="TopGearCPS", experimental=False):
+                 environment_id=10000, media_name="TopGearCPS", experimental=False,
+                 display_name="Top Gear (CPS)", source_media_name="topgear"):
     if type(experimental) is not bool:
         raise ValueError("Experimental registration must be explicitly Boolean")
     if (type(track_id) is not int or type(environment_id) is not int or
@@ -51,6 +52,11 @@ def registration(connection, source_connection, track_id=10000,
         raise ValueError("Custom track/environment IDs must be signed integers >= 10000")
     if not re.fullmatch(r"[A-Za-z][A-Za-z0-9_]{0,47}", media_name):
         raise ValueError("Invalid custom media namespace")
+    if (not isinstance(display_name, str) or not display_name.strip() or
+            len(display_name) > 100 or any(ord(c) < 32 for c in display_name)):
+        raise ValueError("Invalid custom track display name")
+    if not re.fullmatch(r"[A-Za-z][A-Za-z0-9_]{0,47}", source_media_name):
+        raise ValueError("Invalid source media namespace")
     tracks = table_rows(connection, "Tracks")
     environments = table_rows(connection, "Environments")
     if any(row["id"] == track_id or str(row["MediaName"]).casefold() == media_name.casefold()
@@ -67,9 +73,10 @@ def registration(connection, source_connection, track_id=10000,
         raise ValueError("Mainland environment template is missing")
     sources = table_rows(source_connection, "Tracks")
     source = next((row for row in sources
-                   if row["MediaName"].casefold() == "topgear" and row["RibbonIndex"] == 0), None)
+                   if row["MediaName"].casefold() == source_media_name.casefold() and row["RibbonIndex"] == 0), None)
     if source is None:
-        raise ValueError("FM5 Top Gear ribbon 0 metadata is missing")
+        raise ValueError("FM5 %s ribbon 0 metadata is missing" %
+                         ("Top Gear" if source_media_name.casefold() == "topgear" else source_media_name))
     source_environment = next((row for row in table_rows(source_connection, "Environments")
                                if row["Id"] == source["EnvironmentId"]), None)
     if source_environment is None:
@@ -93,6 +100,11 @@ def registration(connection, source_connection, track_id=10000,
     })
     if experimental:
         track.update({"Active": 1, "Renderable": 1, "IsInstalled": 1, "IsPurchased": 1})
+    if display_name != "Top Gear (CPS)":
+        track.update({"DisplayName": display_name, "ShortDisplayName": display_name,
+                      "ShortDisplayNameAllCaps": display_name.upper()})
+        env.update({"DisplayName": display_name, "ShortDisplayName": display_name,
+                    "Location": display_name, "LocationAllCaps": display_name.upper()})
     guard = "TrackLoaderCPS_RegistrationGuard"
     sql = (('-- Session-only experimental registration; NOT a paid DLC offer or a validated map.\n'
             if experimental else '-- Disabled local-map registration; NOT a paid DLC offer or a playable map.\n') +
@@ -147,7 +159,8 @@ def build(database, source_database, output, track_id=10000, environment_id=1000
         source_connection.close()
     parser = configparser.ConfigParser(interpolation=None)
     parser.optionxform = str
-    parser["Track"] = {"Id": str(track_id), "Name": "Top Gear (CPS)", "State": "blocked",
+    parser["Track"] = {"Id": str(track_id), "Name": "Top Gear (CPS)",
+                       "Author": "suderek", "Version": "0.3.2-beta", "State": "blocked",
                        "Reason": "Full world, surface/material wiring and native custom travel are unfinished."}
     parser["LocalDLC"] = {"Format": "1", "EnvironmentId": str(environment_id),
                           "MediaName": media_name, "Delivery": "mod-managed",

@@ -83,9 +83,9 @@ public:
         context.rflags |= ZeroFlag;
         ++blockedProfiles;
     }
-    bool Release(const ReturnState& state, std::string& error) {
+    bool Release(const ReturnState& state, std::string& error, bool allowCareerChanges = false) {
         std::lock_guard<std::mutex> lock(mutex);
-        if (sessionOnly) {
+        if (sessionOnly && !allowCareerChanges) {
             error = "experimental session saving stays disabled until game restart";
             return false;
         }
@@ -100,13 +100,14 @@ public:
         }
         if (state.currentTrack != 542 || state.targetTrack != 542 || state.pendingTrackJob ||
             state.pendingSaveJob || state.pendingProfileJob || !state.gameplayReady || !state.originalPoseRestored ||
-            !state.careerUnchanged) {
+            (!state.careerUnchanged && !allowCareerChanges)) {
             error = "mainland return is not verified; native save gate remains held";
             return false;
         }
         module = 0;
         profile = 0;
         owner = {};
+        sessionOnly = false;
         return true;
     }
     bool Held() const {

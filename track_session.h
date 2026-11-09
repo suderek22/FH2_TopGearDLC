@@ -3,23 +3,26 @@
 #include "track_group.h"
 #include "track_flow.h"
 #include "track_diag.h"
-#include "..\CarPackStudio\native\include\track_visit_api.h"
+#include "track_visit.h"
 #include <mutex>
 
 namespace TrackSession {
 class Driver {
-    enum class State { Unavailable, Ready, Entering, Driving, Returning, Mainland, Failed };
+    enum class State { Unavailable, Ready, Entering, Driving, Returning, Failed };
     mutable std::mutex mutex;
     State state = State::Unavailable;
     const FH2ModApi* api = nullptr;
     FH2Mod* mod = nullptr;
-    const CPSTrackVisitApi* cps = nullptr;
+    const TrackVisit::Api* cooperation = nullptr;
     uintptr_t base = 0;
     int track = 0;
     int request = 0;
     ULONGLONG deadline = 0;
     TrackPose::Pose arrival = {};
+    TrackLifecycle::Names lifecycle;
+    bool restoreSaving = false;
     TrackLive::CarState departure;
+    TrackLive::CarState mainlandArrival;
     TrackSave::Gate saves;
     TrackBinding::Runtime bridge{saves};
     TrackPlayer::Owners owners;
@@ -28,21 +31,38 @@ class Driver {
     TrackBinding::Visit entry, returned;
     std::string detail = "experimental runtime not initialized";
     std::string submissionError;
+    static void ResetVisit(TrackBinding::Visit& visit) {
+        visit.target = {};
+        visit.pose = {};
+        visit.profile = 0;
+        visit.component = nullptr;
+        visit.mainlandStartup = nullptr;
+        visit.swaps = 0;
+        visit.restores = 0;
+        visit.failed = false;
+        visit.destroyed = false;
+        visit.launched = false;
+        visit.startupLaunched = false;
+        visit.transitionOwner.Reset();
+        visit.startupOwner.Reset();
+        visit.error.clear();
+    }
     static void TickCallback(void* user, void* pause, int canEnter) {
         static_cast<Driver*>(user)->Tick(pause, canEnter != 0);
     }
     static void LoadCallback(void* user) {
         auto self = static_cast<Driver*>(user);
-        self->loader.Submit(self->state == State::Returning, self->submissionError);
+        self->loader.Submit(self->state == State::Returning, self->submissionError, self->lifecycle);
     }
     static bool PrepareGroupCallback(void* user, void* group, std::string& error) {
-        return static_cast<Driver*>(user)->flows.Ensure(group, error);
+        auto self = static_cast<Driver*>(user);
+        return self->flows.Ensure(group, error, self->lifecycle);
     }
     void Fail(const std::string& error) {
         state = State::Failed;
         detail = error;
         api->log(mod, ("error: " + error +
-            (bridge.SessionProtectionActive() ? "; experimental saving remains disabled; restart required" :
+            (saves.Held() ? "; experimental saving remains disabled; restart required" :
                                    "; no custom visit started")).c_str());
     }
     bool GameplayReady(void* pause) const {
@@ -61,7 +81,7 @@ class Driver {
     }
     void Tick(void* pause, bool canEnter) {
         std::lock_guard<std::mutex> lock(mutex);
-        if (state == State::Unavailable || state == State::Failed || state == State::Mainland) return;
+        if (state == State::Unavailable || state == State::Failed) return;
         std::string error;
         if (state == State::Ready) {
             if (!request) return;
@@ -96,7 +116,7 @@ class Driver {
                 return;
             }
             char message[512] = {};
-            if (!cps->acquire(message, sizeof message)) {
+            if (!cooperation->acquire(message, sizeof message)) {
                 detail = message;
                 api->log(mod, message);
                 owners.Reset();
@@ -106,9 +126,14 @@ class Driver {
                 Fail(error);
                 return;
             }
+            api->set_notice(mod, restoreSaving ?
+                "Custom tracks: SAVING DISABLED\nSaving resumes after verified mainland return" :
+                "Custom tracks: SAVING DISABLED\nDisable track activation and restart to restore saving");
+            mainlandArrival = TrackLive::AirportReturn(departure);
             entry.target = {542, 542, track,
                 {arrival.position[0], arrival.position[1], arrival.position[2], 1}, 0};
             entry.pose = arrival;
+            entry.lifecycle = lifecycle;
             entry.profile = owners.ProfileAddress();
             state = State::Entering;
             detail = "native entry and streaming pending";
@@ -128,8 +153,9 @@ class Driver {
             if (!request) return;
             request = 0;
             returned.target = {track, 542, 542,
-                {departure.pose.position[0], departure.pose.position[1], departure.pose.position[2], 1}, 0};
-            returned.pose = departure.pose;
+                {mainlandArrival.pose.position[0], mainlandArrival.pose.position[1], mainlandArrival.pose.position[2], 1}, 0};
+            returned.pose = mainlandArrival.pose;
+            returned.lifecycle = lifecycle;
             returned.profile = owners.ProfileAddress();
             state = State::Returning;
             detail = "native mainland transition and pose restoration pending";
@@ -154,16 +180,33 @@ class Driver {
             detail = "native custom map/car/flow ready; rendering and driving require in-game observation";
             api->log(mod, ("track " + std::to_string(track) + ": " + detail).c_str());
         } else {
-            if (!bridge.FinishSessionReturnObserved(returned, departure, car.Address(),
-                                                     owners.Module(), true, error)) {
+            bool finished = false;
+            if (restoreSaving) {
+                TrackSave::ReturnState observed = {owners.Module(), owners.ProfileAddress(),
+                    0, 0, 0, 0, 0, true, false, false};
+                finished = bridge.FinishReturnObserved(returned, mainlandArrival, car.Address(),
+                                                       observed, error, true);
+            } else {
+                finished = bridge.FinishSessionReturnObserved(returned, mainlandArrival, car.Address(),
+                                                              owners.Module(), true, error);
+            }
+            if (!finished) {
                 detail = error;
                 return;
             }
             loader.ReleaseReceipt();
             char message[512] = {};
-            if (!cps->release(message, sizeof message)) { Fail(message); return; }
-            state = State::Mainland;
-            detail = "mainland return and departure pose verified; saving disabled until game restart";
+            if (!cooperation->release(message, sizeof message)) { Fail(message); return; }
+            owners.Reset();
+            ResetVisit(entry);
+            ResetVisit(returned);
+            departure = {};
+            mainlandArrival = {};
+            state = State::Ready;
+            detail = restoreSaving ?
+                "mainland Airport arrival verified; saving enabled; repeat entry ready; career changes not audited" :
+                "mainland Airport arrival verified; repeat entry ready; saving disabled until game restart";
+            api->set_notice(mod, restoreSaving ? nullptr : "Custom tracks: SAVING DISABLED\nDisable track activation and restart to restore saving");
             api->log(mod, detail.c_str());
         }
     }
@@ -203,29 +246,34 @@ public:
         return true;
     }
     bool Initialize(const FH2ModApi* platform, FH2Mod* owner, uintptr_t image,
-                    const CPSTrackVisitApi* cooperation, int id, const TrackPose::Pose& pose,
-                    std::string& error) {
+                    const TrackVisit::Api* services, int id, const TrackPose::Pose& pose,
+                    std::string& error, bool restoreSavingOnReturn = false,
+                    const TrackLifecycle::Names& names = {}) {
         std::lock_guard<std::mutex> lock(mutex);
         if (state != State::Unavailable || api != platform || mod != owner || base != image ||
             !bridge.SessionProtectionActive() ||
-            !cooperation || cooperation->size < sizeof *cooperation || !cooperation->attach ||
-            !cooperation->acquire || !cooperation->release || !cooperation->held ||
-            id < 10000 || !TrackPose::Valid(pose)) {
-            error = "experimental native protection/CPS cooperation is unavailable or invalid";
+            !services || services->size < sizeof *services || !services->attach ||
+            !services->acquire || !services->release || !services->held ||
+            id < 10000 || !TrackPose::Valid(pose) || !TrackLifecycle::Valid(names.group)) {
+            error = "experimental native protection/visit cooperation is unavailable or invalid";
             return false;
         }
-        cps = cooperation;
+        cooperation = services;
         track = id;
         arrival = pose;
-        CPSTrackVisitClient client{sizeof client, this, TickCallback};
+        lifecycle = names;
+        restoreSaving = restoreSavingOnReturn;
+        TrackVisit::Client client{sizeof client, this, TickCallback};
         char message[512] = {};
-        if (!cps->attach(&client, message, sizeof message)) {
+        if (!cooperation->attach(&client, message, sizeof message)) {
             error = message;
             Fail(error);
             return false;
         }
         state = State::Ready;
-        detail = "session-only native entry armed; all profile saving disabled until restart";
+        detail = restoreSaving ?
+            "native entry ready; saving disabled until verified mainland return; career changes not audited" :
+            "native entry ready; all profile saving disabled until restart";
         api->log(mod, detail.c_str());
         return true;
     }
@@ -238,9 +286,28 @@ public:
         request = returning ? 2 : 1;
         return true;
     }
+    bool QueueEntry(int id, const TrackPose::Pose& pose, const TrackLifecycle::Names& names,
+                    bool restoreSavingOnReturn, std::string& error) {
+        std::lock_guard<std::mutex> lock(mutex);
+        if (request || state != State::Ready || id < 10000 ||
+            !TrackPose::Valid(pose) || !TrackLifecycle::Valid(names.group)) {
+            error = "track entry refused: " + detail;
+            return false;
+        }
+        track = id;
+        arrival = pose;
+        lifecycle = names;
+        restoreSaving = restoreSavingOnReturn;
+        request = 1;
+        return true;
+    }
     std::string Status() const {
         std::lock_guard<std::mutex> lock(mutex);
         return detail;
+    }
+    bool InCustomTrack() const {
+        std::lock_guard<std::mutex> lock(mutex);
+        return state == State::Driving;
     }
 };
 }

@@ -5,6 +5,7 @@
 #include "track_ownership.h"
 #include "track_live.h"
 #include "track_jobs.h"
+#include "track_lifecycle.h"
 #include <windows.h>
 #include <vector>
 
@@ -17,6 +18,7 @@ constexpr uintptr_t MachineVtable = 0x2c98cf0;
 constexpr uintptr_t GroupParse = 0x50a2e0;
 
 struct Visit {
+    TrackLifecycle::Names lifecycle;
     TrackTarget::Request target;
     TrackPose::Pose pose;
     uintptr_t profile = 0;
@@ -278,6 +280,7 @@ public:
     bool Dispatch(Visit& visit, void (*load)(void*), void* user, std::string& error) {
         if (!enabled || !load || dispatching || bound || !saves.Held() ||
             !TrackTarget::Valid(visit.target) || !TrackPose::Valid(visit.pose) ||
+            !TrackLifecycle::Valid(visit.lifecycle.group) ||
             visit.component || visit.mainlandStartup || visit.failed || visit.swaps || visit.restores ||
             visit.launched || visit.startupLaunched || visit.transitionOwner.Component() || visit.startupOwner.Component() ||
             ((visit.target.sourceTrack == 542) == (visit.target.targetTrack == 542))) {
@@ -306,15 +309,15 @@ public:
     void* Parse(void* parser, void* output, const char* filename) {
         Visit* visit = dispatching;
         bool startup = false;
-        const char* expectedFile = visit && visit->target.targetTrack == 542 ?
-            "entities_trackloadercps_return.xml" : "entities_trackloadercps_enter.xml";
+        std::string expectedFile = visit ? visit->lifecycle.Entity(
+            visit->target.targetTrack == 542 ? "return" : "enter") + ".xml" : "";
         if (!visit && bound && Executing() == bound && ExecutingComponent() == bound->component &&
             bound->target.targetTrack == 542) {
             visit = bound;
             startup = true;
-            expectedFile = "entities_trackloadercps_mainland.xml";
+            expectedFile = visit->lifecycle.Entity("mainland") + ".xml";
         }
-        bool matching = visit && filename && !strcmp(filename, expectedFile);
+        bool matching = visit && filename && expectedFile == filename;
         void* result = originalParse(parser, output, filename);
         if (!matching) return result;
         if (visit->failed) return result;
@@ -323,10 +326,10 @@ public:
             return result;
         }
         std::string error;
-        const char* expectedFlow = startup ? "trackloadercps.resume_mainland" :
-            visit->target.targetTrack == 542 ? "trackloadercps.return_mainland" : "trackloadercps.enter";
+        std::string expectedFlow = visit->lifecycle.Flow(startup ? "resume_mainland" :
+            visit->target.targetTrack == 542 ? "return_mainland" : "enter");
         auto& ownership = startup ? visit->startupOwner : visit->transitionOwner;
-        if (!ownership.Capture(output, base, expectedFlow, error)) {
+        if (!ownership.Capture(output, base, expectedFlow.c_str(), error)) {
             Fail(*visit, "native group ownership failed: " + error);
             return result;
         }
@@ -341,11 +344,11 @@ public:
         Visit* visit = bound && (component == bound->component || component == bound->mainlandStartup) ? bound : nullptr;
         if (visit) {
             bool startup = component == visit->mainlandStartup;
-            const char* expected = startup ? "trackloadercps.resume_mainland" :
-                visit->target.targetTrack == 542 ? "trackloadercps.return_mainland" : "trackloadercps.enter";
+            std::string expected = visit->lifecycle.Flow(startup ? "resume_mainland" :
+                visit->target.targetTrack == 542 ? "return_mainland" : "enter");
             bool& launched = startup ? visit->startupLaunched : visit->launched;
-            if (gameThread != std::this_thread::get_id() || !flow || strcmp(flow, expected) ||
-                !Flow(component, base, expected) || launched) {
+            if (gameThread != std::this_thread::get_id() || !flow || expected != flow ||
+                !Flow(component, base, expected.c_str()) || launched) {
                 Fail(*visit, "owned native state machine launch has wrong thread/flow or is repeated");
             }
             if (visit->failed) return false;
@@ -372,9 +375,9 @@ public:
             Fail(*visit, "owned native state machine updated before its launch");
             visit = nullptr;
         }
-        const char* expected = visit && visit->mainlandStartup == component ? "trackloadercps.resume_mainland" :
-            visit && visit->target.targetTrack == 542 ? "trackloadercps.return_mainland" : "trackloadercps.enter";
-        if (visit && !Flow(component, base, expected)) {
+        std::string expected = visit ? visit->lifecycle.Flow(visit->mainlandStartup == component ? "resume_mainland" :
+            visit->target.targetTrack == 542 ? "return_mainland" : "enter") : "";
+        if (visit && !Flow(component, base, expected.c_str())) {
             Fail(*visit, "bound native state machine changed its target flow");
             visit = nullptr;
         }
@@ -458,8 +461,9 @@ public:
         }
         return true;
     }
-    bool FinishReturn(Visit& visit, const TrackSave::ReturnState& state, std::string& error) {
-        if (!ReturnComplete(visit, error) || !saves.Release(state, error)) return false;
+    bool FinishReturn(Visit& visit, const TrackSave::ReturnState& state, std::string& error,
+                      bool allowCareerChanges = false) {
+        if (!ReturnComplete(visit, error) || !saves.Release(state, error, allowCareerChanges)) return false;
         bound = nullptr;
         visit.startupOwner.Reset();
         visit.transitionOwner.Reset();
@@ -491,7 +495,7 @@ public:
     }
     bool FinishReturnObserved(Visit& visit, const TrackLive::CarState& departure,
                               uintptr_t activePlayerCar, TrackSave::ReturnState state,
-                              std::string& error) {
+                              std::string& error, bool allowCareerChanges = false) {
         if (gameThread != std::this_thread::get_id()) {
             error = "native return observation must run on the visit dispatch thread";
             return false;
@@ -513,13 +517,13 @@ public:
         state.pendingTrackJob = map.pendingJob;
         state.originalPoseRestored = true;
         state.pendingSaveJob = 0;
-        return FinishReturn(visit, state, error);
+        return FinishReturn(visit, state, error, allowCareerChanges);
     }
     bool PersistenceIdle(std::string& error) const { return jobs.Idle(error); }
     bool SessionProtectionActive() const { return enabled && saves.SessionOnly(); }
     bool SessionProfileReady(uintptr_t profile, std::string& error) const {
-        if (!enabled || !saves.SessionOnly()) {
-            error = "native session profile observation requires active permanent save protection";
+        if (!enabled) {
+            error = "native profile observation requires active persistence hooks";
             return false;
         }
         return profiles.Contains(profile, error) && jobs.Idle(error);
