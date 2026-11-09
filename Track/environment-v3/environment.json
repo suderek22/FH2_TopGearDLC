@@ -1,0 +1,361 @@
+{
+  "component": "native-settings-locators-and-arrival",
+  "media_name": "TopGearCPS",
+  "schema_verified": true,
+  "engine_validated": false,
+  "first_test_ready": false,
+  "playable_map": false,
+  "world_source_sha256": "4a5a938bf18c0ad26b09b8f0b733891fa11026e3d9a42e44464136f835ac1515",
+  "source_collision_sha256": "5d03cf44982744f68d5851091fb73e76eb94c398071ed493309588e276ffdb1d",
+  "source_settings_sha256": "93c154383677bc1002e901fd6db9a7b7db6f5c9ed07a31ceda632af71b8c4304",
+  "native_settings_sha256": "3dba4e9840860554c842388b1f1a8039ed0bd9c9693b02e8a8f9797770247b3e",
+  "settings": {
+    "preserved_source_fields": [
+      "SkyboxHeightOffset",
+      "SkyboxIndex",
+      "SunHeightOffset",
+      "LightAmbient",
+      "DesaturateAmount",
+      "DesatLuminosity",
+      "DesatPostMod",
+      "WorldClear",
+      "SHLighting",
+      "WindDirection",
+      "WindAmplitude",
+      "WindGustinessStrength",
+      "WindGustinessFrequency",
+      "WindSpeed",
+      "Fog",
+      "ShadowColor",
+      "StaticShadowColor",
+      "GrassHeightScale",
+      "GlobalSpecularLevel",
+      "MinSpecLevel",
+      "DetailBlurAmount1",
+      "DetailBlurAmount2",
+      "DetailBlurAmount3",
+      "DetailBlurContrastAmount1",
+      "DetailBlurContrastAmount2",
+      "DetailBlurContrastAmount3",
+      "DetailBlurIntensityAmount1",
+      "DetailBluIntensityAmount2",
+      "DetailBlurIntensityAmount3",
+      "DetailBlurContrastAmountFinal",
+      "DetailBlurIntensityAmountFinal",
+      "DetailBlurMPHForMaxBlur",
+      "bloomCutoffScale",
+      "bloomPersist",
+      "motionBlurAmount",
+      "dofFocalDistance",
+      "dofFocalLength",
+      "dofFocalMaxBlur",
+      "DarkColor",
+      "LightColor",
+      "CollidableDropDistance",
+      "GrassSpacingType",
+      "GrassLODDist",
+      "GrassLODFadeRange",
+      "GrassMinNumShells",
+      "GrassFadeStartDistance",
+      "GrassFadeEndDistance",
+      "GrassLOD",
+      "TonemapEnabled",
+      "ToneMapAdaptiveExposure",
+      "ToneMapCockpitExposure",
+      "bloomEnable",
+      "bloomCutoff",
+      "bloomScale",
+      "bloomPersist",
+      "bloomWeights",
+      "cockpitBloomEnable",
+      "cockpitBloomCutoff",
+      "cockpitBloomScale",
+      "cockpitBloomPersist",
+      "cockpitBloomWeights",
+      "skyGain",
+      "sunGainScale",
+      "GrassMaxNumShells",
+      "Cubemap",
+      "CubemapDiffuse",
+      "CubemapRenderingParameters",
+      "MirrorRenderingParameters",
+      "Mirror",
+      "ShadowLightDirection",
+      "MaxCubemapInShadow",
+      "TrackMaxCubemapInShadow",
+      "SunSpecularScale",
+      "SunRadius",
+      "SunCarScale",
+      "SunCarSpecularScale",
+      "SunCarRadius",
+      "LensFlareIntensity",
+      "CockpitLensFlareIntensity",
+      "EmissiveScale",
+      "LODGroups",
+      "MipMapLodBiasModifier",
+      "Crowds",
+      "DropShadowColor",
+      "TrackLightMapTransition",
+      "TrackLightMapColor",
+      "GlobalFresnel",
+      "ToneMapeDelay",
+      "CockpitToneMapeDelay",
+      "CameraExposureRange",
+      "DetailBlurScale",
+      "SunSize",
+      "SunAdjust",
+      "Performance",
+      "ShadowEnds",
+      "CommandBufferRecording",
+      "RoadSpecular",
+      "TrackLightMapParams",
+      "skyScale",
+      "cubeSkyScale",
+      "cubeSkySaturation",
+      "homespaceCamLightDirOffset",
+      "DropShadowOpacityAdjustment",
+      "ResourcePriority",
+      "imageBasedLighting",
+      "cubeReflGroundScale",
+      "filmicTone",
+      "CockpitFilmicTone",
+      "wholeTrackLightmapRadius",
+      "TrackGroundColor",
+      "TrackSkyColor",
+      "TrackHorizonBegin",
+      "TrackHorizonEnd",
+      "Particles",
+      "lightRays",
+      "skidmarks",
+      "planarReflection",
+      "RaceLineIntensity",
+      "CrowdMovement2D"
+    ],
+    "native_default_fields": [
+      "screenAreaDistances"
+    ],
+    "adapted_fields": [
+      "FileChunkSize"
+    ],
+    "source_version": 81,
+    "target_version": 83
+  },
+  "locator_count": 6,
+  "source_locator_bytes_preserved": true,
+  "arrival": {
+    "locator": "321Root",
+    "locator_transform": [
+      0.999958,
+      0.0,
+      -0.009204,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.009204,
+      0.0,
+      0.999958,
+      0.0,
+      202.150299,
+      -0.724013,
+      31.53647,
+      1.0
+    ],
+    "source_position": [
+      202.150299,
+      -0.724013,
+      31.53647
+    ],
+    "ground_samples": [
+      {
+        "xz": [
+          202.150299,
+          31.53647
+        ],
+        "height": -0.7472915045826793,
+        "hits": [
+          {
+            "height": -0.7472915045826793,
+            "flags": 7798784,
+            "cell": 100,
+            "triangle": 445
+          },
+          {
+            "height": -0.7472915045826793,
+            "flags": 7798784,
+            "cell": 101,
+            "triangle": 166
+          }
+        ]
+      },
+      {
+        "xz": [
+          200.9282598,
+          29.1476156
+        ],
+        "height": -0.7613635220389656,
+        "hits": [
+          {
+            "height": -0.7613635220389656,
+            "flags": 7798784,
+            "cell": 100,
+            "triangle": 445
+          },
+          {
+            "height": -0.7613635220389656,
+            "flags": 7798784,
+            "cell": 101,
+            "triangle": 166
+          }
+        ]
+      },
+      {
+        "xz": [
+          203.328159,
+          29.125526
+        ],
+        "height": -0.7530589178230229,
+        "hits": [
+          {
+            "height": -0.7530589178230229,
+            "flags": 7798784,
+            "cell": 100,
+            "triangle": 445
+          },
+          {
+            "height": -0.7530589178230229,
+            "flags": 7798784,
+            "cell": 101,
+            "triangle": 166
+          }
+        ]
+      },
+      {
+        "xz": [
+          200.97243899999998,
+          33.947414
+        ],
+        "height": -0.7809084600157642,
+        "hits": [
+          {
+            "height": -0.7809084600157642,
+            "flags": 7798784,
+            "cell": 100,
+            "triangle": 543
+          },
+          {
+            "height": -0.7809084600157642,
+            "flags": 7798784,
+            "cell": 101,
+            "triangle": 188
+          }
+        ]
+      },
+      {
+        "xz": [
+          203.37233819999997,
+          33.9253244
+        ],
+        "height": -0.7724254686767055,
+        "hits": [
+          {
+            "height": -0.7724254686767055,
+            "flags": 7798784,
+            "cell": 100,
+            "triangle": 542
+          },
+          {
+            "height": -0.7724254686767055,
+            "flags": 7798784,
+            "cell": 101,
+            "triangle": 187
+          }
+        ]
+      }
+    ],
+    "candidate_position": [
+      202.150299,
+      0.0527084954173207,
+      31.53647
+    ],
+    "candidate_clearance": 0.8,
+    "engine_arrival_validated": false,
+    "source_persisted_ground_equal": true
+  },
+  "files": [
+    {
+      "name": "TrackSettings.xml",
+      "bytes": 51144,
+      "sha256": "8fd77b53233e4555e83e2353e701a2fc65101cad0bbf43acd455e0044af5c0fb"
+    },
+    {
+      "name": "ribbon_00\\Locators.xml",
+      "bytes": 3121,
+      "sha256": "5d05a91fcb6d92a0efac17f524c32dd5bbb2451f7d878b6a4a9e48d7e03d5e73"
+    },
+    {
+      "name": "smoke.dds",
+      "bytes": 87536,
+      "sha256": "c8974e6132098516a5ecb0244829725f3b5f0ce5d018c15ed1b20dcea5d1d2a7"
+    },
+    {
+      "name": "staticcarcubemap.xpr",
+      "bytes": 542732,
+      "sha256": "f6c2ba387b0aa41eba5d0ba06885fe3e733896cbb7ca0a52f4b30468c6023aa3"
+    },
+    {
+      "name": "PhysicsDefinitions.bin",
+      "bytes": 8,
+      "sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc"
+    },
+    {
+      "name": "ribbon_00\\CollObjs.xml",
+      "bytes": 51,
+      "sha256": "d692deb878145f7df08562129178b0cd11dfddea56831cab4ac0ee76348ab103"
+    }
+  ],
+  "remaining": [
+    "Native v83 settings retain source v81 field values after recursive schema checking; rendering still needs engine validation.",
+    "Only the FH2-only screenAreaDistances default is taken from the reference; no donor geometry, locators or track identity are used.",
+    "Source SH probe v2 differs from native v4 and is not copied or version-spoofed; dynamic lighting integration remains.",
+    "Runtime object/animation, audio and dynamic time-of-day integration remain unresolved; movable-prop physics is intentionally disabled.",
+    "The collision-backed arrival has 0.8m test clearance; heading units and actual car placement need native-flow validation.",
+    "Custom game-thread target preparation/load and a save-safe return path still block activation.",
+    "Static-only test deliberately omits movable collision-object registrations; empty dynamic catalog still needs engine validation."
+  ],
+  "static_test": {
+    "profile": "static-circuit-first-test",
+    "dynamic_physics_definition_count": 0,
+    "dynamic_collision_object_count": 0,
+    "omitted_source_object_count": 221,
+    "omitted_source_physics_types": [
+      "Barrel1",
+      "BowlingPin",
+      "BowlingPinGold",
+      "BrakeMarker",
+      "CO_Barrel_Black_001",
+      "CO_LuggageClaimSign_001",
+      "CO_Luggage_001",
+      "CO_PLasticBarr_003",
+      "CO_TOPG_BigBen_001",
+      "CO_TOPG_BuckinghamPalace_001",
+      "CO_TOPG_DoubleDBus_001",
+      "CO_TOPG_LondonEye_001",
+      "CO_TOPG_SPCathedral_001",
+      "CO_TOPG_TowerBridge_001",
+      "CO_TOPG_mailbox_001",
+      "CO_TOPG_pylon_001",
+      "CO_Topg_Trashcan_001",
+      "CO_TrafficSign_001",
+      "CO_TrafficSign_002",
+      "Cone",
+      "SilvPole",
+      "TireWallA",
+      "WhiteArrowBox"
+    ],
+    "source_objects_sha256": "c90391429b27e56685ad377c113dc98f79869dd03c67d9275f6a341d36699d22",
+    "road_collision_preserved": true,
+    "engine_validated": false
+  }
+}

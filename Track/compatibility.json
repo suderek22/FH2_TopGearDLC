@@ -1,0 +1,3341 @@
+{
+  "format": 1,
+  "name": "TopGear",
+  "reserved_track_id": 10000,
+  "source": "E:\\FM5_1.0.0.20_x64\\Forza_1.0.0.20_x64__8wekyb3d8bbwe\\Mount\\media\\tracks\\topgear",
+  "target_reference": "E:\\forza2port_win\\game\\Anthem_1.0.0.64_x64__8wekyb3d8bbwe\\Mount\\media\\tracks\\anthem",
+  "playable": false,
+  "conversion_state": "blocked",
+  "source_imap": {
+    "version": null,
+    "record_width": 8,
+    "models": 330,
+    "records": [
+      {
+        "source": "tracks\\_library\\objects\\barrier_jersey\\barr_jersey_001.max",
+        "references": 4,
+        "guids": 21,
+        "reference_sample": "0800000037000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\barrier_jersey\\barr_jersey_005.max",
+        "references": 4,
+        "guids": 2,
+        "reference_sample": "080000007d020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\buildings\\bldg_bleacher_generic_001.max",
+        "references": 4,
+        "guids": 3,
+        "reference_sample": "0100000080000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\objects\\obj_flag_001.max",
+        "references": 4,
+        "guids": 5,
+        "reference_sample": "08000000fe000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\objects\\obj_flag_dunsfold_001.max",
+        "references": 3,
+        "guids": 3,
+        "reference_sample": "01000000ff000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\objects\\obj_groundanchor_001.max",
+        "references": 2,
+        "guids": 21,
+        "reference_sample": "0200000086040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\objects\\obj_lightstreetob_001.max",
+        "references": 3,
+        "guids": 8,
+        "reference_sample": "0c00000017020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\objects\\obj_smflatlight_001.max",
+        "references": 3,
+        "guids": 7,
+        "reference_sample": "0c000000a2020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\raceday\\rceday_camerajib_anim_001.max",
+        "references": 3,
+        "guids": 5,
+        "reference_sample": "0c00000003010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\raceday\\rceday_chair_folding_001.max",
+        "references": 4,
+        "guids": 16,
+        "reference_sample": "0100000087020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\raceday\\rceday_chest_b_001.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "080000002e020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\raceday\\rceday_ezside_001.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "0800000004010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\raceday\\rceday_ezup_a_001.max",
+        "references": 4,
+        "guids": 3,
+        "reference_sample": "080000002f020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\raceday\\rceday_ezup_b_001.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "0100000005010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\raceday\\rceday_fireextinguisher_003.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "04000000c0020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\raceday\\rceday_portapotty_a_001.max",
+        "references": 4,
+        "guids": 2,
+        "reference_sample": "0800000009010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\raceday\\rceday_rv_grandstand_002.max",
+        "references": 4,
+        "guids": 2,
+        "reference_sample": "080000000a010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\raceday\\rceday_table_folding_001.max",
+        "references": 4,
+        "guids": 2,
+        "reference_sample": "0400000018020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\raceday\\rceday_table_plastic_001.max",
+        "references": 4,
+        "guids": 7,
+        "reference_sample": "0400000003050000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\raceday\\rceday_tent_long_001.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "080000000b010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\raceday\\rceday_trashbarrel_001.max",
+        "references": 4,
+        "guids": 6,
+        "reference_sample": "0800000019020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\raceday\\rceday_trashbarrel_002.max",
+        "references": 4,
+        "guids": 2,
+        "reference_sample": "08000000f4040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\signage\\sign_turnarrows_001.max",
+        "references": 2,
+        "guids": 2,
+        "reference_sample": "0e00000049020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\vegetation\\veg_bush_shrub_a_wavy_001.max",
+        "references": 4,
+        "guids": 134,
+        "reference_sample": "08000000b5010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\vegetation\\veg_bush_small_b_wide_001.max",
+        "references": 4,
+        "guids": 134,
+        "reference_sample": "01000000b9010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\vegetation\\veg_plant_weed_a_long_001.max",
+        "references": 1,
+        "guids": 14,
+        "reference_sample": "080000004a020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\vegetation\\veg_x_bush_small_a_wide_002.max",
+        "references": 1,
+        "guids": 189,
+        "reference_sample": "ff000000f8010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\vegetation\\veg_x_bush_small_b_wide_001.max",
+        "references": 1,
+        "guids": 58,
+        "reference_sample": "ff000000f9010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\vegetation\\veg_x_tree_common_b_medium_001.max",
+        "references": 1,
+        "guids": 366,
+        "reference_sample": "ff000000fa010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\vegetation\\veg_x_tree_common_c_medium_001.max",
+        "references": 1,
+        "guids": 63,
+        "reference_sample": "ff000000fb010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\vegetation\\veg_x_tree_oak_a_large_002.max",
+        "references": 1,
+        "guids": 2,
+        "reference_sample": "ff000000fc010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\vehicles\\veh_bmw_135icoupe_09_fict_001.max",
+        "references": 3,
+        "guids": 19,
+        "reference_sample": "08000000fd010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\vehicles\\veh_cameratruck_002.max",
+        "references": 4,
+        "guids": 5,
+        "reference_sample": "01000000a9040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\vehicles\\veh_che_express2500cargo_05_fict_001.max",
+        "references": 4,
+        "guids": 5,
+        "reference_sample": "040000001e020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\vehicles\\veh_eu_ambulance_fict_001.max",
+        "references": 2,
+        "guids": 3,
+        "reference_sample": "08000000fe010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\vehicles\\veh_eu_firetruck_001.max",
+        "references": 1,
+        "guids": 3,
+        "reference_sample": "040000001d050000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\vehicles\\veh_eu_minivan_fict_001.max",
+        "references": 4,
+        "guids": 11,
+        "reference_sample": "01000000ff010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\vehicles\\veh_eu_semi_fict_002.max",
+        "references": 4,
+        "guids": 26,
+        "reference_sample": "0800000003020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\_library\\objects\\vehicles\\veh_flatbed_001.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "0800000004020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\barriers\\barr_topg_chainlink_pt01_001.max",
+        "references": 12,
+        "guids": 1,
+        "reference_sample": "0e00000038000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\barriers\\barr_topg_chainlink_pt02_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff00000072020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\barriers\\barr_topg_chainlink_pt08_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "0e0000003d000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\barriers\\barr_topg_chainlink_pt09_001.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "0f0000003e000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\barriers\\barr_topg_chainlink_pt10_001.max",
+        "references": 6,
+        "guids": 1,
+        "reference_sample": "0e00000022030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\barriers\\barr_topg_jersey_blue_001.max",
+        "references": 3,
+        "guids": 17,
+        "reference_sample": "0c00000040000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\barriers\\barr_topg_jersey_white_001.max",
+        "references": 3,
+        "guids": 27,
+        "reference_sample": "0c00000041000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\barriers\\barr_topg_pt01_001.max",
+        "references": 12,
+        "guids": 1,
+        "reference_sample": "0f00000042000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\barriers\\barr_topg_pt01_002.max",
+        "references": 9,
+        "guids": 1,
+        "reference_sample": "0c0000004e000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\barriers\\barr_topg_pt01_003.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "0800000051000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\barriers\\barr_topg_pt01_004.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "0f00000052000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\barriers\\barr_topg_pt02_001.max",
+        "references": 16,
+        "guids": 1,
+        "reference_sample": "0100000053000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\barriers\\barr_topg_pt02_002.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "0c00000063000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\barriers\\barr_topg_pt03_001.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "0800000064000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\barriers\\barr_topg_pt03_ribbon00_001.max",
+        "references": 12,
+        "guids": 1,
+        "reference_sample": "0800000065000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\barriers\\barr_topg_pt03_ribbon00_002.max",
+        "references": 9,
+        "guids": 1,
+        "reference_sample": "0c00000067000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\barriers\\barr_topg_pt04_001.max",
+        "references": 9,
+        "guids": 1,
+        "reference_sample": "0c00000025020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\barriers\\barr_topg_pt05_001.max",
+        "references": 12,
+        "guids": 1,
+        "reference_sample": "080000006a000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\barriers\\barr_topg_pt05_002.max",
+        "references": 12,
+        "guids": 1,
+        "reference_sample": "080000006b000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\barriers\\barr_topg_pt06_ribbon00_01_02_03_001.max",
+        "references": 12,
+        "guids": 1,
+        "reference_sample": "0c0000006d000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\barriers\\barr_topg_pt08_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "0e00000071000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\barriers\\barr_topg_pt08_002.max",
+        "references": 12,
+        "guids": 1,
+        "reference_sample": "08000000da020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\barriers\\barr_topg_pt09_001.max",
+        "references": 13,
+        "guids": 1,
+        "reference_sample": "0f00000072000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\barriers\\barr_topg_pt10_001.max",
+        "references": 12,
+        "guids": 1,
+        "reference_sample": "010000000c020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\barriers\\barr_topg_tirewall_camera_001.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "040000007f000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_beigebrick_pt09_002.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "0200000081000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_beigehouse_pt08_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "0e00000082000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_beigetrailer_pt09_002.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "0c0000004d020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_beigetrailer_pt09_003.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "0100000083000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_beigetrailer_pt09_004.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "0e000000f6040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_bluelonghouse_pt08_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "0e00000086000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_bluelonghouse_pt08_002.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "0e00000087000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_bluelonghouse_pt08_003.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "0e00000088000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_blueshed_pt09_001.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "010000009e040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_brick_pt01_001.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "0200000089000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_brick_pt09_002.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "010000000d020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_cement_pt01_001.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "0e00000086030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_cementres_pt09_001.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "020000008a000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_commantenna_pt08_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "0e0000008b000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_crewqtrs_pt01_001.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "010000008c000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_dangercage_pt09_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "0f000000ec040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_dmf_pt09_001.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "0e0000008d000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_firehouse_pt09_001.max",
+        "references": 7,
+        "guids": 1,
+        "reference_sample": "010000008e000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_greenbrick_pt09_003.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "0200000084020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_greencement_pt09_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "0f000000eb040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_greencement_pt09_003.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "0c000000b3040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_greenelectrical_pt09_001.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "0200000090000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_greengarage_pt09_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "0c00000029020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_greenhangers_pt08_004.max",
+        "references": 2,
+        "guids": 5,
+        "reference_sample": "0c00000091000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_greenhangers_pt08_008.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "0c00000092000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_greentarp_pt08_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "0e00000093000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_greentrailer_pt09_001.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "0200000094000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_greentrailer_pt09_002.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "0c0000006a020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_greentrailer_pt09_003.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "0c0000001c050000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_greentrailer_pt09_004.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "0e0000001e040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_greenwarehse_pt08_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "0e00000095000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_greyshed_pt01_001.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "0100000096000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_greyshed_pt01_002.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "010000000f020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_greyshed_pt08_003.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "02000000b7040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_greyshed_pt08_004.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "0c0000005e030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_greytrailer_pt09_001.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "0e00000097000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_guardhut_pt02_001.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "0800000098000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_hanger_pt01_001.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "0200000099000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_house_pt07_001.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "010000009a000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_monument_pt09_001.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "020000009d000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_nba_pt01_001.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "020000009e000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_office_pt0hg.max",
+        "references": 5,
+        "guids": 1,
+        "reference_sample": "020000009f000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_oldhouse_pt07_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "0f00000055030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_open_pt01_003.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "04000000a0000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_open_pt01_004.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "0200000054030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_open_pt01_005.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "0e000000c6020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_phonebooth_pt01_001.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "01000000a1000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_pink_pt09_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "0c0000007b020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_powergen_pt01_002.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "01000000a4000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_powerstation_pt02_001.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "01000000a7000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_powerstation_pt02_002.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "0c000000aa000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_pt01_brickhatch_001.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "01000000ab000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_pt01_handrail_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "010000003e030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_red_pt01_001.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "02000000ae000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_red_pt09_002.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "0c0000004e020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_red_pt09_003.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "08000000b5040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_redbrick_pt08_003.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "0e000000af000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_redbrick_pt09_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "0e000000cb040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_redbrick_pt09_003.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "0e000000cd040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_redshed_pt01_001.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "02000000b0000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_shed_pt01_001.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "0e00000071030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_shed_pt09_002.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "0f00000013020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_smbrick_pt01_001.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "01000000b1000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_smbrick_pt01_002.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "0f000000d6040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_studio_pt01_001.max",
+        "references": 6,
+        "guids": 1,
+        "reference_sample": "01000000b2000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_studiobrick_001.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "01000000b3000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_studiobrick_pt01_002.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "0100000014020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_studiocage_pt01_001.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "01000000b4000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_topgsign_pt01_001.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "0100000015020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_tower_pt08_001.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "0c000000b5000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_towershed_pt08_001.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "0c0000003b030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_warehse_pt01_001.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "08000000b6000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_warehse_pt08_011.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "0c000000b7000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_warehse_pt09_002.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "01000000b8000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_warehse_pt09_003.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "02000000b9000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_warehse_pt09_004.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "02000000ba000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_warehse_pt09_005.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "0e000000cf040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_warehse_pt09_006.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "0e000000ef040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_warehse_pt09_007.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "0e0000006b020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_warehse_pt09_008.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "0e00000013040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_warehse_pt09_013.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "0e000000cc040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_warehse_pt09_014.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "0e000000b6040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_warehsehut_pt08_001.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "0c0000003c030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_white_pt09_001.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "01000000bb000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_whitebrick_pt09_001.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "02000000bc000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_whitetent_pt09_001.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "01000000bd000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_whitetwr_pt09_001.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "02000000c0000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_wood_pt09_001.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "01000000a1040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\buildings\\bldg_topg_woodshed_pt08_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "0e000000c1000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_terr_topg_pt01_000.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "1f0000000f030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_terr_topg_pt05_000.max",
+        "references": 7,
+        "guids": 1,
+        "reference_sample": "1f00000095030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_terr_topg_pt07_001.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "1f0000007c040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_terr_topg_pt07_003.max",
+        "references": 7,
+        "guids": 1,
+        "reference_sample": "1f000000fe030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_terr_topg_pt07_008.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "1f00000054040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_terr_topg_pt08_005_01.max",
+        "references": 8,
+        "guids": 1,
+        "reference_sample": "1f00000028040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_terr_topg_pt09_000.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "1f00000015050000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt01_001.max",
+        "references": 9,
+        "guids": 1,
+        "reference_sample": "1f000000f0020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt01_002.max",
+        "references": 12,
+        "guids": 1,
+        "reference_sample": "1f000000c2000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt01_shoulderfar_001.max",
+        "references": 17,
+        "guids": 1,
+        "reference_sample": "1f000000df020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt01_shoulderfar_002.max",
+        "references": 14,
+        "guids": 1,
+        "reference_sample": "1f000000ce000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt02_001.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "1f00000087030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt02_002.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "1f0000009e030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt02_shoulderfar_001.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "1f0000003f030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt02_shoulderfar_002.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "1f00000092030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt03_001.max",
+        "references": 9,
+        "guids": 1,
+        "reference_sample": "1f000000f9020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt03_002.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "1f0000008b030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt03_003.max",
+        "references": 10,
+        "guids": 1,
+        "reference_sample": "1f00000065030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt03_004.max",
+        "references": 12,
+        "guids": 1,
+        "reference_sample": "1f000000de030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt03_shoulderfar_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "1f00000090030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt03_shoulderfar_002.max",
+        "references": 12,
+        "guids": 1,
+        "reference_sample": "1f00000046030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt03_shoulderfar_003.max",
+        "references": 19,
+        "guids": 1,
+        "reference_sample": "1f000000b5030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt04_001.max",
+        "references": 5,
+        "guids": 1,
+        "reference_sample": "1f0000005b040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt04_shoulderfar_001.max",
+        "references": 5,
+        "guids": 1,
+        "reference_sample": "1f00000060040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt05_001.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "1f000000cc030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt05_002.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "1f000000d7030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt05_shoulderfar_001.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "1f000000c9030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt05_shoulderfar_002.max",
+        "references": 6,
+        "guids": 1,
+        "reference_sample": "1f000000d1030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt06_001.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "1f000000dc000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt06_002.max",
+        "references": 5,
+        "guids": 1,
+        "reference_sample": "1f000000de000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt06_003.max",
+        "references": 6,
+        "guids": 1,
+        "reference_sample": "1f000000e3000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt06_004.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "1f000000e6040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt06_005.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "1f00000025030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt06_shoulderfar_001.max",
+        "references": 6,
+        "guids": 1,
+        "reference_sample": "1f000000e9000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt06_shoulderfar_002.max",
+        "references": 6,
+        "guids": 1,
+        "reference_sample": "1f0000001a030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt06_shoulderfar_003.max",
+        "references": 8,
+        "guids": 1,
+        "reference_sample": "1f000000a8020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt06_shoulderfar_004.max",
+        "references": 8,
+        "guids": 1,
+        "reference_sample": "1f000000ef000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt06_shoulderfar_005.max",
+        "references": 6,
+        "guids": 1,
+        "reference_sample": "1f000000f7000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt06_shoulderfar_006.max",
+        "references": 10,
+        "guids": 1,
+        "reference_sample": "1f000000d9040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt07_001.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "1f0000006f040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt07_shoulderfar_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "1f00000074040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt08_001.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "1f00000005040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt08_002.max",
+        "references": 7,
+        "guids": 1,
+        "reference_sample": "1f00000015040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt08_shoulderfar_001.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "1f00000008040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt08_shoulderfar_002.max",
+        "references": 6,
+        "guids": 1,
+        "reference_sample": "1f00000020040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt09_001.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "1f000000ff040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topg_pt09_shoulderfar_001.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "1f000000f8040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\grass\\grass_topgear_pt01_001_paving_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000fd000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\objects\\obj_topg_pt01_001.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "0e0000008f020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\objects\\obj_topg_pt04_001.max",
+        "references": 6,
+        "guids": 1,
+        "reference_sample": "0100000057030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\objects\\obj_topg_pt05_001.max",
+        "references": 12,
+        "guids": 1,
+        "reference_sample": "0c00000002010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\objects\\obj_topg_pt07_001.max",
+        "references": 6,
+        "guids": 1,
+        "reference_sample": "010000003a040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\objects\\obj_topg_pt09_001.max",
+        "references": 6,
+        "guids": 1,
+        "reference_sample": "01000000a3040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\road\\road_topg_pt01_001.max",
+        "references": 11,
+        "guids": 1,
+        "reference_sample": "ff00000032010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\road\\road_topg_pt01_002.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "ff0000003c010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\road\\road_topg_pt01_003.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "ff0000003f010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\road\\road_topg_pt02_001.max",
+        "references": 6,
+        "guids": 1,
+        "reference_sample": "ff00000057020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\road\\road_topg_pt03_001.max",
+        "references": 10,
+        "guids": 1,
+        "reference_sample": "ff00000040010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\road\\road_topg_pt03_002.max",
+        "references": 11,
+        "guids": 1,
+        "reference_sample": "ff00000047010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\road\\road_topg_pt03_003.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff00000041020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\road\\road_topg_pt04_001.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "ff0000004c010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\road\\road_topg_pt05_001.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "ff00000033030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\road\\road_topg_pt06_001.max",
+        "references": 8,
+        "guids": 1,
+        "reference_sample": "ff0000004d010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\road\\road_topg_pt06_002.max",
+        "references": 9,
+        "guids": 1,
+        "reference_sample": "ff00000055010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\road\\road_topg_pt07_001.max",
+        "references": 5,
+        "guids": 1,
+        "reference_sample": "ff00000042020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\road\\road_topg_pt08_001.max",
+        "references": 8,
+        "guids": 1,
+        "reference_sample": "ff0000005e010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\road\\road_topg_pt09_001.max",
+        "references": 5,
+        "guids": 1,
+        "reference_sample": "ff00000064010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\road\\road_topg_pt09_002.max",
+        "references": 7,
+        "guids": 1,
+        "reference_sample": "ff00000067010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\road\\road_topg_pt09_003.max",
+        "references": 10,
+        "guids": 1,
+        "reference_sample": "ff00000068010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\road_detail\\rddet_topg_001.max",
+        "references": 35,
+        "guids": 1,
+        "reference_sample": "ff0000000c010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\road_line\\rdline_topg_pt03_002_tarlines_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff00000034020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\road_line\\rdline_topg_roadline_pt01_001.max",
+        "references": 18,
+        "guids": 1,
+        "reference_sample": "ff00000014010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\road_line\\rdline_topg_roadline_pt02_001.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "ff00000050020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\road_line\\rdline_topg_roadline_pt03_001.max",
+        "references": 23,
+        "guids": 1,
+        "reference_sample": "ff0000001f010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\road_line\\rdline_topg_roadline_pt03_turtles_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff0000003a020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\road_line\\rdline_topg_roadline_pt05_001.max",
+        "references": 6,
+        "guids": 1,
+        "reference_sample": "ff0000003b020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\road_line\\rdline_topg_roadline_pt06_001.max",
+        "references": 18,
+        "guids": 1,
+        "reference_sample": "ff00000027010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\road_line\\rdline_topg_roadline_pt07_001.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "ff00000072040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\road_line\\rdline_topg_roadline_pt09_001.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "ff000000f2040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\shoulders\\shldr_topg_pt01_001.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "ff0000006a010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\shoulders\\shldr_topg_pt01_002.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "ff0000006d010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\shoulders\\shldr_topg_pt01_003.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "ff00000070010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\shoulders\\shldr_topg_pt02_001.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "ff00000060020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\shoulders\\shldr_topg_pt03_001.max",
+        "references": 9,
+        "guids": 1,
+        "reference_sample": "ff00000071010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\shoulders\\shldr_topg_pt03_002.max",
+        "references": 7,
+        "guids": 1,
+        "reference_sample": "ff00000078010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\shoulders\\shldr_topg_pt04_001.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "ff0000007d010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\shoulders\\shldr_topg_pt05_001.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "ff0000007f010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\shoulders\\shldr_topg_pt06_001.max",
+        "references": 8,
+        "guids": 1,
+        "reference_sample": "ff00000080010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\shoulders\\shldr_topg_pt06_002.max",
+        "references": 6,
+        "guids": 1,
+        "reference_sample": "ff00000087010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\shoulders\\shldr_topg_pt07_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff00000066040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\shoulders\\shldr_topg_pt08_001.max",
+        "references": 5,
+        "guids": 1,
+        "reference_sample": "ff0000008d010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\shoulders\\shldr_topg_pt09_001.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "ff00000091010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\shoulders\\shldr_topg_pt09_002.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "ff00000094010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\shoulders\\shldr_topg_pt09_003.max",
+        "references": 6,
+        "guids": 1,
+        "reference_sample": "ff00000095010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\signage\\sign_topg_pt01_001.max",
+        "references": 10,
+        "guids": 1,
+        "reference_sample": "ff00000096010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\signage\\sign_topg_pt02_001.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "ff000000a0010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\signage\\sign_topg_pt03_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000a1010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\signage\\sign_topg_pt04_001.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "ff000000a2010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\signage\\sign_topg_pt05_001.max",
+        "references": 8,
+        "guids": 1,
+        "reference_sample": "ff000000a5010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\signage\\sign_topg_pt07_001.max",
+        "references": 3,
+        "guids": 1,
+        "reference_sample": "ff00000044040000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\signage\\sign_topg_pt09_001.max",
+        "references": 16,
+        "guids": 1,
+        "reference_sample": "ff00000048020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\sky\\sky_topg_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff00000036000000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\sky\\sky_topg_matte_001.max",
+        "references": 1,
+        "guids": 4,
+        "reference_sample": "ff000000a7010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\sky\\sky_topg_matte_002.max",
+        "references": 1,
+        "guids": 15,
+        "reference_sample": "ff000000a8010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\sky\\sky_topg_matte_003.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000a9010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\sky\\sky_topg_matte_004.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff00000082030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\sky\\sky_topg_matte_005.max",
+        "references": 1,
+        "guids": 3,
+        "reference_sample": "ff000000aa010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\sky\\sky_topg_matte_006.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000ab010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\terrain\\terr_topg_pt01_001.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "ff000000ac010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\terrain\\terr_topg_pt05_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000ae010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\terrain\\terr_topg_pt07_001.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "ff000000af010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\terrain\\terr_topg_pt08_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000b2010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\terrain\\terr_topg_pt09_001.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "ff000000b3010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_common_c_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000bd010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_common_c_003.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000be010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_common_c_004.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000bf010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_common_c_005.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000c0010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_common_c_006.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000c1010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_common_c_007.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000c2010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_common_c_008.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000c3010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_common_c_009.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000c4010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_common_c_010.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000c5010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_common_c_011.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000c6010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_common_c_012.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000c7010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_maple_b_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000c8010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_maple_b_003.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000c9010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_maple_b_004.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000ca010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_maple_b_005.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000cb010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_maple_b_006.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000cc010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_maple_b_008.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000cd010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_maple_b_009.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000ce010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_maple_b_010.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000cf010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_maple_b_011.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000d0010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_maple_b_012.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000d1010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_maple_b_013.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000d2010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_maple_b_014.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000d3010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_maple_b_015.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000d4010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_oak_a_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff00000004030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_oak_a_002.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000d5010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_oak_a_003.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000d6010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_oak_a_004.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000d7010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_oak_a_005.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000d8010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_oak_a_006.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000d9010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_oak_a_007.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000da010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_oak_a_008.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000db010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_oak_a_009.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000dc010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_oak_a_010.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000dd010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_oak_a_011.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000de010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_oak_c_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000df010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_oak_c_002.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000e0010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_oak_c_003.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000e1010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_oak_c_004.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000e2010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_oak_c_005.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000e3010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_oak_c_006.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000e4010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_oak_c_007.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000e5010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_oak_c_008.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000e6010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_combined_tree_oak_c_009.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000e7010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_grass_dry_001.max",
+        "references": 1,
+        "guids": 2,
+        "reference_sample": "08000000a6030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_pt01_dark_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000e8010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_pt01_gradient_001.max",
+        "references": 6,
+        "guids": 1,
+        "reference_sample": "ff000000eb010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_pt01_gradient__nomirror_001.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "ff000000e9010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_pt01_light_001.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "ff000000f0010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_pt01_light_nomirror_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff00000069020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_pt07_dark_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000f2010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_pt07_dark_nomirror_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000f3010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_pt07_gradient_001.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "ff000000f4010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_pt07_light_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000b4030000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_pt08_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000f5010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_pt08_gradient_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000f6010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_pt10_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff000000f7010000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vegetation\\veg_topg_pt10_nomirror_001.max",
+        "references": 1,
+        "guids": 1,
+        "reference_sample": "ff0000004b020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vehicles\\veh_topg_747_001.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "0100000005020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vehicles\\veh_topg_747stairs_001.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "0200000006020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vehicles\\veh_topg_747tow_001.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "0400000007020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vehicles\\veh_topg_c47_002.max",
+        "references": 4,
+        "guids": 1,
+        "reference_sample": "0800000008020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vehicles\\veh_topg_pt09_001.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "0800000009020000",
+        "mapping": null
+      },
+      {
+        "source": "tracks\\topgear\\scene\\vehicles\\veh_topg_pt09_002.max",
+        "references": 2,
+        "guids": 1,
+        "reference_sample": "ff0000000a020000",
+        "mapping": null
+      }
+    ],
+    "placement_guids": 1892,
+    "placement_references": 3567,
+    "placement_width": 4,
+    "unparsed_reference_extension_bytes": 0,
+    "parsed_bytes": 191608,
+    "total_bytes": 191608
+  },
+  "target_imap": {
+    "version": 1,
+    "record_width": 7,
+    "models": 3393,
+    "placement_guids": 26674,
+    "placement_references": 88240,
+    "placement_width": 6,
+    "unparsed_reference_extension_bytes": 4336570,
+    "parsed_bytes": 3229185,
+    "total_bytes": 7565755
+  },
+  "source_pvs": {
+    "version": 50,
+    "header_words": [
+      1179670099,
+      50,
+      14000000,
+      22559344,
+      1638400,
+      61,
+      1707,
+      253,
+      254,
+      1270
+    ],
+    "size": 2909664
+  },
+  "target_pvs": {
+    "version": 60,
+    "header_words": [
+      1179670099,
+      60,
+      126844511,
+      0,
+      29611,
+      68270,
+      26736,
+      1583,
+      6247,
+      29957
+    ],
+    "size": 24200394
+  },
+  "source_assets": {
+    "archive_entries": 7509,
+    "archive_formats": {
+      ".modelbin": 1376,
+      ".bin": 1,
+      ".gr2": 15,
+      ".swatchbin": 4796,
+      ".html": 1,
+      ".xml": 1,
+      ".materialbin": 131,
+      ".shaderbin": 36,
+      ".pso": 360,
+      ".vso": 792
+    },
+    "manifest_sections": {
+      "Shaders": 36,
+      "Materials": 131,
+      "Textures": 2301,
+      "Models": 1376
+    },
+    "missing_models": [],
+    "shaders": [
+      {
+        "name": "shaders\\_0x00000000\\characterbasic.shaderbin",
+        "source": "_library\\shaders\\characterbasic.shader"
+      },
+      {
+        "name": "shaders\\_0x00000001\\animatedflag.shaderbin",
+        "source": "tracks\\_library\\shaders\\animatedflag.shader"
+      },
+      {
+        "name": "shaders\\_0x00000002\\characterhair.shaderbin",
+        "source": "tracks\\_library\\shaders\\characterhair.shader"
+      },
+      {
+        "name": "shaders\\_0x00000003\\crewsuit.shaderbin",
+        "source": "tracks\\_library\\shaders\\crewsuit.shader"
+      },
+      {
+        "name": "shaders\\_0x00000004\\diffch2tintnormglossmaskao.shaderbin",
+        "source": "tracks\\_library\\shaders\\diffch2tintnormglossmaskao.shader"
+      },
+      {
+        "name": "shaders\\_0x00000005\\diffnormmaskgloss.shaderbin",
+        "source": "tracks\\_library\\shaders\\diffnormmaskgloss.shader"
+      },
+      {
+        "name": "shaders\\_0x00000006\\diffnormmaskgloss_2difftint_threshold.shaderbin",
+        "source": "tracks\\_library\\shaders\\diffnormmaskgloss_2difftint_threshold.shader"
+      },
+      {
+        "name": "shaders\\_0x00000007\\diffnormmaskglossalpha.shaderbin",
+        "source": "tracks\\_library\\shaders\\diffnormmaskglossalpha.shader"
+      },
+      {
+        "name": "shaders\\_0x00000008\\difftintnormglossmask.shaderbin",
+        "source": "tracks\\_library\\shaders\\difftintnormglossmask.shader"
+      },
+      {
+        "name": "shaders\\_0x00000009\\difftintnormglossmaskao.shaderbin",
+        "source": "tracks\\_library\\shaders\\difftintnormglossmaskao.shader"
+      },
+      {
+        "name": "shaders\\_0x0000000A\\dontuse_diffnormmaskgloss.shaderbin",
+        "source": "tracks\\_library\\shaders\\dontuse_diffnormmaskgloss.shader"
+      },
+      {
+        "name": "shaders\\_0x0000000B\\dontuse_difftintnormglossmask.shaderbin",
+        "source": "tracks\\_library\\shaders\\dontuse_difftintnormglossmask.shader"
+      },
+      {
+        "name": "shaders\\_0x0000000C\\driverglass.shaderbin",
+        "source": "tracks\\_library\\shaders\\driverglass.shader"
+      },
+      {
+        "name": "shaders\\_0x0000000D\\gls_stint_smask_sch2norm.shaderbin",
+        "source": "tracks\\_library\\shaders\\gls_stint_smask_sch2norm.shader"
+      },
+      {
+        "name": "shaders\\_0x0000000E\\gls_tintgloss_sopacmap_snorm.shaderbin",
+        "source": "tracks\\_library\\shaders\\gls_tintgloss_sopacmap_snorm.shader"
+      },
+      {
+        "name": "shaders\\_0x0000000F\\grass_blend.shaderbin",
+        "source": "tracks\\_library\\shaders\\grass_blend.shader"
+      },
+      {
+        "name": "shaders\\_0x00000010\\grass_blend_002.shaderbin",
+        "source": "tracks\\_library\\shaders\\grass_blend_002.shader"
+      },
+      {
+        "name": "shaders\\_0x00000011\\leaf_shader_01.shaderbin",
+        "source": "tracks\\_library\\shaders\\leaf_shader_01.shader"
+      },
+      {
+        "name": "shaders\\_0x00000012\\mattepainting_emissive.shaderbin",
+        "source": "tracks\\_library\\shaders\\mattepainting_emissive.shader"
+      },
+      {
+        "name": "shaders\\_0x00000013\\road_2blend_threshold_001.shaderbin",
+        "source": "tracks\\_library\\shaders\\road_2blend_threshold_001.shader"
+      },
+      {
+        "name": "shaders\\_0x00000014\\road_basic.shaderbin",
+        "source": "tracks\\_library\\shaders\\road_basic.shader"
+      },
+      {
+        "name": "shaders\\_0x00000015\\road_basic_ch5multiply.shaderbin",
+        "source": "tracks\\_library\\shaders\\road_basic_ch5multiply.shader"
+      },
+      {
+        "name": "shaders\\_0x00000016\\road_basic_nonorm_ch5overlay.shaderbin",
+        "source": "tracks\\_library\\shaders\\road_basic_nonorm_ch5overlay.shader"
+      },
+      {
+        "name": "shaders\\_0x00000017\\roadedge_003.shaderbin",
+        "source": "tracks\\_library\\shaders\\roadedge_003.shader"
+      },
+      {
+        "name": "shaders\\_0x00000018\\roadedge_003_withnorm.shaderbin",
+        "source": "tracks\\_library\\shaders\\roadedge_003_withnorm.shader"
+      },
+      {
+        "name": "shaders\\_0x00000019\\roadedgedecal_basic.shaderbin",
+        "source": "tracks\\_library\\shaders\\roadedgedecal_basic.shader"
+      },
+      {
+        "name": "shaders\\_0x0000001A\\roadlinedecal.shaderbin",
+        "source": "tracks\\_library\\shaders\\roadlinedecal.shader"
+      },
+      {
+        "name": "shaders\\_0x0000001B\\sky.shaderbin",
+        "source": "tracks\\_library\\shaders\\sky.shader"
+      },
+      {
+        "name": "shaders\\_0x0000001C\\sky_cap.shaderbin",
+        "source": "tracks\\_library\\shaders\\sky_cap.shader"
+      },
+      {
+        "name": "shaders\\_0x0000001D\\terrain_3blend.shaderbin",
+        "source": "tracks\\_library\\shaders\\terrain_3blend.shader"
+      },
+      {
+        "name": "shaders\\_0x0000001E\\terrain_3blend_ch4overlay.shaderbin",
+        "source": "tracks\\_library\\shaders\\terrain_3blend_ch4overlay.shader"
+      },
+      {
+        "name": "shaders\\_0x0000001F\\terrain_3blend_macrodiffuse.shaderbin",
+        "source": "tracks\\_library\\shaders\\terrain_3blend_macrodiffuse.shader"
+      },
+      {
+        "name": "shaders\\_0x00000020\\tint2blend.shaderbin",
+        "source": "tracks\\_library\\shaders\\tint2blend.shader"
+      },
+      {
+        "name": "shaders\\_0x00000021\\trackcarpaint.shaderbin",
+        "source": "tracks\\_library\\shaders\\trackcarpaint.shader"
+      },
+      {
+        "name": "shaders\\_0x00000022\\tree_quad_fade.shaderbin",
+        "source": "tracks\\_library\\shaders\\tree_quad_fade.shader"
+      },
+      {
+        "name": "shaders\\_0x00000023\\tree_quad_fade_nolightmaps_002.shaderbin",
+        "source": "tracks\\_library\\shaders\\tree_quad_fade_nolightmaps_002.shader"
+      }
+    ]
+  },
+  "target_manifest_sections": {
+    "Shaders": 113,
+    "Materials": 645,
+    "Textures": 8194,
+    "Models": 17221
+  },
+  "unmatched_shader_names": [
+    {
+      "name": "shaders\\_0x00000000\\characterbasic.shaderbin",
+      "source": "_library\\shaders\\characterbasic.shader"
+    },
+    {
+      "name": "shaders\\_0x00000001\\animatedflag.shaderbin",
+      "source": "tracks\\_library\\shaders\\animatedflag.shader"
+    },
+    {
+      "name": "shaders\\_0x00000002\\characterhair.shaderbin",
+      "source": "tracks\\_library\\shaders\\characterhair.shader"
+    },
+    {
+      "name": "shaders\\_0x00000003\\crewsuit.shaderbin",
+      "source": "tracks\\_library\\shaders\\crewsuit.shader"
+    },
+    {
+      "name": "shaders\\_0x00000004\\diffch2tintnormglossmaskao.shaderbin",
+      "source": "tracks\\_library\\shaders\\diffch2tintnormglossmaskao.shader"
+    },
+    {
+      "name": "shaders\\_0x00000006\\diffnormmaskgloss_2difftint_threshold.shaderbin",
+      "source": "tracks\\_library\\shaders\\diffnormmaskgloss_2difftint_threshold.shader"
+    },
+    {
+      "name": "shaders\\_0x00000007\\diffnormmaskglossalpha.shaderbin",
+      "source": "tracks\\_library\\shaders\\diffnormmaskglossalpha.shader"
+    },
+    {
+      "name": "shaders\\_0x00000009\\difftintnormglossmaskao.shaderbin",
+      "source": "tracks\\_library\\shaders\\difftintnormglossmaskao.shader"
+    },
+    {
+      "name": "shaders\\_0x0000000A\\dontuse_diffnormmaskgloss.shaderbin",
+      "source": "tracks\\_library\\shaders\\dontuse_diffnormmaskgloss.shader"
+    },
+    {
+      "name": "shaders\\_0x0000000B\\dontuse_difftintnormglossmask.shaderbin",
+      "source": "tracks\\_library\\shaders\\dontuse_difftintnormglossmask.shader"
+    },
+    {
+      "name": "shaders\\_0x0000000C\\driverglass.shaderbin",
+      "source": "tracks\\_library\\shaders\\driverglass.shader"
+    },
+    {
+      "name": "shaders\\_0x0000000D\\gls_stint_smask_sch2norm.shaderbin",
+      "source": "tracks\\_library\\shaders\\gls_stint_smask_sch2norm.shader"
+    },
+    {
+      "name": "shaders\\_0x0000000F\\grass_blend.shaderbin",
+      "source": "tracks\\_library\\shaders\\grass_blend.shader"
+    },
+    {
+      "name": "shaders\\_0x00000010\\grass_blend_002.shaderbin",
+      "source": "tracks\\_library\\shaders\\grass_blend_002.shader"
+    },
+    {
+      "name": "shaders\\_0x00000011\\leaf_shader_01.shaderbin",
+      "source": "tracks\\_library\\shaders\\leaf_shader_01.shader"
+    },
+    {
+      "name": "shaders\\_0x00000012\\mattepainting_emissive.shaderbin",
+      "source": "tracks\\_library\\shaders\\mattepainting_emissive.shader"
+    },
+    {
+      "name": "shaders\\_0x00000013\\road_2blend_threshold_001.shaderbin",
+      "source": "tracks\\_library\\shaders\\road_2blend_threshold_001.shader"
+    },
+    {
+      "name": "shaders\\_0x00000014\\road_basic.shaderbin",
+      "source": "tracks\\_library\\shaders\\road_basic.shader"
+    },
+    {
+      "name": "shaders\\_0x00000015\\road_basic_ch5multiply.shaderbin",
+      "source": "tracks\\_library\\shaders\\road_basic_ch5multiply.shader"
+    },
+    {
+      "name": "shaders\\_0x00000016\\road_basic_nonorm_ch5overlay.shaderbin",
+      "source": "tracks\\_library\\shaders\\road_basic_nonorm_ch5overlay.shader"
+    },
+    {
+      "name": "shaders\\_0x00000017\\roadedge_003.shaderbin",
+      "source": "tracks\\_library\\shaders\\roadedge_003.shader"
+    },
+    {
+      "name": "shaders\\_0x00000018\\roadedge_003_withnorm.shaderbin",
+      "source": "tracks\\_library\\shaders\\roadedge_003_withnorm.shader"
+    },
+    {
+      "name": "shaders\\_0x00000019\\roadedgedecal_basic.shaderbin",
+      "source": "tracks\\_library\\shaders\\roadedgedecal_basic.shader"
+    },
+    {
+      "name": "shaders\\_0x0000001A\\roadlinedecal.shaderbin",
+      "source": "tracks\\_library\\shaders\\roadlinedecal.shader"
+    },
+    {
+      "name": "shaders\\_0x0000001B\\sky.shaderbin",
+      "source": "tracks\\_library\\shaders\\sky.shader"
+    },
+    {
+      "name": "shaders\\_0x0000001C\\sky_cap.shaderbin",
+      "source": "tracks\\_library\\shaders\\sky_cap.shader"
+    },
+    {
+      "name": "shaders\\_0x0000001D\\terrain_3blend.shaderbin",
+      "source": "tracks\\_library\\shaders\\terrain_3blend.shader"
+    },
+    {
+      "name": "shaders\\_0x0000001E\\terrain_3blend_ch4overlay.shaderbin",
+      "source": "tracks\\_library\\shaders\\terrain_3blend_ch4overlay.shader"
+    },
+    {
+      "name": "shaders\\_0x0000001F\\terrain_3blend_macrodiffuse.shaderbin",
+      "source": "tracks\\_library\\shaders\\terrain_3blend_macrodiffuse.shader"
+    },
+    {
+      "name": "shaders\\_0x00000020\\tint2blend.shaderbin",
+      "source": "tracks\\_library\\shaders\\tint2blend.shader"
+    },
+    {
+      "name": "shaders\\_0x00000021\\trackcarpaint.shaderbin",
+      "source": "tracks\\_library\\shaders\\trackcarpaint.shader"
+    },
+    {
+      "name": "shaders\\_0x00000022\\tree_quad_fade.shaderbin",
+      "source": "tracks\\_library\\shaders\\tree_quad_fade.shader"
+    },
+    {
+      "name": "shaders\\_0x00000023\\tree_quad_fade_nolightmaps_002.shaderbin",
+      "source": "tracks\\_library\\shaders\\tree_quad_fade_nolightmaps_002.shader"
+    }
+  ],
+  "reference_geometry_chunks": [
+    "GeoChunk0.minizip",
+    "GeoChunk1.minizip",
+    "GeoChunk10.minizip",
+    "GeoChunk11.minizip",
+    "GeoChunk12.minizip",
+    "GeoChunk13.minizip",
+    "GeoChunk14.minizip",
+    "GeoChunk15.minizip",
+    "GeoChunk16.minizip",
+    "GeoChunk17.minizip",
+    "GeoChunk18.minizip",
+    "GeoChunk19.minizip",
+    "GeoChunk2.minizip",
+    "GeoChunk3.minizip",
+    "GeoChunk4.minizip",
+    "GeoChunk5.minizip",
+    "GeoChunk6.minizip",
+    "GeoChunk7.minizip",
+    "GeoChunk8.minizip",
+    "GeoChunk9.minizip"
+  ],
+  "blockers": [
+    "IMAP references use different record layouts (FM5 8 bytes; FH2 7 bytes plus a counted additional model-mapping array); FH2 also has additional spatial/procedural lookup tables that this tool has not decoded. A header-only patch does not convert geometry references.",
+    "FM5 geometry and textures are in bin.zip; the FH2 reference uses GeoChunk/ChunkMap streaming. The legacy loading path and required dependency mapping are not verified.",
+    "Shader filename matches do not establish compatible material parameters or compiled shaders.",
+    "FH2 navigation, spawn/arrival and native custom-track selection are not implemented or tested."
+  ],
+  "pvs_note": "FH2 native serializers retain legacy version branches, including version 50. Do not rewrite the version to 60 without converting its payload.",
+  "fts_note": "ForzaTechStudio documentation describes car/model/texture conversion, not a full track/world/navigation conversion.",
+  "staged_files": [
+    {
+      "path": "bin.zip",
+      "size": 1227326604,
+      "sha256": "5f69a0774b5df705aeac9832265b7d2ba3031bd28ad7c8080461ecb8c449e94e"
+    },
+    {
+      "path": "Cinematics.zip",
+      "size": 29550,
+      "sha256": "88184712bec8ae77de487cbb58ff37b483f0ff8ff969cdc5d582d89fe9b1affb"
+    },
+    {
+      "path": "ribbon_00\\AI.zip",
+      "size": 58062,
+      "sha256": "120b7c6b21bfbdec58ad7e3255fc8885c12156a9d27cac0bde8f0b36e4cbaa41"
+    },
+    {
+      "path": "ribbon_00\\CollObjs.xml",
+      "size": 68311,
+      "sha256": "c90391429b27e56685ad377c113dc98f79869dd03c67d9275f6a341d36699d22"
+    },
+    {
+      "path": "ribbon_00\\collobjsplacement1.xml",
+      "size": 253351,
+      "sha256": "5baa3bc33d04db7e5670881cbe7357b3571271095912ff2ed243c18ab5c027dc"
+    },
+    {
+      "path": "ribbon_00\\Locators.xml",
+      "size": 3121,
+      "sha256": "5d05a91fcb6d92a0efac17f524c32dd5bbb2451f7d878b6a4a9e48d7e03d5e73"
+    },
+    {
+      "path": "ribbon_00\\ParticleInstances.particlebin",
+      "size": 310,
+      "sha256": "d79f12b422f6a124545a00888f60fbc9a66e7f7872fe13431cbbc2d5c5dda959"
+    },
+    {
+      "path": "ribbon_00\\preracecams.xml",
+      "size": 15371,
+      "sha256": "4eee58d7f75c140f60703aa451758fc7128a043245337750d2a385f5cd3ecd12"
+    },
+    {
+      "path": "ribbon_00\\TopGear_00.imap",
+      "size": 191608,
+      "sha256": "b2099ab658d2cbbd5c865dd85535eef58a0def360771e535fdbd44234271ac6b"
+    },
+    {
+      "path": "ribbon_00\\TopGear_00.pvs",
+      "size": 2909664,
+      "sha256": "4a5a938bf18c0ad26b09b8f0b733891fa11026e3d9a42e44464136f835ac1515"
+    },
+    {
+      "path": "ribbon_00\\TopGear_track_00.col",
+      "size": 4517888,
+      "sha256": "5d03cf44982744f68d5851091fb73e76eb94c398071ed493309588e276ffdb1d"
+    },
+    {
+      "path": "ribbon_00\\TopGear_track_00.crowd",
+      "size": 29992,
+      "sha256": "fd3930b2bed43933424db611cd049e772e70c45e621732869a52b8bde60d74a1"
+    },
+    {
+      "path": "ribbon_00\\TrackSegcams.xml",
+      "size": 64239,
+      "sha256": "1583020bb6244391dad30ef00cdb34b101182b5150084df45593784f5d555412"
+    },
+    {
+      "path": "ribbon_00\\TriggerVolumes.xml",
+      "size": 2822,
+      "sha256": "f03aa7e9f473b1ddde8bbac253171df060e67629ea6dc98196d5424d6b0de12b"
+    },
+    {
+      "path": "ribbon_01\\AI.zip",
+      "size": 30331,
+      "sha256": "f74c0135d3a0113e51c14739f7f455b89bb3d8a197aea35cbba591ef7a55017c"
+    },
+    {
+      "path": "ribbon_01\\CollObjs.xml",
+      "size": 45567,
+      "sha256": "796f40c946127156a88e16ff5127fb096b6b0b7d4718438613ca3b02fcf3f0c3"
+    },
+    {
+      "path": "ribbon_01\\Locators.xml",
+      "size": 3121,
+      "sha256": "df3b085a400aea4483041d7cb7f9f89c257a54ba68bc38bd4aee360c1d7e5d27"
+    },
+    {
+      "path": "ribbon_01\\ParticleInstances.particlebin",
+      "size": 310,
+      "sha256": "d79f12b422f6a124545a00888f60fbc9a66e7f7872fe13431cbbc2d5c5dda959"
+    },
+    {
+      "path": "ribbon_01\\preracecams.xml",
+      "size": 15371,
+      "sha256": "4eee58d7f75c140f60703aa451758fc7128a043245337750d2a385f5cd3ecd12"
+    },
+    {
+      "path": "ribbon_01\\TopGear_01.imap",
+      "size": 165177,
+      "sha256": "7932915499d7e367e33682d16d03520b9060fba0c2b60e8858bf81300a8f9e59"
+    },
+    {
+      "path": "ribbon_01\\TopGear_01.pvs",
+      "size": 1839317,
+      "sha256": "eff15b9c2e275d89f85e3bf75bb7febe9ce654d253cf1a751ea0dcdf454b4b88"
+    },
+    {
+      "path": "ribbon_01\\Topgear_track_01.col",
+      "size": 4229120,
+      "sha256": "d2109590f3f3d961f3c9b087c304a413d97e4439e3c6fd35abf995bb9ecd55c2"
+    },
+    {
+      "path": "ribbon_01\\TopGear_track_01.crowd",
+      "size": 29992,
+      "sha256": "fd3930b2bed43933424db611cd049e772e70c45e621732869a52b8bde60d74a1"
+    },
+    {
+      "path": "ribbon_01\\TrackSegcams.xml",
+      "size": 25977,
+      "sha256": "85891b1083b6ce32ccde7106ec40ced8499ec5c55c1cab08e82b35aa63ccb8ac"
+    },
+    {
+      "path": "ribbon_01\\TriggerVolumes.xml",
+      "size": 2822,
+      "sha256": "f03aa7e9f473b1ddde8bbac253171df060e67629ea6dc98196d5424d6b0de12b"
+    },
+    {
+      "path": "ribbon_02\\AI.zip",
+      "size": 25155,
+      "sha256": "e6556f276c1b9cbddf379fb504869f6a4be64a85d18fd4317c8189b664dfde3d"
+    },
+    {
+      "path": "ribbon_02\\CollObjs.xml",
+      "size": 48037,
+      "sha256": "fe2d856be788795b3ff7115e3afcf9d4adc9252a4d91a2e039feacd9295538cb"
+    },
+    {
+      "path": "ribbon_02\\Locators.xml",
+      "size": 3119,
+      "sha256": "8ed7b2ec85af6555fed3bc0493b70ea042a55b6652f48b0229b8a7d224d0d207"
+    },
+    {
+      "path": "ribbon_02\\ParticleInstances.particlebin",
+      "size": 310,
+      "sha256": "d79f12b422f6a124545a00888f60fbc9a66e7f7872fe13431cbbc2d5c5dda959"
+    },
+    {
+      "path": "ribbon_02\\preracecams.xml",
+      "size": 15371,
+      "sha256": "4eee58d7f75c140f60703aa451758fc7128a043245337750d2a385f5cd3ecd12"
+    },
+    {
+      "path": "ribbon_02\\TopGear_02.imap",
+      "size": 149709,
+      "sha256": "7899ba2c6383b88b8039bf30f934ea1243bf05b9804a648a41d3c1a6a26a919e"
+    },
+    {
+      "path": "ribbon_02\\TopGear_02.pvs",
+      "size": 1586359,
+      "sha256": "2f3db1418fac943092cf8fa4817a5f314dba5cd5d6f659062582919e828486f9"
+    },
+    {
+      "path": "ribbon_02\\Topgear_track_02.col",
+      "size": 4337664,
+      "sha256": "1c1f89f54fe804358b6650a1b40773217375cd73f1b3493c40436f47349f29d2"
+    },
+    {
+      "path": "ribbon_02\\TopGear_track_02.crowd",
+      "size": 29992,
+      "sha256": "fd3930b2bed43933424db611cd049e772e70c45e621732869a52b8bde60d74a1"
+    },
+    {
+      "path": "ribbon_02\\TrackSegcams.xml",
+      "size": 25604,
+      "sha256": "4f17c49aaf1028a23adb5b728d4fb0852b4685b0cafdd3dc290438b2d092d8f2"
+    },
+    {
+      "path": "ribbon_02\\TriggerVolumes.xml",
+      "size": 2822,
+      "sha256": "f03aa7e9f473b1ddde8bbac253171df060e67629ea6dc98196d5424d6b0de12b"
+    },
+    {
+      "path": "ribbon_03\\AI.zip",
+      "size": 44518,
+      "sha256": "ed165de5af19e7e7a3541de2bbcf33bdfdb07e0c6fd970af9e911f543cc55a96"
+    },
+    {
+      "path": "ribbon_03\\CollObjs.xml",
+      "size": 52349,
+      "sha256": "6d3c5e70439ebfa7b729ec81b01304afca7b3e3a7659c20d909ef33f1f69d896"
+    },
+    {
+      "path": "ribbon_03\\collobjsplacement1.xml",
+      "size": 278672,
+      "sha256": "4815972f267fdfc4382fc2dae9dfb2f3dc593cd4aa6e5e253fc8a9f3670a1c20"
+    },
+    {
+      "path": "ribbon_03\\collobjsplacement10.xml",
+      "size": 617271,
+      "sha256": "34f768f33d024eb3996b172236598a44a4ba1d4e93a02a92d487cd06e7453777"
+    },
+    {
+      "path": "ribbon_03\\collobjsplacement2.xml",
+      "size": 253910,
+      "sha256": "99ef39cfbaeaeaf3a31bee12954faaee19eb4c32e5f4a469ce574a8a99ed439b"
+    },
+    {
+      "path": "ribbon_03\\collobjsplacement3.xml",
+      "size": 444062,
+      "sha256": "1b96e4a93fe7c9e26b69b83fe29bf5942ca5aded1f116bba8142dce423e6e053"
+    },
+    {
+      "path": "ribbon_03\\collobjsplacement4.xml",
+      "size": 552687,
+      "sha256": "4f2b9535a71fea82b01e3306f2f80fb33b77f20ec04d82236ae614c16452f4a0"
+    },
+    {
+      "path": "ribbon_03\\collobjsplacement5.xml",
+      "size": 511496,
+      "sha256": "96d9525f518daab5f4fdad038d2348f32f2846ad2467e471a70acd05e2055fe9"
+    },
+    {
+      "path": "ribbon_03\\collobjsplacement6.xml",
+      "size": 498449,
+      "sha256": "df962894b3a239760a3ecbfaf069569900e809b72facc0fb5b64b9f7a3a21e90"
+    },
+    {
+      "path": "ribbon_03\\collobjsplacement7.xml",
+      "size": 411682,
+      "sha256": "ea5b65ca426c93e505f67a557e363d8568129ac1cba77723fb12705046d69ca1"
+    },
+    {
+      "path": "ribbon_03\\collobjsplacement8.xml",
+      "size": 458162,
+      "sha256": "ac68ac5a6b0c97926087b88c302390c434eadc050e8c98133914b322d9d65f0d"
+    },
+    {
+      "path": "ribbon_03\\collobjsplacement9.xml",
+      "size": 635547,
+      "sha256": "e8583e4955aaf8ab2e93106edc0699b48a90135dece79ee734ecf66f49aca450"
+    },
+    {
+      "path": "ribbon_03\\Locators.xml",
+      "size": 3121,
+      "sha256": "f1a50cac454d04a4ac691003b569d359731e008fadb6778f364c531738979fac"
+    },
+    {
+      "path": "ribbon_03\\ParticleInstances.particlebin",
+      "size": 310,
+      "sha256": "d79f12b422f6a124545a00888f60fbc9a66e7f7872fe13431cbbc2d5c5dda959"
+    },
+    {
+      "path": "ribbon_03\\preracecams.xml",
+      "size": 15368,
+      "sha256": "697236e9e2084f3c4d24eef46c2da7c4721efe0a40b5174da9aaa598bedbb9f7"
+    },
+    {
+      "path": "ribbon_03\\TopGear_03.imap",
+      "size": 182858,
+      "sha256": "923e80b20034d17cb2e6d87c7c925e49db1f8cb9ffd9b7e185c0eed844f96751"
+    },
+    {
+      "path": "ribbon_03\\TopGear_03.pvs",
+      "size": 2268225,
+      "sha256": "7198ea0a483281bee2f88cafb50ed3faf69507d8e4a5f488ad9e444480c4c1ab"
+    },
+    {
+      "path": "ribbon_03\\Topgear_track_03.col",
+      "size": 4392960,
+      "sha256": "ebd1c2910e48872f2789d3a52ca2af1a2ac85417d058ec68eb2877aae916f5d3"
+    },
+    {
+      "path": "ribbon_03\\TopGear_track_03.crowd",
+      "size": 29992,
+      "sha256": "fd3930b2bed43933424db611cd049e772e70c45e621732869a52b8bde60d74a1"
+    },
+    {
+      "path": "ribbon_03\\TrackSegcams.xml",
+      "size": 27941,
+      "sha256": "bda5795d21d7de74297f94dd9f13b0d7831578030608ff2c807e6eb96e93bb79"
+    },
+    {
+      "path": "ribbon_03\\TriggerVolumes.xml",
+      "size": 2822,
+      "sha256": "f03aa7e9f473b1ddde8bbac253171df060e67629ea6dc98196d5424d6b0de12b"
+    },
+    {
+      "path": "ribbon_04\\AI.zip",
+      "size": 70962,
+      "sha256": "b324708cff82c6e073a77e7060a2d36b996972290895f55cd81854c9943b29ae"
+    },
+    {
+      "path": "ribbon_04\\CollObjs.xml",
+      "size": 35030,
+      "sha256": "5ca80eb03462b0f56851f2d19abff41ddb7cf8e22982ec06a9ad0cb3578bcb03"
+    },
+    {
+      "path": "ribbon_04\\Locators.xml",
+      "size": 2598,
+      "sha256": "3359d06aa3f3a422584e4f232f9dc2b7aa3150cace4c762d79cafd5a8423e1e1"
+    },
+    {
+      "path": "ribbon_04\\ParticleInstances.particlebin",
+      "size": 56,
+      "sha256": "17611da63535d2f44a9a720197f21dabe91f7af3825925ba979b4db82e520bbe"
+    },
+    {
+      "path": "ribbon_04\\preracecams.xml",
+      "size": 15368,
+      "sha256": "a06b6b6685582b6adeef06f6a39cb0ada226b6071356f03f42790e47f94ee687"
+    },
+    {
+      "path": "ribbon_04\\TopGear_04.imap",
+      "size": 296407,
+      "sha256": "47d55fec9a509f232041507e332ff27c8bd966e04c1cbcf2303d6c4c106f32c4"
+    },
+    {
+      "path": "ribbon_04\\TopGear_04.pvs",
+      "size": 1952222,
+      "sha256": "f820f63fc008714d6006976fd2f112c1a339c7c880d53b98f8c7c362a9d8101c"
+    },
+    {
+      "path": "ribbon_04\\Topgear_track_04.col",
+      "size": 3350528,
+      "sha256": "3bd68dc648f75d64a3906f4b5a9227e45ff3cfca59ce8d873f8774c8734a6986"
+    },
+    {
+      "path": "ribbon_04\\TopGear_track_04.crowd",
+      "size": 24,
+      "sha256": "b97f04a7b2553ffe229deb26f42ff91ee2eab9e5f91c5761f898e52f8d7e5a2c"
+    },
+    {
+      "path": "ribbon_04\\tracksegcams.xml",
+      "size": 11113,
+      "sha256": "4504b1b55bdce58206cb57c95f6a01b863501af8b6c8615518eced023b47d06f"
+    },
+    {
+      "path": "ribbon_04\\TriggerVolumes.xml",
+      "size": 19,
+      "sha256": "d3741ecdc0bb4938b63edb63915c5e41e1324f3b43173268dc411b2bd09b60a7"
+    },
+    {
+      "path": "ribbon_05\\AI.zip",
+      "size": 71345,
+      "sha256": "7d0d78c7bd7356c36702abc653ad3ae5a79710051ff56195e6463063ee0aa726"
+    },
+    {
+      "path": "ribbon_05\\CollObjs.xml",
+      "size": 33794,
+      "sha256": "decc3df981081564dcd747903b2c1a2e0965be46f5bc9fa2edb6d374cb8d9d23"
+    },
+    {
+      "path": "ribbon_05\\Locators.xml",
+      "size": 2598,
+      "sha256": "3359d06aa3f3a422584e4f232f9dc2b7aa3150cace4c762d79cafd5a8423e1e1"
+    },
+    {
+      "path": "ribbon_05\\ParticleInstances.particlebin",
+      "size": 56,
+      "sha256": "17611da63535d2f44a9a720197f21dabe91f7af3825925ba979b4db82e520bbe"
+    },
+    {
+      "path": "ribbon_05\\preracecams.xml",
+      "size": 15368,
+      "sha256": "3c40299e2a317d76c4d31a5ec48ba158d92c4a11cadd28f038eef350c5aecd66"
+    },
+    {
+      "path": "ribbon_05\\TopGear_05.imap",
+      "size": 296323,
+      "sha256": "a2a59f7692206599304b15b0d04409afcb63a83c875ff7925236fd6b8c02a5ec"
+    },
+    {
+      "path": "ribbon_05\\TopGear_05.pvs",
+      "size": 1952198,
+      "sha256": "22d548025d5ad6ce51fb5561a07c70f2aa17db17d7af82adec4bea0f1cde2d3b"
+    },
+    {
+      "path": "ribbon_05\\Topgear_track_05.col",
+      "size": 3350528,
+      "sha256": "3bd68dc648f75d64a3906f4b5a9227e45ff3cfca59ce8d873f8774c8734a6986"
+    },
+    {
+      "path": "ribbon_05\\TopGear_track_05.crowd",
+      "size": 24,
+      "sha256": "b97f04a7b2553ffe229deb26f42ff91ee2eab9e5f91c5761f898e52f8d7e5a2c"
+    },
+    {
+      "path": "ribbon_05\\tracksegcams.xml",
+      "size": 9271,
+      "sha256": "dc9a76598c45d8d685d367ffc999223fc4093c1d334a53ad2281afaa18b9df26"
+    },
+    {
+      "path": "ribbon_05\\TriggerVolumes.xml",
+      "size": 19,
+      "sha256": "d3741ecdc0bb4938b63edb63915c5e41e1324f3b43173268dc411b2bd09b60a7"
+    },
+    {
+      "path": "ribbon_06\\AI.zip",
+      "size": 71784,
+      "sha256": "a04262a01b51971bff326b06dde3f4e206d1349ebb089db44e7d2f52dc923609"
+    },
+    {
+      "path": "ribbon_06\\CollObjs.xml",
+      "size": 34412,
+      "sha256": "a353e86f6170dafa1ba1c61c569aa553d97111af11b5b2874a788ceae5b3d8a8"
+    },
+    {
+      "path": "ribbon_06\\Locators.xml",
+      "size": 2598,
+      "sha256": "3359d06aa3f3a422584e4f232f9dc2b7aa3150cace4c762d79cafd5a8423e1e1"
+    },
+    {
+      "path": "ribbon_06\\ParticleInstances.particlebin",
+      "size": 56,
+      "sha256": "17611da63535d2f44a9a720197f21dabe91f7af3825925ba979b4db82e520bbe"
+    },
+    {
+      "path": "ribbon_06\\preracecams.xml",
+      "size": 15368,
+      "sha256": "5750f200aad73469feafb52399e8ea2bed1163f56060762512bb272bb8ae146e"
+    },
+    {
+      "path": "ribbon_06\\TopGear_06.imap",
+      "size": 296307,
+      "sha256": "a0db7e9a3cb0893f5c74bbf99c3ae868710c4154f456cfbe8c5c7cb7d5fe41a1"
+    },
+    {
+      "path": "ribbon_06\\TopGear_06.pvs",
+      "size": 1951757,
+      "sha256": "47af1413b53f50a6e1bca781f2b4ed9082082599138c1941de85dddbd594c697"
+    },
+    {
+      "path": "ribbon_06\\Topgear_track_06.col",
+      "size": 3350528,
+      "sha256": "3bd68dc648f75d64a3906f4b5a9227e45ff3cfca59ce8d873f8774c8734a6986"
+    },
+    {
+      "path": "ribbon_06\\TopGear_track_06.crowd",
+      "size": 24,
+      "sha256": "b97f04a7b2553ffe229deb26f42ff91ee2eab9e5f91c5761f898e52f8d7e5a2c"
+    },
+    {
+      "path": "ribbon_06\\tracksegcams.xml",
+      "size": 16168,
+      "sha256": "20975a6467619a25d1232f686100bbc0cb57b123e9de095fe52acd3fdb57a1a3"
+    },
+    {
+      "path": "ribbon_06\\TriggerVolumes.xml",
+      "size": 19,
+      "sha256": "d3741ecdc0bb4938b63edb63915c5e41e1324f3b43173268dc411b2bd09b60a7"
+    },
+    {
+      "path": "ribbon_07\\AI.zip",
+      "size": 52199,
+      "sha256": "6985ca5b830ba2cffab0144e2ee1c8c37c611cd98c6196791bfa35afa5843880"
+    },
+    {
+      "path": "ribbon_08\\AI.zip",
+      "size": 30665,
+      "sha256": "345b893548d28e891ce77a548b04be16e00acdf7f5e2a479e05052f082915335"
+    },
+    {
+      "path": "ribbon_08\\CollObjs.xml",
+      "size": 43363,
+      "sha256": "7ab39ce379214cd61be716d10c347ba6dbc7b3c4f06b79dac2f01aa67c42110d"
+    },
+    {
+      "path": "ribbon_08\\Locators.xml",
+      "size": 3121,
+      "sha256": "dea7ed4d56cc1ab732101405dcd3f44f913e5cf4a5f627cdf850fc31373a6633"
+    },
+    {
+      "path": "ribbon_08\\ParticleInstances.particlebin",
+      "size": 310,
+      "sha256": "d79f12b422f6a124545a00888f60fbc9a66e7f7872fe13431cbbc2d5c5dda959"
+    },
+    {
+      "path": "ribbon_08\\preracecams.xml",
+      "size": 15371,
+      "sha256": "4eee58d7f75c140f60703aa451758fc7128a043245337750d2a385f5cd3ecd12"
+    },
+    {
+      "path": "ribbon_08\\TrackSegcams.xml",
+      "size": 19804,
+      "sha256": "d89fcf88d63c46e033b03bf80ec1df90d0c156eaf128c4f2f97b4d66c91650f5"
+    },
+    {
+      "path": "ribbon_08\\TriggerVolumes.xml",
+      "size": 2822,
+      "sha256": "f03aa7e9f473b1ddde8bbac253171df060e67629ea6dc98196d5424d6b0de12b"
+    },
+    {
+      "path": "ribbon_09\\AI.zip",
+      "size": 25140,
+      "sha256": "1371e62b0bf20c6866b2d74a15f0d738155f31cc0fc9268694e5f9a63e1e36e1"
+    },
+    {
+      "path": "ribbon_09\\CollObjs.xml",
+      "size": 50483,
+      "sha256": "d37e6d337002e4815f4f3104f8653a40292c106e6b79ce15006d73d7053c8ff9"
+    },
+    {
+      "path": "ribbon_09\\Locators.xml",
+      "size": 3121,
+      "sha256": "1f538e913b1d00ad18a1d9ebf58cfc1d5339dd98c34859e53ec73b94a326d164"
+    },
+    {
+      "path": "ribbon_09\\ParticleInstances.particlebin",
+      "size": 310,
+      "sha256": "d79f12b422f6a124545a00888f60fbc9a66e7f7872fe13431cbbc2d5c5dda959"
+    },
+    {
+      "path": "ribbon_09\\preracecams.xml",
+      "size": 15371,
+      "sha256": "4eee58d7f75c140f60703aa451758fc7128a043245337750d2a385f5cd3ecd12"
+    },
+    {
+      "path": "ribbon_09\\TrackSegcams.xml",
+      "size": 19131,
+      "sha256": "e5568b5b343157f3fb239628013f0f39725f6035252fbeb8102d81e019ba193d"
+    },
+    {
+      "path": "ribbon_09\\TriggerVolumes.xml",
+      "size": 2822,
+      "sha256": "f03aa7e9f473b1ddde8bbac253171df060e67629ea6dc98196d5424d6b0de12b"
+    },
+    {
+      "path": "ribbon_10\\AI.zip",
+      "size": 42608,
+      "sha256": "d0d003656550926d9e2740d8e8ce25d855101195a62c685f1349ea96b7542fa9"
+    },
+    {
+      "path": "ribbon_10\\CollObjs.xml",
+      "size": 51407,
+      "sha256": "078303dab48f4f2cbeca0b29012cf6d0e23ca21bf65b3a3fc1d30ee21708d5c1"
+    },
+    {
+      "path": "ribbon_10\\collobjsplacement1.xml",
+      "size": 426162,
+      "sha256": "fd3615b807491e420dfd1de4a0abea3b90bd819e0259e2eac9f04dcd19aad097"
+    },
+    {
+      "path": "ribbon_10\\collobjsplacement2.xml",
+      "size": 312730,
+      "sha256": "ae0435eb567c5c724044bdbaa325bea8cc2fd9b2e4b976b0116420db8b6a8e79"
+    },
+    {
+      "path": "ribbon_10\\Locators.xml",
+      "size": 3121,
+      "sha256": "3c9eea1e303f93799aae1ab240f1c8f775cfabe71bdc7d4cffbd5d14162e7b9a"
+    },
+    {
+      "path": "ribbon_10\\ParticleInstances.particlebin",
+      "size": 310,
+      "sha256": "d79f12b422f6a124545a00888f60fbc9a66e7f7872fe13431cbbc2d5c5dda959"
+    },
+    {
+      "path": "ribbon_10\\preracecams.xml",
+      "size": 15368,
+      "sha256": "697236e9e2084f3c4d24eef46c2da7c4721efe0a40b5174da9aaa598bedbb9f7"
+    },
+    {
+      "path": "ribbon_10\\TrackSegcams.xml",
+      "size": 43967,
+      "sha256": "301967fc3eb751a7d7c5c43ad2bfa8612662c38258883f174d9fbcd23ad8b229"
+    },
+    {
+      "path": "ribbon_10\\TriggerVolumes.xml",
+      "size": 2822,
+      "sha256": "f03aa7e9f473b1ddde8bbac253171df060e67629ea6dc98196d5424d6b0de12b"
+    },
+    {
+      "path": "smoke.dds",
+      "size": 87536,
+      "sha256": "c8974e6132098516a5ecb0244829725f3b5f0ce5d018c15ed1b20dcea5d1d2a7"
+    },
+    {
+      "path": "staticcarcubemap.xpr",
+      "size": 542732,
+      "sha256": "f6c2ba387b0aa41eba5d0ba06885fe3e733896cbb7ca0a52f4b30468c6023aa3"
+    },
+    {
+      "path": "staticcarcubemap1.xpr",
+      "size": 542732,
+      "sha256": "fd384c4951f6d374a3ad942bc718382eadea8edaf4acaffd41d3546fc4a21c95"
+    },
+    {
+      "path": "TopGear_ribbon00.sh",
+      "size": 266736,
+      "sha256": "46045f7127f0eacaf69f41e901d6b4966b265a88b675b38eaa4b9547c7a8ed66"
+    },
+    {
+      "path": "TopGear_ribbon01.sh",
+      "size": 138664,
+      "sha256": "4c342e4d37443dc6f11cfcb15429116b513a2b05eafd0e2516d409a97d31dec2"
+    },
+    {
+      "path": "TopGear_ribbon02.sh",
+      "size": 118532,
+      "sha256": "37aebb8d980481b339f804522c1c963549be0ea7c9ba0edcdf06bbffb352c7b1"
+    },
+    {
+      "path": "TopGear_ribbon03.sh",
+      "size": 211680,
+      "sha256": "4bb2c173378e3f50713c9368a6fec5e70717d725cbbc50f98f375ba1410b67c7"
+    },
+    {
+      "path": "TopGear_ribbon04.sh",
+      "size": 419628,
+      "sha256": "9eaaf0c4e052f4bf4f7fa8e5e587b57c4fa956bed51d528f89212c2e55619b94"
+    },
+    {
+      "path": "TopGear_ribbon05.sh",
+      "size": 419628,
+      "sha256": "212b7f21519819b171c35f6ce588628293e478725014442b56510670d1e23d61"
+    },
+    {
+      "path": "TopGear_ribbon06.sh",
+      "size": 419628,
+      "sha256": "f802d00e826b5405e870b6be9c819f7c66a53c5874393b30bcb14b7a547f9077"
+    },
+    {
+      "path": "TrackSettings.xml",
+      "size": 51149,
+      "sha256": "93c154383677bc1002e901fd6db9a7b7db6f5c9ed07a31ceda632af71b8c4304"
+    }
+  ],
+  "staged_bytes": 1281370587
+}

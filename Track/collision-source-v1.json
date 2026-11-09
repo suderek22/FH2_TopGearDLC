@@ -1,0 +1,38 @@
+{
+  "source_sha256": "5d03cf44982744f68d5851091fb73e76eb94c398071ed493309588e276ffdb1d",
+  "envelope_version": 2,
+  "grid": [
+    27,
+    11
+  ],
+  "cells": 210,
+  "vertices": 65236,
+  "triangles": 53862,
+  "geometry_verified": true,
+  "engine_validated": false,
+  "playable_map": false,
+  "remaining": [
+    "Streamed template/root binding and material flags need conversion.",
+    "This validates source collision, not engine loading or safe arrival."
+  ],
+  "ground_query": {
+    "xz": [
+      202.150299,
+      31.53647
+    ],
+    "hits": [
+      {
+        "height": -0.7472915045826793,
+        "flags": 7798784,
+        "cell": 100,
+        "triangle": 445
+      },
+      {
+        "height": -0.7472915045826793,
+        "flags": 7798784,
+        "cell": 101,
+        "triangle": 166
+      }
+    ]
+  }
+}

@@ -1,0 +1,4247 @@
+{
+  "component": "spatial-zone-physics-node-bindings",
+  "playable_map": false,
+  "engine_validated": false,
+  "binding_consistency_verified": true,
+  "zone_count": 288,
+  "physics_count": 210,
+  "required_node_capacity": 498,
+  "nodes": [
+    {
+      "index": 0,
+      "key": 201326592,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 1,
+      "key": 201326593,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 2,
+      "key": 201326594,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 3,
+      "key": 201326595,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 4,
+      "key": 201326596,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 5,
+      "key": 201326597,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 6,
+      "key": 201326598,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 7,
+      "key": 201326599,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 8,
+      "key": 201326600,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 9,
+      "key": 201326601,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 10,
+      "key": 201326602,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 11,
+      "key": 201326603,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 12,
+      "key": 201326604,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 13,
+      "key": 201326605,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 14,
+      "key": 201326606,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 15,
+      "key": 201326607,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 16,
+      "key": 201326608,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 17,
+      "key": 201326609,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 18,
+      "key": 201326610,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 19,
+      "key": 201326611,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 20,
+      "key": 201326612,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 21,
+      "key": 201326613,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 22,
+      "key": 201326614,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 23,
+      "key": 201326615,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 24,
+      "key": 201326616,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 25,
+      "key": 201326617,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 26,
+      "key": 201326618,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 27,
+      "key": 201326619,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 28,
+      "key": 201326620,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 29,
+      "key": 201326621,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 30,
+      "key": 201326622,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 31,
+      "key": 201326623,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 32,
+      "key": 201326624,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 33,
+      "key": 201326625,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 34,
+      "key": 201326626,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 35,
+      "key": 201326627,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 36,
+      "key": 201326628,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 37,
+      "key": 201326629,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 38,
+      "key": 201326630,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 39,
+      "key": 201326631,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 40,
+      "key": 201326632,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 41,
+      "key": 201326633,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 42,
+      "key": 201326634,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 43,
+      "key": 201326635,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 44,
+      "key": 201326636,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 45,
+      "key": 201326637,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 46,
+      "key": 201326638,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 47,
+      "key": 201326639,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 48,
+      "key": 201326640,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 49,
+      "key": 201326641,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 50,
+      "key": 201326642,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 51,
+      "key": 201326643,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 52,
+      "key": 201326644,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 53,
+      "key": 201326645,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 54,
+      "key": 201326646,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 55,
+      "key": 201326647,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 56,
+      "key": 201326648,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 57,
+      "key": 201326649,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 58,
+      "key": 201326650,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 59,
+      "key": 201326651,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 60,
+      "key": 201326652,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 61,
+      "key": 201326653,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 62,
+      "key": 201326654,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 63,
+      "key": 201326655,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 64,
+      "key": 201326656,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 65,
+      "key": 201326657,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 66,
+      "key": 201326658,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 67,
+      "key": 201326659,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 68,
+      "key": 201326660,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 69,
+      "key": 201326661,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 70,
+      "key": 201326662,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 71,
+      "key": 201326663,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 72,
+      "key": 201326664,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 73,
+      "key": 201326665,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 74,
+      "key": 201326666,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 75,
+      "key": 201326667,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 76,
+      "key": 201326668,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 77,
+      "key": 201326669,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 78,
+      "key": 201326670,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 79,
+      "key": 201326671,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 80,
+      "key": 201326672,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 81,
+      "key": 201326673,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 82,
+      "key": 201326674,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 83,
+      "key": 201326675,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 84,
+      "key": 201326676,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 85,
+      "key": 201326677,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 86,
+      "key": 201326678,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 87,
+      "key": 201326679,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 88,
+      "key": 201326680,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 89,
+      "key": 201326681,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 90,
+      "key": 201326682,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 91,
+      "key": 201326683,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 92,
+      "key": 201326684,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 93,
+      "key": 201326685,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 94,
+      "key": 201326686,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 95,
+      "key": 201326687,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 96,
+      "key": 201326688,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 97,
+      "key": 201326689,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 98,
+      "key": 201326690,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 99,
+      "key": 201326691,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 100,
+      "key": 201326692,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 101,
+      "key": 201326693,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 102,
+      "key": 201326694,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 103,
+      "key": 201326695,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 104,
+      "key": 201326696,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 105,
+      "key": 201326697,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 106,
+      "key": 201326698,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 107,
+      "key": 201326699,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 108,
+      "key": 201326700,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 109,
+      "key": 201326701,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 110,
+      "key": 201326702,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 111,
+      "key": 201326703,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 112,
+      "key": 201326704,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 113,
+      "key": 201326705,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 114,
+      "key": 201326706,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 115,
+      "key": 201326707,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 116,
+      "key": 201326708,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 117,
+      "key": 201326709,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 118,
+      "key": 201326710,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 119,
+      "key": 201326711,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 120,
+      "key": 201326712,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 121,
+      "key": 201326713,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 122,
+      "key": 201326714,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 123,
+      "key": 201326715,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 124,
+      "key": 201326716,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 125,
+      "key": 201326717,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 126,
+      "key": 201326718,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 127,
+      "key": 201326719,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 128,
+      "key": 201326720,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 129,
+      "key": 201326721,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 130,
+      "key": 201326722,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 131,
+      "key": 201326723,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 132,
+      "key": 201326724,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 133,
+      "key": 201326725,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 134,
+      "key": 201326726,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 135,
+      "key": 201326727,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 136,
+      "key": 201326728,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 137,
+      "key": 201326729,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 138,
+      "key": 201326730,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 139,
+      "key": 201326731,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 140,
+      "key": 201326732,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 141,
+      "key": 201326733,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 142,
+      "key": 201326734,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 143,
+      "key": 201326735,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 144,
+      "key": 201326736,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 145,
+      "key": 201326737,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 146,
+      "key": 201326738,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 147,
+      "key": 201326739,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 148,
+      "key": 201326740,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 149,
+      "key": 201326741,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 150,
+      "key": 201326742,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 151,
+      "key": 201326743,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 152,
+      "key": 201326744,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 153,
+      "key": 201326745,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 154,
+      "key": 201326746,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 155,
+      "key": 201326747,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 156,
+      "key": 201326748,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 157,
+      "key": 201326749,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 158,
+      "key": 201326750,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 159,
+      "key": 201326751,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 160,
+      "key": 201326752,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 161,
+      "key": 201326753,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 162,
+      "key": 201326754,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 163,
+      "key": 201326755,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 164,
+      "key": 201326756,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 165,
+      "key": 201326757,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 166,
+      "key": 201326758,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 167,
+      "key": 201326759,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 168,
+      "key": 201326760,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 169,
+      "key": 201326761,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 170,
+      "key": 201326762,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 171,
+      "key": 201326763,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 172,
+      "key": 201326764,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 173,
+      "key": 201326765,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 174,
+      "key": 201326766,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 175,
+      "key": 201326767,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 176,
+      "key": 201326768,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 177,
+      "key": 201326769,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 178,
+      "key": 201326770,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 179,
+      "key": 201326771,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 180,
+      "key": 201326772,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 181,
+      "key": 201326773,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 182,
+      "key": 201326774,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 183,
+      "key": 201326775,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 184,
+      "key": 201326776,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 185,
+      "key": 201326777,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 186,
+      "key": 201326778,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 187,
+      "key": 201326779,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 188,
+      "key": 201326780,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 189,
+      "key": 201326781,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 190,
+      "key": 201326782,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 191,
+      "key": 201326783,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 192,
+      "key": 201326784,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 193,
+      "key": 201326785,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 194,
+      "key": 201326786,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 195,
+      "key": 201326787,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 196,
+      "key": 201326788,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 197,
+      "key": 201326789,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 198,
+      "key": 201326790,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 199,
+      "key": 201326791,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 200,
+      "key": 201326792,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 201,
+      "key": 201326793,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 202,
+      "key": 201326794,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 203,
+      "key": 201326795,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 204,
+      "key": 201326796,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 205,
+      "key": 201326797,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 206,
+      "key": 201326798,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 207,
+      "key": 201326799,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 208,
+      "key": 201326800,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 209,
+      "key": 201326801,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 210,
+      "key": 201326802,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 211,
+      "key": 201326803,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 212,
+      "key": 201326804,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 213,
+      "key": 201326805,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 214,
+      "key": 201326806,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 215,
+      "key": 201326807,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 216,
+      "key": 201326808,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 217,
+      "key": 201326809,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 218,
+      "key": 201326810,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 219,
+      "key": 201326811,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 220,
+      "key": 201326812,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 221,
+      "key": 201326813,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 222,
+      "key": 201326814,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 223,
+      "key": 201326815,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 224,
+      "key": 201326816,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 225,
+      "key": 201326817,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 226,
+      "key": 201326818,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 227,
+      "key": 201326819,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 228,
+      "key": 201326820,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 229,
+      "key": 201326821,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 230,
+      "key": 201326822,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 231,
+      "key": 201326823,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 232,
+      "key": 201326824,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 233,
+      "key": 201326825,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 234,
+      "key": 201326826,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 235,
+      "key": 201326827,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 236,
+      "key": 201326828,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 237,
+      "key": 201326829,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 238,
+      "key": 201326830,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 239,
+      "key": 201326831,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 240,
+      "key": 201326832,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 241,
+      "key": 201326833,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 242,
+      "key": 201326834,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 243,
+      "key": 201326835,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 244,
+      "key": 201326836,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 245,
+      "key": 201326837,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 246,
+      "key": 201326838,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 247,
+      "key": 201326839,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 248,
+      "key": 201326840,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 249,
+      "key": 201326841,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 250,
+      "key": 201326842,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 251,
+      "key": 201326843,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 252,
+      "key": 201326844,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 253,
+      "key": 201326845,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 254,
+      "key": 201326846,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 255,
+      "key": 201326847,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 256,
+      "key": 201326848,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 257,
+      "key": 201326849,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 258,
+      "key": 201326850,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 259,
+      "key": 201326851,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 260,
+      "key": 201326852,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 261,
+      "key": 201326853,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 262,
+      "key": 201326854,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 263,
+      "key": 201326855,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 264,
+      "key": 201326856,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 265,
+      "key": 201326857,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 266,
+      "key": 201326858,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 267,
+      "key": 201326859,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 268,
+      "key": 201326860,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 269,
+      "key": 201326861,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 270,
+      "key": 201326862,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 271,
+      "key": 201326863,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 272,
+      "key": 201326864,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 273,
+      "key": 201326865,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 274,
+      "key": 201326866,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 275,
+      "key": 201326867,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 276,
+      "key": 201326868,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 277,
+      "key": 201326869,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 278,
+      "key": 201326870,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 279,
+      "key": 201326871,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 280,
+      "key": 201326872,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 281,
+      "key": 201326873,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 282,
+      "key": 201326874,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 283,
+      "key": 201326875,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 284,
+      "key": 201326876,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 285,
+      "key": 201326877,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 286,
+      "key": 201326878,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 287,
+      "key": 201326879,
+      "kind": "pvs-zone"
+    },
+    {
+      "index": 288,
+      "key": 16777216,
+      "kind": "physics"
+    },
+    {
+      "index": 289,
+      "key": 16777217,
+      "kind": "physics"
+    },
+    {
+      "index": 290,
+      "key": 16777218,
+      "kind": "physics"
+    },
+    {
+      "index": 291,
+      "key": 16777219,
+      "kind": "physics"
+    },
+    {
+      "index": 292,
+      "key": 16777220,
+      "kind": "physics"
+    },
+    {
+      "index": 293,
+      "key": 16777221,
+      "kind": "physics"
+    },
+    {
+      "index": 294,
+      "key": 16777222,
+      "kind": "physics"
+    },
+    {
+      "index": 295,
+      "key": 16777223,
+      "kind": "physics"
+    },
+    {
+      "index": 296,
+      "key": 16777224,
+      "kind": "physics"
+    },
+    {
+      "index": 297,
+      "key": 16777225,
+      "kind": "physics"
+    },
+    {
+      "index": 298,
+      "key": 16777226,
+      "kind": "physics"
+    },
+    {
+      "index": 299,
+      "key": 16777227,
+      "kind": "physics"
+    },
+    {
+      "index": 300,
+      "key": 16777228,
+      "kind": "physics"
+    },
+    {
+      "index": 301,
+      "key": 16777229,
+      "kind": "physics"
+    },
+    {
+      "index": 302,
+      "key": 16777230,
+      "kind": "physics"
+    },
+    {
+      "index": 303,
+      "key": 16777231,
+      "kind": "physics"
+    },
+    {
+      "index": 304,
+      "key": 16777232,
+      "kind": "physics"
+    },
+    {
+      "index": 305,
+      "key": 16777233,
+      "kind": "physics"
+    },
+    {
+      "index": 306,
+      "key": 16777234,
+      "kind": "physics"
+    },
+    {
+      "index": 307,
+      "key": 16777235,
+      "kind": "physics"
+    },
+    {
+      "index": 308,
+      "key": 16777236,
+      "kind": "physics"
+    },
+    {
+      "index": 309,
+      "key": 16777237,
+      "kind": "physics"
+    },
+    {
+      "index": 310,
+      "key": 16777238,
+      "kind": "physics"
+    },
+    {
+      "index": 311,
+      "key": 16777239,
+      "kind": "physics"
+    },
+    {
+      "index": 312,
+      "key": 16777240,
+      "kind": "physics"
+    },
+    {
+      "index": 313,
+      "key": 16777241,
+      "kind": "physics"
+    },
+    {
+      "index": 314,
+      "key": 16777242,
+      "kind": "physics"
+    },
+    {
+      "index": 315,
+      "key": 16777243,
+      "kind": "physics"
+    },
+    {
+      "index": 316,
+      "key": 16777244,
+      "kind": "physics"
+    },
+    {
+      "index": 317,
+      "key": 16777245,
+      "kind": "physics"
+    },
+    {
+      "index": 318,
+      "key": 16777246,
+      "kind": "physics"
+    },
+    {
+      "index": 319,
+      "key": 16777247,
+      "kind": "physics"
+    },
+    {
+      "index": 320,
+      "key": 16777248,
+      "kind": "physics"
+    },
+    {
+      "index": 321,
+      "key": 16777249,
+      "kind": "physics"
+    },
+    {
+      "index": 322,
+      "key": 16777250,
+      "kind": "physics"
+    },
+    {
+      "index": 323,
+      "key": 16777251,
+      "kind": "physics"
+    },
+    {
+      "index": 324,
+      "key": 16777252,
+      "kind": "physics"
+    },
+    {
+      "index": 325,
+      "key": 16777253,
+      "kind": "physics"
+    },
+    {
+      "index": 326,
+      "key": 16777254,
+      "kind": "physics"
+    },
+    {
+      "index": 327,
+      "key": 16777255,
+      "kind": "physics"
+    },
+    {
+      "index": 328,
+      "key": 16777256,
+      "kind": "physics"
+    },
+    {
+      "index": 329,
+      "key": 16777257,
+      "kind": "physics"
+    },
+    {
+      "index": 330,
+      "key": 16777258,
+      "kind": "physics"
+    },
+    {
+      "index": 331,
+      "key": 16777259,
+      "kind": "physics"
+    },
+    {
+      "index": 332,
+      "key": 16777260,
+      "kind": "physics"
+    },
+    {
+      "index": 333,
+      "key": 16777261,
+      "kind": "physics"
+    },
+    {
+      "index": 334,
+      "key": 16777262,
+      "kind": "physics"
+    },
+    {
+      "index": 335,
+      "key": 16777263,
+      "kind": "physics"
+    },
+    {
+      "index": 336,
+      "key": 16777264,
+      "kind": "physics"
+    },
+    {
+      "index": 337,
+      "key": 16777265,
+      "kind": "physics"
+    },
+    {
+      "index": 338,
+      "key": 16777266,
+      "kind": "physics"
+    },
+    {
+      "index": 339,
+      "key": 16777267,
+      "kind": "physics"
+    },
+    {
+      "index": 340,
+      "key": 16777268,
+      "kind": "physics"
+    },
+    {
+      "index": 341,
+      "key": 16777269,
+      "kind": "physics"
+    },
+    {
+      "index": 342,
+      "key": 16777270,
+      "kind": "physics"
+    },
+    {
+      "index": 343,
+      "key": 16777271,
+      "kind": "physics"
+    },
+    {
+      "index": 344,
+      "key": 16777272,
+      "kind": "physics"
+    },
+    {
+      "index": 345,
+      "key": 16777273,
+      "kind": "physics"
+    },
+    {
+      "index": 346,
+      "key": 16777274,
+      "kind": "physics"
+    },
+    {
+      "index": 347,
+      "key": 16777275,
+      "kind": "physics"
+    },
+    {
+      "index": 348,
+      "key": 16777276,
+      "kind": "physics"
+    },
+    {
+      "index": 349,
+      "key": 16777277,
+      "kind": "physics"
+    },
+    {
+      "index": 350,
+      "key": 16777278,
+      "kind": "physics"
+    },
+    {
+      "index": 351,
+      "key": 16777279,
+      "kind": "physics"
+    },
+    {
+      "index": 352,
+      "key": 16777280,
+      "kind": "physics"
+    },
+    {
+      "index": 353,
+      "key": 16777281,
+      "kind": "physics"
+    },
+    {
+      "index": 354,
+      "key": 16777282,
+      "kind": "physics"
+    },
+    {
+      "index": 355,
+      "key": 16777283,
+      "kind": "physics"
+    },
+    {
+      "index": 356,
+      "key": 16777284,
+      "kind": "physics"
+    },
+    {
+      "index": 357,
+      "key": 16777285,
+      "kind": "physics"
+    },
+    {
+      "index": 358,
+      "key": 16777286,
+      "kind": "physics"
+    },
+    {
+      "index": 359,
+      "key": 16777287,
+      "kind": "physics"
+    },
+    {
+      "index": 360,
+      "key": 16777288,
+      "kind": "physics"
+    },
+    {
+      "index": 361,
+      "key": 16777289,
+      "kind": "physics"
+    },
+    {
+      "index": 362,
+      "key": 16777290,
+      "kind": "physics"
+    },
+    {
+      "index": 363,
+      "key": 16777291,
+      "kind": "physics"
+    },
+    {
+      "index": 364,
+      "key": 16777292,
+      "kind": "physics"
+    },
+    {
+      "index": 365,
+      "key": 16777293,
+      "kind": "physics"
+    },
+    {
+      "index": 366,
+      "key": 16777294,
+      "kind": "physics"
+    },
+    {
+      "index": 367,
+      "key": 16777295,
+      "kind": "physics"
+    },
+    {
+      "index": 368,
+      "key": 16777296,
+      "kind": "physics"
+    },
+    {
+      "index": 369,
+      "key": 16777297,
+      "kind": "physics"
+    },
+    {
+      "index": 370,
+      "key": 16777298,
+      "kind": "physics"
+    },
+    {
+      "index": 371,
+      "key": 16777299,
+      "kind": "physics"
+    },
+    {
+      "index": 372,
+      "key": 16777300,
+      "kind": "physics"
+    },
+    {
+      "index": 373,
+      "key": 16777301,
+      "kind": "physics"
+    },
+    {
+      "index": 374,
+      "key": 16777302,
+      "kind": "physics"
+    },
+    {
+      "index": 375,
+      "key": 16777303,
+      "kind": "physics"
+    },
+    {
+      "index": 376,
+      "key": 16777304,
+      "kind": "physics"
+    },
+    {
+      "index": 377,
+      "key": 16777305,
+      "kind": "physics"
+    },
+    {
+      "index": 378,
+      "key": 16777306,
+      "kind": "physics"
+    },
+    {
+      "index": 379,
+      "key": 16777307,
+      "kind": "physics"
+    },
+    {
+      "index": 380,
+      "key": 16777308,
+      "kind": "physics"
+    },
+    {
+      "index": 381,
+      "key": 16777309,
+      "kind": "physics"
+    },
+    {
+      "index": 382,
+      "key": 16777310,
+      "kind": "physics"
+    },
+    {
+      "index": 383,
+      "key": 16777311,
+      "kind": "physics"
+    },
+    {
+      "index": 384,
+      "key": 16777312,
+      "kind": "physics"
+    },
+    {
+      "index": 385,
+      "key": 16777313,
+      "kind": "physics"
+    },
+    {
+      "index": 386,
+      "key": 16777314,
+      "kind": "physics"
+    },
+    {
+      "index": 387,
+      "key": 16777315,
+      "kind": "physics"
+    },
+    {
+      "index": 388,
+      "key": 16777316,
+      "kind": "physics"
+    },
+    {
+      "index": 389,
+      "key": 16777317,
+      "kind": "physics"
+    },
+    {
+      "index": 390,
+      "key": 16777318,
+      "kind": "physics"
+    },
+    {
+      "index": 391,
+      "key": 16777319,
+      "kind": "physics"
+    },
+    {
+      "index": 392,
+      "key": 16777320,
+      "kind": "physics"
+    },
+    {
+      "index": 393,
+      "key": 16777321,
+      "kind": "physics"
+    },
+    {
+      "index": 394,
+      "key": 16777322,
+      "kind": "physics"
+    },
+    {
+      "index": 395,
+      "key": 16777323,
+      "kind": "physics"
+    },
+    {
+      "index": 396,
+      "key": 16777324,
+      "kind": "physics"
+    },
+    {
+      "index": 397,
+      "key": 16777325,
+      "kind": "physics"
+    },
+    {
+      "index": 398,
+      "key": 16777326,
+      "kind": "physics"
+    },
+    {
+      "index": 399,
+      "key": 16777327,
+      "kind": "physics"
+    },
+    {
+      "index": 400,
+      "key": 16777328,
+      "kind": "physics"
+    },
+    {
+      "index": 401,
+      "key": 16777329,
+      "kind": "physics"
+    },
+    {
+      "index": 402,
+      "key": 16777330,
+      "kind": "physics"
+    },
+    {
+      "index": 403,
+      "key": 16777331,
+      "kind": "physics"
+    },
+    {
+      "index": 404,
+      "key": 16777332,
+      "kind": "physics"
+    },
+    {
+      "index": 405,
+      "key": 16777333,
+      "kind": "physics"
+    },
+    {
+      "index": 406,
+      "key": 16777334,
+      "kind": "physics"
+    },
+    {
+      "index": 407,
+      "key": 16777335,
+      "kind": "physics"
+    },
+    {
+      "index": 408,
+      "key": 16777336,
+      "kind": "physics"
+    },
+    {
+      "index": 409,
+      "key": 16777337,
+      "kind": "physics"
+    },
+    {
+      "index": 410,
+      "key": 16777338,
+      "kind": "physics"
+    },
+    {
+      "index": 411,
+      "key": 16777339,
+      "kind": "physics"
+    },
+    {
+      "index": 412,
+      "key": 16777340,
+      "kind": "physics"
+    },
+    {
+      "index": 413,
+      "key": 16777341,
+      "kind": "physics"
+    },
+    {
+      "index": 414,
+      "key": 16777342,
+      "kind": "physics"
+    },
+    {
+      "index": 415,
+      "key": 16777343,
+      "kind": "physics"
+    },
+    {
+      "index": 416,
+      "key": 16777344,
+      "kind": "physics"
+    },
+    {
+      "index": 417,
+      "key": 16777345,
+      "kind": "physics"
+    },
+    {
+      "index": 418,
+      "key": 16777346,
+      "kind": "physics"
+    },
+    {
+      "index": 419,
+      "key": 16777347,
+      "kind": "physics"
+    },
+    {
+      "index": 420,
+      "key": 16777348,
+      "kind": "physics"
+    },
+    {
+      "index": 421,
+      "key": 16777349,
+      "kind": "physics"
+    },
+    {
+      "index": 422,
+      "key": 16777350,
+      "kind": "physics"
+    },
+    {
+      "index": 423,
+      "key": 16777351,
+      "kind": "physics"
+    },
+    {
+      "index": 424,
+      "key": 16777352,
+      "kind": "physics"
+    },
+    {
+      "index": 425,
+      "key": 16777353,
+      "kind": "physics"
+    },
+    {
+      "index": 426,
+      "key": 16777354,
+      "kind": "physics"
+    },
+    {
+      "index": 427,
+      "key": 16777355,
+      "kind": "physics"
+    },
+    {
+      "index": 428,
+      "key": 16777356,
+      "kind": "physics"
+    },
+    {
+      "index": 429,
+      "key": 16777357,
+      "kind": "physics"
+    },
+    {
+      "index": 430,
+      "key": 16777358,
+      "kind": "physics"
+    },
+    {
+      "index": 431,
+      "key": 16777359,
+      "kind": "physics"
+    },
+    {
+      "index": 432,
+      "key": 16777360,
+      "kind": "physics"
+    },
+    {
+      "index": 433,
+      "key": 16777361,
+      "kind": "physics"
+    },
+    {
+      "index": 434,
+      "key": 16777362,
+      "kind": "physics"
+    },
+    {
+      "index": 435,
+      "key": 16777363,
+      "kind": "physics"
+    },
+    {
+      "index": 436,
+      "key": 16777364,
+      "kind": "physics"
+    },
+    {
+      "index": 437,
+      "key": 16777365,
+      "kind": "physics"
+    },
+    {
+      "index": 438,
+      "key": 16777366,
+      "kind": "physics"
+    },
+    {
+      "index": 439,
+      "key": 16777367,
+      "kind": "physics"
+    },
+    {
+      "index": 440,
+      "key": 16777368,
+      "kind": "physics"
+    },
+    {
+      "index": 441,
+      "key": 16777369,
+      "kind": "physics"
+    },
+    {
+      "index": 442,
+      "key": 16777370,
+      "kind": "physics"
+    },
+    {
+      "index": 443,
+      "key": 16777371,
+      "kind": "physics"
+    },
+    {
+      "index": 444,
+      "key": 16777372,
+      "kind": "physics"
+    },
+    {
+      "index": 445,
+      "key": 16777373,
+      "kind": "physics"
+    },
+    {
+      "index": 446,
+      "key": 16777374,
+      "kind": "physics"
+    },
+    {
+      "index": 447,
+      "key": 16777375,
+      "kind": "physics"
+    },
+    {
+      "index": 448,
+      "key": 16777376,
+      "kind": "physics"
+    },
+    {
+      "index": 449,
+      "key": 16777377,
+      "kind": "physics"
+    },
+    {
+      "index": 450,
+      "key": 16777378,
+      "kind": "physics"
+    },
+    {
+      "index": 451,
+      "key": 16777379,
+      "kind": "physics"
+    },
+    {
+      "index": 452,
+      "key": 16777380,
+      "kind": "physics"
+    },
+    {
+      "index": 453,
+      "key": 16777381,
+      "kind": "physics"
+    },
+    {
+      "index": 454,
+      "key": 16777382,
+      "kind": "physics"
+    },
+    {
+      "index": 455,
+      "key": 16777383,
+      "kind": "physics"
+    },
+    {
+      "index": 456,
+      "key": 16777384,
+      "kind": "physics"
+    },
+    {
+      "index": 457,
+      "key": 16777385,
+      "kind": "physics"
+    },
+    {
+      "index": 458,
+      "key": 16777386,
+      "kind": "physics"
+    },
+    {
+      "index": 459,
+      "key": 16777387,
+      "kind": "physics"
+    },
+    {
+      "index": 460,
+      "key": 16777388,
+      "kind": "physics"
+    },
+    {
+      "index": 461,
+      "key": 16777389,
+      "kind": "physics"
+    },
+    {
+      "index": 462,
+      "key": 16777390,
+      "kind": "physics"
+    },
+    {
+      "index": 463,
+      "key": 16777391,
+      "kind": "physics"
+    },
+    {
+      "index": 464,
+      "key": 16777392,
+      "kind": "physics"
+    },
+    {
+      "index": 465,
+      "key": 16777393,
+      "kind": "physics"
+    },
+    {
+      "index": 466,
+      "key": 16777394,
+      "kind": "physics"
+    },
+    {
+      "index": 467,
+      "key": 16777395,
+      "kind": "physics"
+    },
+    {
+      "index": 468,
+      "key": 16777396,
+      "kind": "physics"
+    },
+    {
+      "index": 469,
+      "key": 16777397,
+      "kind": "physics"
+    },
+    {
+      "index": 470,
+      "key": 16777398,
+      "kind": "physics"
+    },
+    {
+      "index": 471,
+      "key": 16777399,
+      "kind": "physics"
+    },
+    {
+      "index": 472,
+      "key": 16777400,
+      "kind": "physics"
+    },
+    {
+      "index": 473,
+      "key": 16777401,
+      "kind": "physics"
+    },
+    {
+      "index": 474,
+      "key": 16777402,
+      "kind": "physics"
+    },
+    {
+      "index": 475,
+      "key": 16777403,
+      "kind": "physics"
+    },
+    {
+      "index": 476,
+      "key": 16777404,
+      "kind": "physics"
+    },
+    {
+      "index": 477,
+      "key": 16777405,
+      "kind": "physics"
+    },
+    {
+      "index": 478,
+      "key": 16777406,
+      "kind": "physics"
+    },
+    {
+      "index": 479,
+      "key": 16777407,
+      "kind": "physics"
+    },
+    {
+      "index": 480,
+      "key": 16777408,
+      "kind": "physics"
+    },
+    {
+      "index": 481,
+      "key": 16777409,
+      "kind": "physics"
+    },
+    {
+      "index": 482,
+      "key": 16777410,
+      "kind": "physics"
+    },
+    {
+      "index": 483,
+      "key": 16777411,
+      "kind": "physics"
+    },
+    {
+      "index": 484,
+      "key": 16777412,
+      "kind": "physics"
+    },
+    {
+      "index": 485,
+      "key": 16777413,
+      "kind": "physics"
+    },
+    {
+      "index": 486,
+      "key": 16777414,
+      "kind": "physics"
+    },
+    {
+      "index": 487,
+      "key": 16777415,
+      "kind": "physics"
+    },
+    {
+      "index": 488,
+      "key": 16777416,
+      "kind": "physics"
+    },
+    {
+      "index": 489,
+      "key": 16777417,
+      "kind": "physics"
+    },
+    {
+      "index": 490,
+      "key": 16777418,
+      "kind": "physics"
+    },
+    {
+      "index": 491,
+      "key": 16777419,
+      "kind": "physics"
+    },
+    {
+      "index": 492,
+      "key": 16777420,
+      "kind": "physics"
+    },
+    {
+      "index": 493,
+      "key": 16777421,
+      "kind": "physics"
+    },
+    {
+      "index": 494,
+      "key": 16777422,
+      "kind": "physics"
+    },
+    {
+      "index": 495,
+      "key": 16777423,
+      "kind": "physics"
+    },
+    {
+      "index": 496,
+      "key": 16777424,
+      "kind": "physics"
+    },
+    {
+      "index": 497,
+      "key": 16777425,
+      "kind": "physics"
+    }
+  ],
+  "zones": [
+    {
+      "index": 0,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 1,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 2,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 3,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 4,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 5,
+      "sha256": "3611e3986f0c13a4524d02eb580dd0158fc7a70d042ee1756ed8ff04563f1138",
+      "draws": 1251,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 6,
+      "sha256": "94844af363b1638d876284e5acd9e9122b178eb79507c28866c3e67cd14f9fd0",
+      "draws": 1397,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 7,
+      "sha256": "cdba8db2c47c0412abb9e08103cf4df1789a009848f14aaf7e1879dc60cd2725",
+      "draws": 1525,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 8,
+      "sha256": "ba6063ce3ab6bb270df8353c0b478b9a242978ed1b6db54a316b518c58eabd20",
+      "draws": 1654,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 9,
+      "sha256": "2c187921b1bf0f4ffbe65ae6548867f221419006a3566f6499ee837e04265b93",
+      "draws": 1705,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 10,
+      "sha256": "96ed1bc7fd9abaf7b19e3b9dc6bfe45f0798ade9ed90c78e5c0f8533d2a5f605",
+      "draws": 1642,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 11,
+      "sha256": "a945cc58ea7e0d920050a4c764f16de7593423e6573840ecfbbd544419dbd5a5",
+      "draws": 1565,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 12,
+      "sha256": "03389bd78c62cfe73b04f8e84ace6dcbf2765389971f246d8598eff91965aea7",
+      "draws": 1653,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 13,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 14,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 15,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 16,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 17,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 18,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 19,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 20,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 21,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 22,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 23,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 24,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 25,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 26,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 27,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 28,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 29,
+      "sha256": "3611e3986f0c13a4524d02eb580dd0158fc7a70d042ee1756ed8ff04563f1138",
+      "draws": 1251,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 30,
+      "sha256": "94844af363b1638d876284e5acd9e9122b178eb79507c28866c3e67cd14f9fd0",
+      "draws": 1397,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 31,
+      "sha256": "cdba8db2c47c0412abb9e08103cf4df1789a009848f14aaf7e1879dc60cd2725",
+      "draws": 1525,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 32,
+      "sha256": "ba6063ce3ab6bb270df8353c0b478b9a242978ed1b6db54a316b518c58eabd20",
+      "draws": 1654,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 33,
+      "sha256": "2c187921b1bf0f4ffbe65ae6548867f221419006a3566f6499ee837e04265b93",
+      "draws": 1705,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 34,
+      "sha256": "96ed1bc7fd9abaf7b19e3b9dc6bfe45f0798ade9ed90c78e5c0f8533d2a5f605",
+      "draws": 1642,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 35,
+      "sha256": "a945cc58ea7e0d920050a4c764f16de7593423e6573840ecfbbd544419dbd5a5",
+      "draws": 1565,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 36,
+      "sha256": "03389bd78c62cfe73b04f8e84ace6dcbf2765389971f246d8598eff91965aea7",
+      "draws": 1653,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 37,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 38,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 39,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 40,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 41,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 42,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 43,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 44,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 45,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 46,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 47,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 48,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 49,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 50,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 51,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 52,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 53,
+      "sha256": "3611e3986f0c13a4524d02eb580dd0158fc7a70d042ee1756ed8ff04563f1138",
+      "draws": 1251,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 54,
+      "sha256": "94844af363b1638d876284e5acd9e9122b178eb79507c28866c3e67cd14f9fd0",
+      "draws": 1397,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 55,
+      "sha256": "cdba8db2c47c0412abb9e08103cf4df1789a009848f14aaf7e1879dc60cd2725",
+      "draws": 1525,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 56,
+      "sha256": "ba6063ce3ab6bb270df8353c0b478b9a242978ed1b6db54a316b518c58eabd20",
+      "draws": 1654,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 57,
+      "sha256": "2c187921b1bf0f4ffbe65ae6548867f221419006a3566f6499ee837e04265b93",
+      "draws": 1705,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 58,
+      "sha256": "96ed1bc7fd9abaf7b19e3b9dc6bfe45f0798ade9ed90c78e5c0f8533d2a5f605",
+      "draws": 1642,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 59,
+      "sha256": "a945cc58ea7e0d920050a4c764f16de7593423e6573840ecfbbd544419dbd5a5",
+      "draws": 1565,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 60,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 61,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 62,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 63,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 64,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 65,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 66,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 67,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 68,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 69,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 70,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 71,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 72,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 73,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 74,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 75,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 76,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 77,
+      "sha256": "6d906b3dbd17cf1294c7cb02ca9f8d1136b3993cd1fc2e95b372d0f08eb2a9f4",
+      "draws": 1759,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 78,
+      "sha256": "d56249856475d01dcbe7be94c116200091ff4cfe0d74b87b059372d4a511a1bc",
+      "draws": 1526,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 79,
+      "sha256": "cb57ab91831485c8e8c6ca8a316c7c1eca228cb615bc6e0b7d915c077008e229",
+      "draws": 2290,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 80,
+      "sha256": "ba6063ce3ab6bb270df8353c0b478b9a242978ed1b6db54a316b518c58eabd20",
+      "draws": 1654,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 81,
+      "sha256": "78b0736ba0e9d4b45d481f2ad0d9fdbc4608f9475a7bcf38dcc8d3e2ef881df2",
+      "draws": 2528,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 82,
+      "sha256": "b5a053904deba008126ed68706aad6394ba55235d1f24757d0fa62aede93b86c",
+      "draws": 1735,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 83,
+      "sha256": "f85d6cf81d2b7333de159788777fc667170a41e733ab868269a2f9d65f7786b1",
+      "draws": 2546,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 84,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 85,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 86,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 87,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 88,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 89,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 90,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 91,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 92,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 93,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 94,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 95,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 96,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 97,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 98,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 99,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 100,
+      "sha256": "fcb1bb5e452d4953a5fe85451c9df48273a6ed3a1ffb813efa05b657b817ec67",
+      "draws": 1672,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 101,
+      "sha256": "08984b59d152f07080b95d5fef4727d43f36d45ca036dc5acb8d84069d99e5c1",
+      "draws": 1804,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 102,
+      "sha256": "cfc61c41f1499019fc4cd72bc94c7f86e80d86fb27ce7cf8b2c9da7a359847e6",
+      "draws": 2405,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 103,
+      "sha256": "94db5821657793c502c8d046a1481f5b2e16b74af7c171fe1480653b59238d37",
+      "draws": 2482,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 104,
+      "sha256": "a7cabc024f402ffd058cfd1cbe9bb5b87c3d674910f9b330b8d3bdf5abd009ed",
+      "draws": 2613,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 105,
+      "sha256": "4aeb816b274777eb042d957a77460caa480b892472cb82eb75610830bba0148d",
+      "draws": 2647,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 106,
+      "sha256": "4cd6d5c5f0244f9f484a634c6e3cdbb7f6cb4e8b5975f96224ca23365ea0c35c",
+      "draws": 2877,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 107,
+      "sha256": "b7c2a9b6b58d3c5e697db3d49a41ea70499cfdb57f648e966e460833c96c774b",
+      "draws": 2601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 108,
+      "sha256": "05bd2bdd5e7a1af3d2031f16f45d40e3e8042365f1de18b167adfa9463586efa",
+      "draws": 2437,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 109,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 110,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 111,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 112,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 113,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 114,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 115,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 116,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 117,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 118,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 119,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 120,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 121,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 122,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 123,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 124,
+      "sha256": "fcb1bb5e452d4953a5fe85451c9df48273a6ed3a1ffb813efa05b657b817ec67",
+      "draws": 1672,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 125,
+      "sha256": "7d824ad2ae93b4bc795a4371b6b21d825d9c3c347b32b8359d7781251a1b8d4a",
+      "draws": 1771,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 126,
+      "sha256": "cfc61c41f1499019fc4cd72bc94c7f86e80d86fb27ce7cf8b2c9da7a359847e6",
+      "draws": 2405,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 127,
+      "sha256": "3a10fddc49a4b2404265df25f80243c71722da8b8179738c514972caf1a9a0e4",
+      "draws": 2470,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 128,
+      "sha256": "a7cabc024f402ffd058cfd1cbe9bb5b87c3d674910f9b330b8d3bdf5abd009ed",
+      "draws": 2613,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 129,
+      "sha256": "354afce0e456835f865ea886490c66b303d6205807206d88b6728cbc74894f6d",
+      "draws": 2600,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 130,
+      "sha256": "4cd6d5c5f0244f9f484a634c6e3cdbb7f6cb4e8b5975f96224ca23365ea0c35c",
+      "draws": 2877,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 131,
+      "sha256": "1e32043c82777dff2b3bb0e8d1a4aab72241fc751292dc6f684cd9e0ca9a4119",
+      "draws": 2556,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 132,
+      "sha256": "05bd2bdd5e7a1af3d2031f16f45d40e3e8042365f1de18b167adfa9463586efa",
+      "draws": 2437,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 133,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 134,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 135,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 136,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 137,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 138,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 139,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 140,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 141,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 142,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 143,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 144,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 145,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 146,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 147,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 148,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 149,
+      "sha256": "cfc163c61939d750e5534ca9306e3010cae2b7ff2bf97b7a641bdc9f6444c43b",
+      "draws": 1276,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 150,
+      "sha256": "058fbe90d0868d1ba2bc8b515c9acdb0e8f45880530732a85372855d1daf0990",
+      "draws": 1403,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 151,
+      "sha256": "52f92e215a2be9225d6abd898fb3555f9fac99ece9a7eab0af3b8f4720790b46",
+      "draws": 1346,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 152,
+      "sha256": "94db0fd99ccc7cda0b8e00379900ab8afedfe0ac9927b5b832090b89f625f184",
+      "draws": 2291,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 153,
+      "sha256": "0f8abe6403208927a5b514e700ca496ba214866c853be10343c6c7d13e9baf77",
+      "draws": 1884,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 154,
+      "sha256": "a12b157c8bc607dbc5b71a114130c1b37dabcbdea738518c7f12f8957015b6e5",
+      "draws": 2000,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 155,
+      "sha256": "7eb34519c866672d55ccc5460d5bea76c95b1d885c88e563e529ce1be83f4776",
+      "draws": 1824,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 156,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 157,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 158,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 159,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 160,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 161,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 162,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 163,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 164,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 165,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 166,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 167,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 168,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 169,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 170,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 171,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 172,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 173,
+      "sha256": "cfc163c61939d750e5534ca9306e3010cae2b7ff2bf97b7a641bdc9f6444c43b",
+      "draws": 1276,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 174,
+      "sha256": "526ac8cba80a49e94d3ca7c5200a554d7be9c6ceffd9ab70b4fdbf7bb9defff7",
+      "draws": 1287,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 175,
+      "sha256": "52f92e215a2be9225d6abd898fb3555f9fac99ece9a7eab0af3b8f4720790b46",
+      "draws": 1346,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 176,
+      "sha256": "6524a3b3c3cc2e20415f2f370bb4e1f51245af91e6a66207503b80f66c4d4c6f",
+      "draws": 1805,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 177,
+      "sha256": "0f8abe6403208927a5b514e700ca496ba214866c853be10343c6c7d13e9baf77",
+      "draws": 1884,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 178,
+      "sha256": "47cfdf49785e2d5f39dc616d678e12550c3d1333fba14156014c3bb1ce0e2e74",
+      "draws": 1865,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 179,
+      "sha256": "7eb34519c866672d55ccc5460d5bea76c95b1d885c88e563e529ce1be83f4776",
+      "draws": 1824,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 180,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 181,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 182,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 183,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 184,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 185,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 186,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 187,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 188,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 189,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 190,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 191,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 192,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 193,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 194,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 195,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 196,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 197,
+      "sha256": "cfc163c61939d750e5534ca9306e3010cae2b7ff2bf97b7a641bdc9f6444c43b",
+      "draws": 1276,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 198,
+      "sha256": "526ac8cba80a49e94d3ca7c5200a554d7be9c6ceffd9ab70b4fdbf7bb9defff7",
+      "draws": 1287,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 199,
+      "sha256": "52f92e215a2be9225d6abd898fb3555f9fac99ece9a7eab0af3b8f4720790b46",
+      "draws": 1346,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 200,
+      "sha256": "6524a3b3c3cc2e20415f2f370bb4e1f51245af91e6a66207503b80f66c4d4c6f",
+      "draws": 1805,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 201,
+      "sha256": "0f8abe6403208927a5b514e700ca496ba214866c853be10343c6c7d13e9baf77",
+      "draws": 1884,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 202,
+      "sha256": "47cfdf49785e2d5f39dc616d678e12550c3d1333fba14156014c3bb1ce0e2e74",
+      "draws": 1865,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 203,
+      "sha256": "7eb34519c866672d55ccc5460d5bea76c95b1d885c88e563e529ce1be83f4776",
+      "draws": 1824,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 204,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 205,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 206,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 207,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 208,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 209,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 210,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 211,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 212,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 213,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 214,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 215,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 216,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 217,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 218,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 219,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 220,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 221,
+      "sha256": "cfc163c61939d750e5534ca9306e3010cae2b7ff2bf97b7a641bdc9f6444c43b",
+      "draws": 1276,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 222,
+      "sha256": "526ac8cba80a49e94d3ca7c5200a554d7be9c6ceffd9ab70b4fdbf7bb9defff7",
+      "draws": 1287,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 223,
+      "sha256": "52f92e215a2be9225d6abd898fb3555f9fac99ece9a7eab0af3b8f4720790b46",
+      "draws": 1346,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 224,
+      "sha256": "6524a3b3c3cc2e20415f2f370bb4e1f51245af91e6a66207503b80f66c4d4c6f",
+      "draws": 1805,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 225,
+      "sha256": "082cb62aa94c122d7e40f6277ab31c495a83afa98f257322c7acc036e261cc08",
+      "draws": 1852,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 226,
+      "sha256": "47cfdf49785e2d5f39dc616d678e12550c3d1333fba14156014c3bb1ce0e2e74",
+      "draws": 1865,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 227,
+      "sha256": "7eb34519c866672d55ccc5460d5bea76c95b1d885c88e563e529ce1be83f4776",
+      "draws": 1824,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 228,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 229,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 230,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 231,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 232,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 233,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 234,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 235,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 236,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 237,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 238,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 239,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 240,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 241,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 242,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 243,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 244,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 245,
+      "sha256": "cfc163c61939d750e5534ca9306e3010cae2b7ff2bf97b7a641bdc9f6444c43b",
+      "draws": 1276,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 246,
+      "sha256": "526ac8cba80a49e94d3ca7c5200a554d7be9c6ceffd9ab70b4fdbf7bb9defff7",
+      "draws": 1287,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 247,
+      "sha256": "52f92e215a2be9225d6abd898fb3555f9fac99ece9a7eab0af3b8f4720790b46",
+      "draws": 1346,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 248,
+      "sha256": "6524a3b3c3cc2e20415f2f370bb4e1f51245af91e6a66207503b80f66c4d4c6f",
+      "draws": 1805,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 249,
+      "sha256": "082cb62aa94c122d7e40f6277ab31c495a83afa98f257322c7acc036e261cc08",
+      "draws": 1852,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 250,
+      "sha256": "47cfdf49785e2d5f39dc616d678e12550c3d1333fba14156014c3bb1ce0e2e74",
+      "draws": 1865,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 251,
+      "sha256": "7eb34519c866672d55ccc5460d5bea76c95b1d885c88e563e529ce1be83f4776",
+      "draws": 1824,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 252,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 253,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 254,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 255,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 256,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 257,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 258,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 259,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 260,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 261,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 262,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 263,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 264,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 265,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 266,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 267,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 268,
+      "sha256": "66df003bbb4adceaed95dcc8410c3e39f69456562b3e88fb25d97a2cf6ab1371",
+      "draws": 1298,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 269,
+      "sha256": "cfc163c61939d750e5534ca9306e3010cae2b7ff2bf97b7a641bdc9f6444c43b",
+      "draws": 1276,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 270,
+      "sha256": "526ac8cba80a49e94d3ca7c5200a554d7be9c6ceffd9ab70b4fdbf7bb9defff7",
+      "draws": 1287,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 271,
+      "sha256": "52f92e215a2be9225d6abd898fb3555f9fac99ece9a7eab0af3b8f4720790b46",
+      "draws": 1346,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 272,
+      "sha256": "6524a3b3c3cc2e20415f2f370bb4e1f51245af91e6a66207503b80f66c4d4c6f",
+      "draws": 1805,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 273,
+      "sha256": "082cb62aa94c122d7e40f6277ab31c495a83afa98f257322c7acc036e261cc08",
+      "draws": 1852,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 274,
+      "sha256": "47cfdf49785e2d5f39dc616d678e12550c3d1333fba14156014c3bb1ce0e2e74",
+      "draws": 1865,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 275,
+      "sha256": "7eb34519c866672d55ccc5460d5bea76c95b1d885c88e563e529ce1be83f4776",
+      "draws": 1824,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 276,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 277,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 278,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 279,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 280,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 281,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 282,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 283,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 284,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 285,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 286,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    },
+    {
+      "index": 287,
+      "sha256": "a2be0be9eb9ce437421cec1d2a58a849addff7b4007bbc5ef0fa519a0c2d3add",
+      "draws": 1601,
+      "physics_dependencies": 210
+    }
+  ],
+  "spatial_component": "E:\\forza2port_win\\project_data\\TrackLoaderCPS\\work\\TopGear\\spatial-v1",
+  "physics_component": "E:\\forza2port_win\\project_data\\TrackLoaderCPS\\work\\TopGear\\physics-v3",
+  "physics_source_sha256": "5d03cf44982744f68d5851091fb73e76eb94c398071ed493309588e276ffdb1d",
+  "world_source_sha256": "4a5a938bf18c0ad26b09b8f0b733891fa11026e3d9a42e44464136f835ac1515",
+  "hex_sha256": "af9112822a38b65893ad73c5f205e8682e8baa74353f4c33893b0612ec773ae7",
+  "collision_roots_sha256": "94d02dd1abf79fe013563f48b5fbc5d7af4e44c2b1ccd6c4acd8296fa3860d8c",
+  "zone_chunk_sha256": "2f1a256b5aba3bf0fcb7952498ffc9e3856e6e4bd07b9c0a79bafdbf5725b9f8",
+  "zone_chunk_map_sha256": "13d2767cfa6f695e61cd10455283bdb3c0cb3876ebdd57b9ab93e4336b0059a8",
+  "pvs_lookup_sha256": "22c0a50e2d481ffe5f6b9af3c9cb8c67c8d1591adebe3f37a9ce553f25daba9d",
+  "remaining": [
+    "498 nodes describe only spatial zones and collision; other resource families require additional nodes.",
+    "Final native root counters and resident/model/material registration are not yet assembled.",
+    "All collision templates are requested per zone like HomeSpace02; Top Gear memory/performance needs engine validation.",
+    "Physics archive remains in its verified component; this directory is not an installable map.",
+    "Secondary draws, surface semantics, custom native travel and off-route rendering remain unverified."
+  ]
+}

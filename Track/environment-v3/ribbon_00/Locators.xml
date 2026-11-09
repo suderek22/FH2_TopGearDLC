@@ -1,0 +1,39 @@
+
+<TrackLocators Version="2">
+  <Locator Version="3">
+    <Name value="321Root"/>
+    <GUID value="db185efe-020c-4382-b625-e7dda7a7535d"/>
+    <SceneTransform value._11="0.999958" value._12="0.000000" value._13="-0.009204" value._14="0.000000" value._21="0.000000" value._22="1.000000" value._23="0.000000" value._24="0.000000" value._31="0.009204" value._32="0.000000" value._33="0.999958" value._34="0.000000" value._41="202.150299" value._42="-0.724013" value._43="31.536470" value._44="1.000000"/>
+    <AttachTo/>
+  </Locator>
+  <Locator Version="3">
+    <Name value="PostRaceRoot"/>
+    <GUID value="430a633e-a5bc-4fda-b6ee-09ec301dda97"/>
+    <SceneTransform value._11="0.996381" value._12="0.000000" value._13="0.085000" value._14="0.000000" value._21="0.000000" value._22="1.000000" value._23="0.000000" value._24="0.000000" value._31="-0.085000" value._32="0.000000" value._33="0.996381" value._34="0.000000" value._41="172.526093" value._42="-0.858059" value._43="25.880899" value._44="1.000000"/>
+    <AttachTo/>
+  </Locator>
+  <Locator Version="3">
+    <Name value="PostRaceTour"/>
+    <GUID value="c9f26134-91e0-4095-a5b7-414d8f995946"/>
+    <SceneTransform value._11="-0.969394" value._12="0.000000" value._13="-0.245511" value._14="0.000000" value._21="0.000000" value._22="1.000000" value._23="0.000000" value._24="0.000000" value._31="0.245511" value._32="0.000000" value._33="-0.969394" value._34="0.000000" value._41="273.585907" value._42="-0.072123" value._43="196.368500" value._44="1.000000"/>
+    <AttachTo/>
+  </Locator>
+  <Locator Version="3">
+    <Name value="PreRace_Beauty"/>
+    <GUID value="de440268-2e8d-4bff-8b71-764eeb526365"/>
+    <SceneTransform value._11="-0.531742" value._12="0.046857" value._13="0.845609" value._14="0.000000" value._21="0.000000" value._22="0.998468" value._23="-0.055327" value._24="0.000000" value._31="-0.846906" value._32="-0.029420" value._33="-0.530928" value._34="0.000000" value._41="331.568390" value._42="0.223469" value._43="57.222179" value._44="1.000000"/>
+    <AttachTo/>
+  </Locator>
+  <Locator Version="3">
+    <Name value="PreRaceRoot"/>
+    <GUID value="2561e161-77f7-4707-9333-fa9160be4634"/>
+    <SceneTransform value._11="-0.969393" value._12="0.000000" value._13="-0.245513" value._14="0.000000" value._21="0.000000" value._22="1.000000" value._23="0.000000" value._24="0.000000" value._31="0.245513" value._32="0.000000" value._33="-0.969393" value._34="0.000000" value._41="273.585907" value._42="-0.072123" value._43="196.368500" value._44="1.000000"/>
+    <AttachTo/>
+  </Locator>
+  <Locator Version="3">
+    <Name value="sceneRoot"/>
+    <GUID value="c665ed55-1a1d-48a6-ade5-3c830b9225e3"/>
+    <SceneTransform value._11="0.385344" value._12="0.000000" value._13="-0.922773" value._14="0.000000" value._21="0.000000" value._22="1.000000" value._23="0.000000" value._24="0.000000" value._31="0.922773" value._32="0.000000" value._33="0.385344" value._34="0.000000" value._41="111.177902" value._42="-0.431491" value._43="32.791672" value._44="1.000000"/>
+    <AttachTo/>
+  </Locator>
+</TrackLocators>

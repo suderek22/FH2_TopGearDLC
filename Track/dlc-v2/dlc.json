@@ -1,0 +1,39 @@
+{
+  "component": "local-dlc-disabled-registration",
+  "delivery": "mod-managed",
+  "track_id": 10000,
+  "environment_id": 10000,
+  "media_name": "TopGearCPS",
+  "game_media_path": "game:\\media\\tracks\\TopGearCPS",
+  "root_path": "tracks\\TopGearCPS\\ribbon_00\\TopGearCPS_00.pvs",
+  "source_track_id": 220,
+  "source_length": 2820,
+  "registration_verified": true,
+  "stock_rows_preserved": true,
+  "playable_map": false,
+  "engine_validated": false,
+  "registration_sha256": "6affd715ba0726f74ad8d4e324cafa9b542dc57211f8c4125cbbfc7fe97484cb",
+  "native_travel_constraint": {
+    "function_rva": "0x93F0F0",
+    "stock_track_ids": [
+      542,
+      549
+    ],
+    "other_track_behavior": "Falls through to the mainland transition, not a custom target.",
+    "custom_travel_implemented": false
+  },
+  "remaining": [
+    "Complete native FPVS root, spatial lookup and streaming dependencies.",
+    "FH2 materials/shaders, physical surface semantics and resident resource wiring.",
+    "Native custom-track travel and arrival/return flow; no raw manager-field writes.",
+    "In-game load, rendering, collision, driving and return-to-mainland validation."
+  ],
+  "notes": [
+    "Adds only Tracks and Environments; does not update stock maps, saves or content offers.",
+    "ContentId 0 is local mod content, not Storm Island's paid offer or platform entitlement.",
+    "New track visibility, rendering, installation and purchase flags are all disabled.",
+    "Native DLC travel is not generalized by adding database rows.",
+    "Inherited FH2 UI/start-grid fields are provisional, not converted FM5 UI or navigation.",
+    "No media is installed or mounted by this registration component."
+  ]
+}

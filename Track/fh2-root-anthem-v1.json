@@ -1,0 +1,18 @@
+{
+  "source": "E:\\forza2port_win\\game\\Anthem_1.0.0.64_x64__8wekyb3d8bbwe\\Mount\\media\\tracks\\anthem\\ribbon_00\\anthem_00.pvs",
+  "sha256": "b41de702033b6f566334871391750ab710012e0bc34b743eb3aa969f0298423e",
+  "bytes": 24200394,
+  "version": 60,
+  "byte_exact_roundtrip": true,
+  "counts": {
+    "root_groups": 29957,
+    "groups": 17221,
+    "primary_draws": 88240,
+    "secondary_draws": 0,
+    "instances": 88240,
+    "textures": 8194,
+    "shaders": 113,
+    "materials": 645
+  },
+  "note": "Validates an original FH2 root schema, not Top Gear runtime compatibility."
+}

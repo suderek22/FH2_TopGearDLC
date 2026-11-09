@@ -1,0 +1,18 @@
+{
+  "source": "E:\\forza2port_win\\game\\Anthem_1.0.0.64_x64__8wekyb3d8bbwe\\Mount\\media\\tracks\\homespace02\\ribbon_00\\HomeSpace02_00.pvs",
+  "sha256": "385945c7b6defefd59f68007d1f152b3e457b98f4ad075f021cbcfab076c5e19",
+  "bytes": 391018,
+  "version": 60,
+  "byte_exact_roundtrip": true,
+  "counts": {
+    "root_groups": 529,
+    "groups": 1005,
+    "primary_draws": 1088,
+    "secondary_draws": 0,
+    "instances": 1088,
+    "textures": 891,
+    "shaders": 48,
+    "materials": 83
+  },
+  "note": "Validates an original FH2 root schema, not Top Gear runtime compatibility."
+}
