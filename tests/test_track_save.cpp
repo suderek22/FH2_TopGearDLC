@@ -131,6 +131,23 @@ int main() {
     expected = original;
     expected.rflags |= TrackSave::ZeroFlag;
     assert(!memcmp(&context, &expected, sizeof context));
+    auto optedIn = returned;
+    optedIn.careerUnchanged = false;
+    auto pending = optedIn;
+    pending.pendingProfileJob = 1;
+    assert(!session.Release(pending, error, true) && session.Held());
+    pending = optedIn;
+    pending.originalPoseRestored = false;
+    assert(!session.Release(pending, error, true) && session.Held());
+    assert(session.Release(optedIn, error, true));
+    assert(!session.Held() && !session.SessionOnly());
+    context = original;
+    TrackSave::Override(&context, &session);
+    TrackSave::OverrideProfile(&context, &session);
+    assert(!memcmp(&context, &original, sizeof context));
+    assert(session.Hold(module, profile, 0, 0, error));
+    assert(!session.Release(optedIn, error));
+    assert(session.Release(optedIn, error, true));
     assert(!gate.ProtectSession(error));
     puts("Visit-held native microsave/profile gate tests passed; no save/career memory writes.");
 }

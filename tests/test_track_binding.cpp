@@ -11,6 +11,10 @@ static bool failEnable = false, runSwap = false, runRestore = false;
 static bool targetApplied, poseApplied, nested;
 static bool launchStartup;
 static float restoredX;
+static int expectedTarget = 10000;
+static float expectedX = 202;
+static std::string resumeFlow = "trackloadercps.resume_mainland";
+static std::string resumeFile = "entities_trackloadercps_mainland.xml";
 static TrackBinding::Runtime* runtime;
 static uintptr_t gameBase;
 static unsigned char otherComponent[0x150] = {};
@@ -36,7 +40,7 @@ static void Swap(void*) {
     FH2Context context = {};
     context.r14 = 542;
     reinterpret_cast<FH2InstructionFn>(detours.at(TrackTarget::PreparationSite))(&context, nullptr);
-    targetApplied = context.r14 == 10000;
+    targetApplied = context.r14 == static_cast<uint64_t>(expectedTarget);
 }
 static void Restore(void*) {
     ++restores;
@@ -45,7 +49,7 @@ static void Restore(void*) {
     reinterpret_cast<FH2InstructionFn>(detours.at(TrackPose::FacingSite))(&context, nullptr);
     reinterpret_cast<FH2InstructionFn>(detours.at(TrackPose::PositionSite))(&context, nullptr);
     restoredX = context.xmm[0].f[0];
-    poseApplied = context.xmm[0].f[0] == 202;
+    poseApplied = context.xmm[0].f[0] == expectedX;
 }
 static bool rejectLaunch, rejectPreparation;
 static unsigned launches;
@@ -60,15 +64,15 @@ static bool PrepareGroup(void* user, void* group, std::string& error) {
 static bool Launch(void*, const char* flow) {
     ++launches;
     if (rejectLaunch) return false;
-    if (!strcmp(flow, "trackloadercps.resume_mainland")) runtime->Restore(nullptr);
+    if (resumeFlow == flow) runtime->Restore(nullptr);
     else if (runSwap) runtime->Swap(nullptr);
     return true;
 }
 static void Update(void*, float) {
     if (launchStartup) {
         launchStartup = false;
-        ParseGroup(startupGroup, "entities_trackloadercps_mainland.xml");
-        if (!deferredStartup) runtime->Launch(startupComponent, "trackloadercps.resume_mainland");
+        ParseGroup(startupGroup, resumeFile.c_str());
+        if (!deferredStartup) runtime->Launch(startupComponent, resumeFlow.c_str());
         return;
     }
     if (nested) {
@@ -144,6 +148,19 @@ static void LoadReturn(void* user) {
         *reinterpret_cast<void**>(group->componentNode + 0x10), "trackloadercps.return_mainland");
 }
 static void LoadNothing(void*) {}
+static TrackBinding::Visit* secondVisit;
+static void LoadSecond(void* user) {
+    auto group = static_cast<GroupFixture*>(user);
+    ParseGroup(*group, "entities_trackloadercps_enter.xml");
+    assert(secondVisit && !secondVisit->component && !secondVisit->failed);
+    ParseGroup(*group, "entities_trackloadercps_10001_enter.xml");
+    runtime->Launch(*reinterpret_cast<void**>(group->componentNode + 0x10), "trackloadercps_10001.enter");
+}
+static void LoadSecondReturn(void* user) {
+    auto group = static_cast<GroupFixture*>(user);
+    ParseGroup(*group, "entities_trackloadercps_10001_return.xml");
+    runtime->Launch(*reinterpret_cast<void**>(group->componentNode + 0x10), "trackloadercps_10001.return_mainland");
+}
 
 int main(int argc, char** argv) {
     std::vector<unsigned char> image(0x365ad78);
@@ -177,7 +194,7 @@ int main(int argc, char** argv) {
     auto mod = reinterpret_cast<FH2Mod*>(1);
     std::string error;
     const char* mode = argc > 1 ? argv[1] : "";
-    bool session = !strcmp(mode, "session") || !strcmp(mode, "session-enable");
+    bool session = !strcmp(mode, "session") || !strcmp(mode, "session-enable") || !strcmp(mode, "session-release");
     if (!strcmp(mode, "signature") || !strcmp(mode, "cleanup-signature") ||
         !strcmp(mode, "parser-signature") || !strcmp(mode, "direct-save-signature") ||
         !strcmp(mode, "job-signature") || !strcmp(mode, "profile-signature")) {
@@ -491,6 +508,17 @@ int main(int argc, char** argv) {
     assert(!bridge.FinishReturnObserved(returned, departure, carAddress, mainland, error));
     assert(gate.Held());
     mainland.pendingProfileJob = 0;
+    if (!strcmp(mode, "session-release")) {
+        mainland.careerUnchanged = false;
+        assert(!bridge.FinishReturnObserved(returned, departure, carAddress, mainland, error));
+        assert(bridge.FinishReturnObserved(returned, departure, carAddress, mainland, error, true));
+        assert(!gate.Held() && !gate.SessionOnly());
+        assert(bridge.SessionProfileReady(profileAddress, error));
+        assert(gate.Hold(saveAddress, profileAddress, 0, 0, error));
+        assert(gate.Held());
+        puts("Opted-in verified return releases early protection; repeat visit can reacquire it.");
+        return 0;
+    }
     if (session) {
         assert(!bridge.FinishReturnObserved(returned, departure, carAddress, mainland, error));
         assert(!bridge.FinishSessionReturnObserved(returned, departure, carAddress, saveAddress, false, error));
@@ -514,5 +542,49 @@ int main(int argc, char** argv) {
     assert(returnGroup.groupControl.strong == 1 && returnGroup.componentControl.strong == 1);
     assert(startupGroup.groupControl.strong == 1 && startupGroup.componentControl.strong == 1);
     assert(!TrackBinding::Executing() && !TrackBinding::ExecutingComponent());
+    if (!*mode) {
+        assert(gate.Hold(saveAddress, profileAddress, 0, 0, error));
+        TrackBinding::Visit second;
+        second.lifecycle.group = "trackloadercps_10001";
+        second.target = {542, 542, 10001, {10, 20, 30, 1}, 0};
+        second.pose = {{10, 20, 30, 1}, {0, 0, -1, 0}};
+        Component(component, "trackloadercps_10001.enter");
+        secondVisit = &second;
+        expectedTarget = 10001;
+        expectedX = 10;
+        runSwap = true;
+        targetApplied = poseApplied = false;
+        assert(bridge.Dispatch(second, LoadSecond, &entryGroup, error));
+        assert(second.component == component && targetApplied && second.swaps == 1);
+        runSwap = false;
+        runRestore = true;
+        bridge.Update(component, 0);
+        assert(poseApplied && restoredX == 10 && second.restores == 1 && !second.failed);
+        assert(bridge.FinishEntry(second, 10001, true, true, error));
+        TrackBinding::Visit secondReturn;
+        secondReturn.lifecycle = second.lifecycle;
+        secondReturn.target = {10001, 542, 542, {425.574f, 110.821f, -1478.082f, 1}, 0};
+        secondReturn.pose = {{425.574f, 110.821f, -1478.082f, 1}, {0, 0, -1, 0}};
+        Component(returnComponent, "trackloadercps_10001.return_mainland");
+        resumeFlow = "trackloadercps_10001.resume_mainland";
+        resumeFile = "entities_trackloadercps_10001_mainland.xml";
+        Component(startupComponent, resumeFlow.c_str());
+        runRestore = false;
+        runSwap = true;
+        assert(bridge.Dispatch(secondReturn, LoadSecondReturn, &returnGroup, error));
+        runSwap = false;
+        launchStartup = true;
+        bridge.Update(returnComponent, 0);
+        assert(secondReturn.restores == 1 && restoredX == secondReturn.pose.position[0]);
+        TrackSave::ReturnState secondMainland = {
+            saveAddress, profileAddress, 542, 542, 0, 0, 0, true, true, true};
+        auto expectedAirport = TrackLive::AirportReturn(departure);
+        memcpy(livePhysics.data(), secondReturn.pose.position, sizeof secondReturn.pose.position);
+        const float airportFacing[] = {1, 0, 0, 0};
+        memcpy(livePhysics.data() + 0x30, airportFacing, sizeof airportFacing);
+        assert(bridge.FinishReturnObserved(secondReturn, expectedAirport, carAddress, secondMainland, error));
+        assert(!gate.Held());
+        puts("Second-map entry/return uses its own flow, target ID and pose; ignores first-map parsing.");
+    }
     puts("Native hook registration, scoped machine dispatch and callback isolation tests passed.");
 }

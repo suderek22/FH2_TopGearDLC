@@ -95,6 +95,14 @@ int main() {
     assert(allocations == frees);
     loader.ReleaseReceipt();
     assert(objectReleases == controlReleases);
+    TrackLifecycle::Names second{"trackloadercps_10001"};
+    expected = "entities_trackloadercps_10001_enter";
+    assert(loader.Submit(false, error, second));
+    loader.ReleaseReceipt();
+    expected = "entities_trackloadercps_10001_return";
+    assert(loader.Submit(true, error, second));
+    loader.ReleaseReceipt();
+    assert(!loader.Submit(false, error, TrackLifecycle::Names{"pause"}));
     {
         TrackGroup::Shared retained;
         Make(&retained, reinterpret_cast<void*>(10));

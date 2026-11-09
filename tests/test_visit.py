@@ -6,7 +6,8 @@ import xml.etree.ElementTree as ET
 import zipfile
 
 from build_visit import (ENTER_FILE, RETURN_FILE, ROUTE_FILE, MAINLAND_FILE, RESUME_CONTRACTS, build, flow,
-                         machine_group, mainland_group, validate_entitymodel, validate_native, xml_bytes)
+                         lifecycle_paths, machine_group, mainland_group, validate_entitymodel,
+                         validate_lifecycle_namespace, validate_native, xml_bytes)
 
 
 class VisitTests(unittest.TestCase):
@@ -54,6 +55,11 @@ class VisitTests(unittest.TestCase):
         template = ET.SubElement(templates, "entity_template", {"name": "pause_flow"})
         component = ET.SubElement(template, "component", {"type": "GameStateMachineComponent"})
         ET.SubElement(component, "property", {"id": "Autostart", "value": "true"})
+        locations = ET.Element("entity_templates")
+        destination = ET.SubElement(locations, "entity_template", {"name": "activation_location_track_swap"})
+        swap = ET.SubElement(destination, "component", {"type": "TrackSwapComponent"})
+        ET.SubElement(swap, "property", {"id": "TrackId", "value": "Mainland"})
+        ET.SubElement(swap, "property", {"id": "WorldPosition", "value": "0.0,0.0,0.0"})
         with zipfile.ZipFile(self.entitymodel, "w") as archive:
             base = ET.Element("entity_group", {"id": "track_route"})
             if base_startup:
@@ -61,6 +67,7 @@ class VisitTests(unittest.TestCase):
             archive.writestr("entities_offline_freeroam.xml", xml_bytes(base))
             archive.writestr("entities_route_offline_freeroam.xml", xml_bytes(route))
             archive.writestr("Templates/templates_global.xml", xml_bytes(templates))
+            archive.writestr("Templates/templates_locations.xml", xml_bytes(locations))
 
     def test_persisted_resource_hashes_and_disabled_gates(self):
         output = self.root / "visit"
@@ -75,17 +82,53 @@ class VisitTests(unittest.TestCase):
         self.assertFalse(report["first_test_ready"])
         self.assertFalse(report["file_mount_enabled"])
         self.assertFalse(report["engine_validated"])
-        self.assertFalse(report["career_swap_used"])
+        self.assertTrue(report["career_swap_used"])
         self.assertFalse(report["stock_mainland_startup_used"])
         self.assertFalse(report["return_ai_enabled"])
         self.assertFalse(report["mulligan_recording_enabled"])
         self.assertEqual(report["return_startup"], "trackloadercps.resume_mainland")
         route = ET.parse(output / "mediaoverride" / "EntityModel" / (ROUTE_FILE + ".xml")).getroot()
         self.assertEqual(route.attrib, {"id": "track_route"})
-        self.assertEqual(len(route), 0)
+        self.assertEqual(len(route), 1)
         self.assertNotIn("pause.xml", [entry["media_path"] for entry in report["files"]])
         with self.assertRaisesRegex(ValueError, "new native visit"):
             build(self.stateflow, self.entitymodel, output)
+
+    def test_two_maps_have_disjoint_resources_and_navigation(self):
+        first = build(self.stateflow, self.entitymodel, self.root / "first")
+        namespace = "trackloadercps_10001"
+        media_name = "trackloadercps_second"
+        second = build(self.stateflow, self.entitymodel, self.root / "second", media_name, namespace)
+        first_paths = {row["media_path"] for row in first["files"]}
+        second_paths = {row["media_path"] for row in second["files"]}
+        self.assertFalse(first_paths & second_paths)
+        self.assertEqual(second_paths, lifecycle_paths(namespace))
+        self.assertEqual(second["entry_flow"], namespace + ".enter")
+        self.assertEqual(second["return_startup"], namespace + ".resume_mainland")
+        root = ET.parse(self.root / "second" / "mediaoverride" / "stateflow" / (namespace + ".xml")).getroot()
+        self.assertEqual(root.get("id"), namespace)
+        self.assertEqual(root.find("state[@id='enter']/node[@state='track_swap.load_navigation_world']")
+                         .get("track_name"), media_name)
+        self.assertEqual(root.find("state[@id='return_mainland']/node[@state='track_swap.load_navigation_world']")
+                         .get("track_name"), "Anthem")
+        for row in second["files"]:
+            data = (self.root / "second" / "mediaoverride" / row["media_path"]).read_bytes()
+            self.assertEqual(hashlib.sha256(data).hexdigest(), row["sha256"])
+            document = ET.fromstring(data)
+            for element in document.iter():
+                value = element.get("value", "")
+                if element.get("id") == "TargetFlow":
+                    self.assertTrue(value.startswith(namespace + "."))
+                entity_file = element.get("entity_group_file")
+                if entity_file:
+                    self.assertIn("EntityModel\\" + entity_file + ".xml", second_paths)
+
+    def test_namespace_cannot_publish_stock_flows_or_escape_paths(self):
+        for namespace in ("global", "pause", "track_swap", "..\\stock", "TrackLoaderCPS",
+                          "trackloadercps_", "trackloadercps_" + "x" * 20, "", None):
+            with self.subTest(namespace=namespace), self.assertRaisesRegex(ValueError, "lifecycle namespace"):
+                validate_lifecycle_namespace(namespace)
+        self.assertEqual(validate_lifecycle_namespace("trackloadercps_10001"), "trackloadercps_10001")
 
     def test_native_call_order_and_return_startup(self):
         root = flow("TopGearCPS")
@@ -118,6 +161,46 @@ class VisitTests(unittest.TestCase):
         for state in [enter, returned]:
             self.assertIsNotNone(state.find("behavior[@id='GameControlWrapper']"))
             self.assertIsNotNone(state.find("behavior[@id='BlockPauseEntryWrapper']"))
+
+    def test_stock_mainland_preparation_preserves_entry_and_owned_resume(self):
+        tested = flow("TopGearCPS")
+        for name in ("enter", "resume_mainland"):
+            self.assertFalse(any(n.get("state").startswith("career")
+                                 for n in tested.find("state[@id='%s']" % name).iter("node")))
+        returned = tested.find("state[@id='return_mainland']")
+        calls = [n.get("state") for n in returned.findall("node")]
+        ordered = ["track_swap.unload_navigation_world", "global.unlock_destination",
+                   "career_swap.root_mainland", "track_swap.swap_track",
+                   "track_swap.load_navigation_world", "wait_locators",
+                   "career_swap.finish_swap", "global.load_entity_group"]
+        self.assertEqual([calls.index(n) for n in ordered], sorted(calls.index(n) for n in ordered))
+        self.assertEqual(calls.count("track_swap.swap_track"), 1)
+        used = validate_native(tested, self.stateflow)
+        self.assertIn("career_swap.root_mainland", used)
+        report = build(self.stateflow, self.entitymodel, self.root / "stock-return")
+        self.assertTrue(report["career_swap_used"])
+        self.assertTrue(report["stock_mainland_preparation"])
+        self.assertFalse(report["stock_mainland_startup_used"])
+        route = ET.parse(self.root / "stock-return" / "mediaoverride" / "EntityModel" /
+                         (ROUTE_FILE + ".xml")).getroot()
+        self.assertEqual(len(route), 1)
+        component = route.find("entity/component")
+        self.assertEqual(component.attrib, {"type": "TrackSwapComponent", "id": "track_swap"})
+        self.assertEqual([p.attrib for p in component.findall("property")], [
+            {"id": "TrackId", "value": "Mainland"},
+            {"id": "WorldPosition", "value": "425.574,110.821,-1478.082"}])
+
+    def test_unsupported_native_destination_contract_refuses_build(self):
+        with zipfile.ZipFile(self.entitymodel) as source:
+            rows = {name: source.read(name) for name in source.namelist()}
+        rows["Templates/templates_locations.xml"] = rows["Templates/templates_locations.xml"].replace(
+            b'value="Mainland"', b'value="Island"')
+        with zipfile.ZipFile(self.entitymodel, "w") as target:
+            for name, data in rows.items():
+                target.writestr(name, data)
+        with self.assertRaisesRegex(ValueError, "TrackSwapComponent"):
+            build(self.stateflow, self.entitymodel, self.root / "unsupported")
+        self.assertFalse((self.root / "unsupported").exists())
 
     def test_dedicated_mainland_resume_without_career_or_stock_startup(self):
         root = flow("TopGearCPS")

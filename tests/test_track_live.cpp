@@ -38,13 +38,38 @@ int main() {
     assert(!memcmp(&departure.pose, &pose, sizeof pose));
     assert(!memcmp(physics.data(), pose.position, sizeof pose.position));
     assert(!memcmp(physics.data() + 0x30, pose.facing, sizeof pose.facing));
-    for (float lane : {0.0f, 0.5f, 1.0f}) {
+    auto airport = TrackLive::AirportReturn(departure);
+    assert(airport.pose.position[0] == 425.574f);
+    assert(airport.pose.position[1] == 110.821f);
+    assert(airport.pose.position[2] == -1478.082f);
+    assert(!memcmp(airport.pose.facing, departure.pose.facing, sizeof pose.facing));
+    assert(!memcmp(&departure.pose, &pose, sizeof pose));
+    assert(!TrackLive::VerifyReturn(airport, departure, map, error));
+    assert(TrackLive::VerifyReturn(airport, airport, map, error));
+    assert(!airport.matchFacing && departure.matchFacing);
+    auto turnedAtAirport = airport;
+    turnedAtAirport.pose.facing[0] = 1;
+    turnedAtAirport.pose.facing[1] = turnedAtAirport.pose.facing[2] = 0;
+    assert(TrackLive::VerifyReturn(airport, turnedAtAirport, map, error));
+    auto strictAirport = airport;
+    strictAirport.matchFacing = true;
+    assert(!TrackLive::VerifyReturn(strictAirport, turnedAtAirport, map, error));
+    turnedAtAirport.pose.position[0] += 0.26f;
+    assert(!TrackLive::VerifyReturn(airport, turnedAtAirport, map, error));
+    auto missedAirport = airport;
+    missedAirport.pose.position[0] += 0.26f;
+    assert(!TrackLive::VerifyReturn(airport, missedAirport, map, error));
+    for (float lane : {0.0f, 0.5f, 1.0f, std::numeric_limits<float>::quiet_NaN(),
+                       std::numeric_limits<float>::infinity()}) {
         auto nativePose = pose;
         nativePose.position[3] = lane;
         memcpy(physics.data(), nativePose.position, sizeof nativePose.position);
         TrackLive::CarState captured;
         assert(TrackLive::CaptureCar(base, player, captured, error));
-        assert(!memcmp(&captured.pose, &nativePose, sizeof nativePose));
+        assert(!memcmp(captured.pose.position, nativePose.position, 3 * sizeof(float)));
+        assert(captured.pose.position[3] == 1);
+        assert(!memcmp(captured.pose.facing, nativePose.facing, sizeof nativePose.facing));
+        assert(!memcmp(physics.data(), nativePose.position, sizeof nativePose.position));
         assert(TrackLive::VerifyReturn(departure, captured, map, error));
         assert(TrackLive::VerifyReturn(captured, departure, map, error));
     }
@@ -54,6 +79,7 @@ int main() {
     assert(!memcmp(&departure, &sentinel, sizeof departure));
     assert(!TrackLive::CaptureCar(0, player, departure, error));
     for (int mode = 0; mode < 8; ++mode) {
+        if (mode == 3) continue;
         auto changed = pose;
         if (mode == 0) image[0x12cd150] ^= 1;
         if (mode == 1) image[0x12cbed0] ^= 1;

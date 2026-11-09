@@ -8,13 +8,65 @@ import zipfile
 from build_media import media_catalog
 from repack_media import (bake_default_draw_distances, digest, neutralize_legacy_ao,
                           neutralize_macro_tint, neutralize_pavement_skid,
-                          neutralize_terrain_macro_tint, repair_draw_lods)
+                          neutralize_terrain_macro_tint, repair_draw_lods, guard_marking_normals)
 from fh2_pvs import read_root60, write_root60
 from test_fh2_root import root_fixture
 from test_shader_patch import container, instructions, skid_reflection, RET, SAMPLE
 
 
 class RepackShaderTests(unittest.TestCase):
+    def test_marking_normal_guard_selects_only_normal_lighting_programs(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            source, output = Path(temporary) / "source", Path(temporary) / "output"
+            root = source / "mediaoverride" / "tracks" / "TopGearCPS"
+            root.mkdir(parents=True)
+            square_root = [75 | (5 << 24), 0x00100082, 2, 0x0010003A, 2]
+            normal = SAMPLE.copy()
+            normal[6] = 18
+            original = container(normal + square_root + [RET],
+                                 reflection=skid_reflection(18, b"Ch5RoadLinesNormalTextureTexture"))
+            members = {
+                "Shaders/test/roadlinedecal%s.%s.pso" % (scenario, platform): original
+                for scenario in ("TrackLightScenario", "DebugLightingLightScenario")
+                for platform in ("pc", "durango")}
+            for name in ("roadlinedecalCubemapLightScenario.pc.pso",
+                         "roadlinedecalShadowDepthLightScenario.pc.pso",
+                         "roadlinedecalTrackLightScenario.pc.vso", "road_basicTrackLightScenario.pc.pso"):
+                members["Shaders/test/" + name] = b"untouched"
+            members["Materials/paint.materialbin"] = b"authored paint"
+            path = root / "bin.zip"
+            with zipfile.ZipFile(path, "w") as archive:
+                for name, data in members.items():
+                    archive.writestr(name, data)
+            inventory = [{"path": str(path.relative_to(source)),
+                          "media_path": "tracks\\TopGearCPS\\bin.zip",
+                          "bytes": path.stat().st_size, "sha256": digest(path)}]
+            catalog = source / "media.catalog"
+            catalog.write_bytes(media_catalog("TopGearCPS", inventory))
+            report = {"catalog_name": catalog.name, "catalog_sha256": digest(catalog),
+                      "media_name": "TopGearCPS", "override_relative_path": str(root.relative_to(source)),
+                      "files": inventory, "repaired_topgear_runway_markings": {"draws": 32}}
+            (source / "media.json").write_text(json.dumps(report))
+            hashes = {p: digest(p) for p in source.rglob("*") if p.is_file()}
+            result = guard_marking_normals(source, output)
+            self.assertEqual(result["guarded_marking_normals"], {"programs": 4, "normal_sqrt_guards": 4})
+            self.assertEqual(result["repaired_topgear_runway_markings"], {"draws": 32})
+            with zipfile.ZipFile(output / path.relative_to(source)) as archive:
+                self.assertEqual(archive.namelist(), list(members))
+                for name, data in members.items():
+                    patched = archive.read(name)
+                    if data != original:
+                        self.assertEqual(patched, data)
+                    else:
+                        code = instructions(patched)
+                        self.assertEqual(code[:len(normal)], normal)
+                        self.assertEqual(code[len(normal)] & 0x7FF, 52)
+                        self.assertEqual(code[len(normal) + 7:], square_root + [RET])
+            self.assertEqual(hashes, {p: digest(p) for p in hashes})
+            self.assertEqual(result["catalog_sha256"], digest(output / catalog.name))
+            with self.assertRaisesRegex(ValueError, "already have"):
+                guard_marking_normals(output, Path(temporary) / "repeat")
+
     def test_pavement_skid_covers_all_families_scenarios_and_platforms(self):
         with tempfile.TemporaryDirectory() as temporary:
             source, output = Path(temporary) / "source", Path(temporary) / "output"

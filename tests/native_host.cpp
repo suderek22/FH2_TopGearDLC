@@ -1,4 +1,4 @@
-﻿#include "..\..\CarPackStudio\native\include\fh2mod.h"
+﻿#include "..\..\FH2-Mod-Platform\include\fh2mod.h"
 #include <windows.h>
 #include <cassert>
 #include <cstdio>
@@ -8,11 +8,35 @@
 static std::map<std::string, FH2CommandFn> commands;
 static int handle;
 static unsigned files, sqlCalls, clears;
+static std::map<std::string, std::string> published;
+static bool catalogTest;
+static const void* runtimeOwner;
+static unsigned registrations;
 static HANDLE startupFailed;
 static HANDLE codeRequested;
+static FH2Page browserPage = {};
+static std::map<int, int> browserSlots;
+static std::string browserContent;
+static int AddPage(FH2Mod*, const FH2Page* page) {
+    assert(!strcmp(page->key, "Tracks") && !strcmp(page->tile, "IslandFeatured"));
+    assert(!strcmp(page->tab_title, "DLC") && page->size == sizeof *page);
+    browserPage = *page;
+    return 1;
+}
+static int SetXaml(FH2Mod*, const char* key, const char* resources, const char* content, const char*) {
+    assert(!strcmp(key, "Tracks") && strstr(resources, "TrackLoader_Thumbnail"));
+    browserContent = content;
+    assert(browserContent.find("Storm Island") < browserContent.find("Top Gear"));
+    assert(strstr(content, "x:Name=\"FirstItem\"") && strstr(content, "Mode=TwoWay"));
+    return 1;
+}
+static int SetSlot(FH2Mod*, const char*, int slot, int value) { browserSlots[slot] = value; return 1; }
+static int GetSlot(FH2Mod*, const char*, int slot) { return browserSlots[slot]; }
+static int TileText(FH2Mod*, const char*, const char*) { return 1; }
 static FH2Mod* Register(const FH2ModInfo* info) {
-    assert(!strcmp(info->name, "TrackLoaderCPS"));
+    assert(!strcmp(info->name, "TrackLoaderCPS") || !strcmp(info->name, "TrackLoader"));
     assert(info->offline_only == 1);
+    ++registrations;
     return reinterpret_cast<FH2Mod*>(&handle);
 }
 static void Log(FH2Mod*, const char* line) {
@@ -22,14 +46,16 @@ static void Log(FH2Mod*, const char* line) {
 static int SetFile(FH2Mod*, const char* path, const void* data, size_t size) {
     assert(WaitForSingleObject(codeRequested, 10000) == WAIT_OBJECT_0);
     assert(data && size);
-    assert(!strncmp(path, "tracks\\TopGearCPS\\", 18) ||
+    assert(catalogTest || !strncmp(path, "tracks\\TopGearCPS\\", 18) ||
            !strcmp(path, "stateflow\\trackloadercps.xml") ||
            !strncmp(path, "EntityModel\\entities_trackloadercps_", 35));
     ++files;
+    assert(published.emplace(path, std::string(static_cast<const char*>(data), size)).second);
     return 1;
 }
 static void ClearFile(FH2Mod*, const char* path) {
-    assert(!strncmp(path, "tracks\\TopGearCPS\\", 18));
+    assert(catalogTest || !strncmp(path, "tracks\\TopGearCPS\\", 18));
+    published.erase(path);
     ++clears;
 }
 static void Sql(FH2Mod*, const char* text) {
@@ -40,7 +66,14 @@ static void Sql(FH2Mod*, const char* text) {
 }
 static int WaitMods(uint32_t) { return 0; }
 static void ApplyDatabase(FH2Mod*) { assert(false); }
-static const void* Interface(const char*, uint32_t) { assert(false); return nullptr; }
+static const void* Interface(const char* name, uint32_t version) {
+    assert(!strcmp(name, "TrackLoader.RuntimeOwner") && version == 1);
+    return runtimeOwner;
+}
+static void PublishInterface(FH2Mod*, const char* name, uint32_t version, const void* value) {
+    assert(!strcmp(name, "TrackLoader.RuntimeOwner") && version == 1 && value && !runtimeOwner);
+    runtimeOwner = value;
+}
 static void* WaitCode(uint32_t) {
     assert(codeRequested);
     SetEvent(codeRequested);
@@ -58,12 +91,14 @@ static std::string Call(const char* command, const char* args) {
     return reply;
 }
 int wmain(int argc, wchar_t** argv) {
-    bool experimental = argc == 4 && !wcscmp(argv[3], L"experimental");
+    setvbuf(stdout, nullptr, _IONBF, 0);
+    catalogTest = argc >= 5 && !wcscmp(argv[3], L"catalog");
+    bool experimental = catalogTest || (argc == 4 && !wcscmp(argv[3], L"experimental"));
     bool disarmed = argc == 4 && !wcscmp(argv[3], L"disarmed");
     assert(argc == 3 || experimental || disarmed);
     if (disarmed) {
         std::wstring manifest = std::wstring(argv[2]) + L"\\fh2-mods\\TrackPacks\\TopGear\\track.ini";
-        assert(WritePrivateProfileStringW(L"Experimental", L"SessionOnly", L"0", manifest.c_str()));
+        assert(WritePrivateProfileStringW(L"Experimental", L"Enabled", L"0", manifest.c_str()));
     }
     HMODULE module = LoadLibraryW(argv[1]);
     assert(module);
@@ -77,6 +112,11 @@ int wmain(int argc, wchar_t** argv) {
     api.register_mod = Register;
     api.log = Log;
     api.add_command = AddCommand;
+    api.add_page = AddPage;
+    api.set_page_xaml = SetXaml;
+    api.get_page_slot = GetSlot;
+    api.set_page_slot = SetSlot;
+    api.set_page_tile_text = TileText;
     if (experimental || disarmed) {
         startupFailed = CreateEventW(nullptr, TRUE, FALSE, nullptr);
         assert(startupFailed);
@@ -101,15 +141,26 @@ int wmain(int argc, wchar_t** argv) {
         api.wait_for_mods = WaitMods;
         api.apply_database = ApplyDatabase;
         api.get_interface = Interface;
+        api.publish_interface = PublishInterface;
         api.wait_for_code = WaitCode;
         api.set_notice = Notice;
     }
     assert(init(&api) == 0);
     assert(commands.size() == 5);
+    assert(browserPage.on_open && browserPage.on_button && browserPage.tile_title && browserPage.on_tile);
+    browserPage.on_open(nullptr, "Tracks");
+    assert(browserSlots[1] == 0);
+    assert(browserPage.on_button(nullptr, "Tracks", FH2_BUTTON_B) == FH2_PAGE_IGNORED);
+    browserPage.on_button(nullptr, "Tracks", FH2_BUTTON_A);
+    assert(browserSlots[2] == 2);  // No native map in this host: fail closed rather than travel.
+    browserPage.on_button(nullptr, "Tracks", FH2_BUTTON_RB);
+    assert(browserSlots[0] == (catalogTest && _wtoi(argv[4]) == 0 ? 0 : 1));
+    browserPage.on_button(nullptr, "Tracks", FH2_BUTTON_LB);
+    assert(browserSlots[0] == 0);
     if (disarmed) {
         assert(files == 0 && sqlCalls == 0);
         assert(WaitForSingleObject(codeRequested, 0) == WAIT_TIMEOUT);
-        assert(Call("list", "").find("One-shot test consumed") != std::string::npos);
+        assert(Call("list", "").find("Track activation disabled") != std::string::npos);
         assert(Call("status", "").find("registered_tracks=0") != std::string::npos);
         assert(Call("travel", "10000").find("error:") == 0);
         assert(Call("return", "").find("error:") == 0);
@@ -123,10 +174,38 @@ int wmain(int argc, wchar_t** argv) {
         assert(WaitForSingleObject(startupFailed, 10000) == WAIT_OBJECT_0);
         assert(WaitForSingleObject(codeRequested, 0) == WAIT_OBJECT_0);
         printf("host: files=%u clears=%u\n", files, clears);
+        if (catalogTest) {
+            unsigned expected = static_cast<unsigned>(_wtoi(argv[4]));
+            assert(files == expected * 8 && sqlCalls == expected);
+            assert(published.size() == files);
+            assert(Call("status", "").find("reserved_tracks=" + std::to_string(expected)) != std::string::npos);
+            if (expected == 2) {
+                assert(published.count("stateflow\\trackloadercps.xml"));
+                assert(published.count("stateflow\\trackloadercps_10001.xml"));
+                assert(Call("pack", "10000").find("lifecycle=trackloadercps arrival=1.000000,2.000000,3.000000")
+                       != std::string::npos);
+                assert(Call("pack", "10001").find("lifecycle=trackloadercps_10001 arrival=10.000000,20.000000,30.000000")
+                       != std::string::npos);
+            }
+            assert(Call("travel", "10000").find("error:") == 0);
+            assert(Call("travel", "10001").find("error:") == 0);
+            if (argc == 6) {
+                HMODULE second = LoadLibraryW(argv[5]);
+                assert(second);
+                auto secondInit = reinterpret_cast<Init>(GetProcAddress(second, "fh2mod_init"));
+                assert(secondInit && secondInit(&api) == 0);
+                assert(registrations == 2 && files == expected * 8 && sqlCalls == expected);
+                assert(commands.size() == 5 && published.size() == files);
+                puts("Mixed variants refused before a second file/SQL/hook publication.");
+                FreeLibrary(second);
+            }
+            puts("Catalog host passed: isolated overrides/SQL/arrival; failed native startup refuses travel.");
+            return 0;
+        }
         assert(files == 22 && sqlCalls == 1);
         assert(GetFileAttributesW((std::wstring(api.game_dir) +
             L"\\media\\tracks\\TopGearCPS").c_str()) == INVALID_FILE_ATTRIBUTES);
-        assert(Call("list", "").find("10000 Top Gear (CPS) [session-only test]") != std::string::npos);
+        assert(Call("list", "").find("10000 Top Gear (CPS) [experimental]") != std::string::npos);
         assert(Call("pack", "10000").find("registration=pending-or-failed") != std::string::npos);
         assert(Call("status", "").find("experimental native startup failed") != std::string::npos);
         assert(Call("travel", "10000").find("error:") == 0);
