@@ -103,6 +103,96 @@ def track_settings(source_data, native_data):
                   "adapted_fields": ["FileChunkSize"], "source_version": 81, "target_version": 83}
 
 
+def apply_lighting_fog(data, ambient_scale=1.0, direct_scale=1.0,
+                       fog_density_scale=1.0, fog_distance_scale=1.0):
+    scales = {
+        "ambient_scale": ambient_scale,
+        "direct_scale": direct_scale,
+        "fog_density_scale": fog_density_scale,
+        "fog_distance_scale": fog_distance_scale,
+    }
+    for name, value in scales.items():
+        if (isinstance(value, bool) or not isinstance(value, (int, float)) or
+                not math.isfinite(value) or value < 0 or value > 4):
+            raise ValueError("Invalid lighting/fog scale: " + name)
+
+    if all(value == 1.0 for value in scales.values()):
+        root = ET.fromstring(data)
+        fog = root.find("Fog")
+        active = []
+        if fog is not None:
+            active = [settings.tag for settings in fog
+                      if re.fullmatch(r"Settings\d+", settings.tag) and
+                      settings.find("Enabled") is not None and
+                      settings.find("Enabled").get("value") == "1"]
+        return data, {
+            "ambient_scale": 1.0, "direct_scale": 1.0,
+            "fog_far_density_scale": 1.0, "fog_far_distance_scale": 1.0,
+            "active_fog_settings": active,
+        }
+
+    root = ET.fromstring(data)
+    lighting = (
+        (ambient_scale, "LightAmbient", ("r", "g", "b")),
+        (direct_scale, "SHLighting", ("SHDirRed", "SHDirGreen", "SHDirBlue")),
+    )
+    for scale, element_name, attributes in lighting:
+        if scale == 1.0:
+            continue
+        element = root.find(element_name)
+        if element is None:
+            raise ValueError("Track settings lack lighting controls: " + element_name)
+        for attribute in attributes:
+            try:
+                value = float(element.attrib[attribute])
+            except (KeyError, ValueError) as error:
+                raise ValueError("Invalid lighting value: " + attribute) from error
+            if not math.isfinite(value) or value < 0:
+                raise ValueError("Invalid lighting value: " + attribute)
+            element.set(attribute, format(value * scale, ".6f"))
+
+    fog = root.find("Fog")
+    active = []
+    if fog_density_scale != 1.0 or fog_distance_scale != 1.0:
+        if fog is None:
+            raise ValueError("Track settings lack fog controls")
+        for settings in fog:
+            if not re.fullmatch(r"Settings\d+", settings.tag):
+                continue
+            enabled = settings.find("Enabled")
+            if enabled is None or enabled.get("value") != "1":
+                continue
+            far = settings.find("Far")
+            density = settings.find("FarDensity")
+            if far is None or density is None:
+                raise ValueError("Active fog settings lack Far or FarDensity")
+            try:
+                far_value = float(far.attrib["value"])
+                density_value = float(density.attrib["value"])
+            except (KeyError, ValueError) as error:
+                raise ValueError("Invalid active fog settings") from error
+            new_far = far_value * fog_distance_scale
+            new_density = density_value * fog_density_scale
+            if (not math.isfinite(far_value) or far_value <= 0 or
+                    not math.isfinite(density_value) or density_value < 0 or
+                    not math.isfinite(new_far) or new_far <= 0 or
+                    not math.isfinite(new_density) or new_density > 1):
+                raise ValueError("Lighting/fog profile exceeds supported fog ranges")
+            far.set("value", format(new_far, ".6f"))
+            density.set("value", format(new_density, ".6f"))
+            active.append(settings.tag)
+    if (fog_density_scale != 1.0 or fog_distance_scale != 1.0) and not active:
+        raise ValueError("Track settings contain no enabled directional fog settings")
+
+    return ET.tostring(root, encoding="utf-8", xml_declaration=True), {
+        "ambient_scale": float(ambient_scale),
+        "direct_scale": float(direct_scale),
+        "fog_far_density_scale": float(fog_density_scale),
+        "fog_far_distance_scale": float(fog_distance_scale),
+        "active_fog_settings": active,
+    }
+
+
 def locators(data):
     root = ET.fromstring(data)
     if root.tag != "TrackLocators" or root.attrib != {"Version": "2"} or not len(root):
@@ -177,13 +267,17 @@ def collision_arrival(world, locator):
             "candidate_clearance": 0.8, "engine_arrival_validated": False}
 
 
-def build(source_directory, native_settings, physics, output, static_test=False):
+def build(source_directory, native_settings, physics, output, static_test=False,
+          ambient_scale=1.0, direct_scale=1.0,
+          fog_density_scale=1.0, fog_distance_scale=1.0):
     source_directory, physics, output = [Path(value).resolve() for value in (source_directory, physics, output)]
     if output.exists():
         raise ValueError("Choose a new environment component directory: " + str(output))
     source_settings = (source_directory / "TrackSettings.xml").read_bytes()
     native_data = Path(native_settings).read_bytes()
     settings, settings_report = track_settings(source_settings, native_data)
+    settings, lighting_fog = apply_lighting_fog(
+        settings, ambient_scale, direct_scale, fog_density_scale, fog_distance_scale)
     locator_data = (source_directory / "ribbon_00" / "Locators.xml").read_bytes()
     locator_rows = locators(locator_data)
     selected = [row for row in locator_rows if row["name"] == "321Root"]
@@ -220,7 +314,8 @@ def build(source_directory, native_settings, physics, output, static_test=False)
         "source_collision_sha256": hashlib.sha256(collision_data).hexdigest(),
         "source_settings_sha256": hashlib.sha256(source_settings).hexdigest(),
         "native_settings_sha256": hashlib.sha256(native_data).hexdigest(),
-        "settings": settings_report, "locator_count": len(locator_rows),
+        "settings": settings_report, "lighting_fog": lighting_fog,
+        "locator_count": len(locator_rows),
         "source_locator_bytes_preserved": True, "arrival": spawn, "files": inventory,
         "remaining": [
             "Native v83 settings retain source v81 field values after recursive schema checking; rendering still needs engine validation.",
@@ -249,9 +344,19 @@ def main():
         parser.add_argument("--" + name, type=Path, required=True)
     parser.add_argument("--static-test", action="store_true",
                         help="Explicitly omit movable props; retain streamed road/ground collision")
+    parser.add_argument("--ambient-scale", type=float, default=1.0,
+                        help="Scale RGB ambient track lighting (per environment)")
+    parser.add_argument("--direct-scale", type=float, default=1.0,
+                        help="Scale SH directional track lighting (per environment)")
+    parser.add_argument("--fog-density-scale", type=float, default=1.0,
+                        help="Scale enabled directional fog FarDensity values (per environment)")
+    parser.add_argument("--fog-distance-scale", type=float, default=1.0,
+                        help="Scale enabled directional fog Far distances (per environment)")
     args = parser.parse_args()
     try:
-        report = build(args.source, args.native_settings, args.physics, args.output, args.static_test)
+        report = build(args.source, args.native_settings, args.physics, args.output, args.static_test,
+                       args.ambient_scale, args.direct_scale,
+                       args.fog_density_scale, args.fog_distance_scale)
     except (OSError, ValueError, KeyError, ET.ParseError) as error:
         print("error: " + str(error), file=sys.stderr)
         return 1

@@ -225,10 +225,12 @@ flowchart TB
     LEASE["Acquire exclusive native-tick lease; hold save gate"]
     ENTERING["Driver Entering: scoped SwapTrack + entry flow"]
     ENTERCHECK{"Actual target settled + one swap/restore + owned flow complete?"}
+    PRESET["Apply configured time/weather after verified custom entry"]
     DRIVING["Driver Driving: original input poll allowed"]
     RETURNREQUEST["Request return; no direct custom-to-custom swap"]
-    RETURNING["Driver Returning: native mainland staging + dedicated resume"]
+    RETURNING["Release preset; native mainland staging + dedicated resume"]
     RETURNCHECK{"542 + Airport within 0.25 m + valid pose + owners/jobs verified?"}
+    RESTORE["Restore captured pre-entry time/weather"]
     SAVING{"RestoreSavingOnReturn opted in?"}
     RELEASE["Release save protection and dispatch lease"]
     KEEP["Keep save protection; release dispatch lease"]
@@ -249,10 +251,10 @@ flowchart TB
     CHECK -- no --> READY
     CHECK -- yes --> PIN --> LEASE --> ENTERING --> ENTERCHECK
     ENTERCHECK -- not yet --> ENTERING
-    ENTERCHECK -- yes --> DRIVING --> RETURNREQUEST --> RETURNING
+    ENTERCHECK -- yes --> PRESET --> DRIVING --> RETURNREQUEST --> RETURNING
     RETURNING --> RETURNCHECK
     RETURNCHECK -- not yet --> RETURNING
-    RETURNCHECK -- yes --> SAVING
+    RETURNCHECK -- yes --> RESTORE --> SAVING
     SAVING -- yes --> RELEASE --> READY
     SAVING -- no --> KEEP --> READY
     VALIDATE -. failure .-> FAILED

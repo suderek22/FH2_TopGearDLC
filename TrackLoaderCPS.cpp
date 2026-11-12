@@ -10,6 +10,7 @@
 #include <vector>
 #include "track_media.h"
 #include "track_session.h"
+#include "track_time_weather.h"
 #ifdef TRACKLOADER_STANDALONE
 #include "track_standalone.h"
 #endif
@@ -40,6 +41,9 @@ struct Track {
     TrackPose::Pose arrival = {};
     TrackLifecycle::Names lifecycle;
     bool restoreSavingOnReturn = false;
+    bool saveDuringVisit = false;
+    TrackTimeWeather::Preset timeWeather;
+    TrackPauseMap::Preset pauseMap;
     std::wstring manifest;
 };
 static const FH2ModApi* g_api;
@@ -172,7 +176,8 @@ static int BrowserButton(void*, const char*, int button) {
                 for (const auto& track : g_tracks)
                     if (track.id == item.id && track.experimental) {
                         queued = session && session->QueueEntry(track.id, track.arrival, track.lifecycle,
-                                                               track.restoreSavingOnReturn, error);
+                                                               track.restoreSavingOnReturn, track.timeWeather,
+                                                               track.pauseMap, error, track.saveDuringVisit);
                         if (!session) error = "native track runtime is unavailable";
                         break;
                     }
@@ -225,7 +230,7 @@ static void RegisterBrowser(const std::wstring& mods) {
     page.on_tile = BrowserTile;
     if (!g_api->add_page(g_mod, &page) ||
         !g_api->set_page_xaml(g_mod, "Tracks", TrackBrowser::Resources().c_str(),
-                              TrackBrowser::Content(g_browser).c_str(), nullptr)) {
+                              TrackBrowser::Content(g_browser).c_str(), TrackBrowser::Help().c_str())) {
         Log("error: could not register Tracks browser; native page unavailable");
         return;
     }
@@ -249,6 +254,53 @@ static bool Vector(const wchar_t* text, float* output) {
         text = end + 1;
     }
     return true;
+}
+static bool ReadTimeWeather(const std::wstring& manifest, TrackTimeWeather::Preset& preset,
+                            std::string& error) {
+    wchar_t enabled[16] = L"0", hours[32] = {}, freeze[16] = {},
+            atmosphere[16] = {}, rain[16] = {}, environment[16] = {};
+    GetPrivateProfileStringW(L"TimeWeather", L"Enabled", L"0", enabled, 16, manifest.c_str());
+    GetPrivateProfileStringW(L"TimeWeather", L"TimeHours", L"", hours, 32, manifest.c_str());
+    GetPrivateProfileStringW(L"TimeWeather", L"Freeze", L"", freeze, 16, manifest.c_str());
+    GetPrivateProfileStringW(L"TimeWeather", L"Atmosphere", L"", atmosphere, 16, manifest.c_str());
+    GetPrivateProfileStringW(L"TimeWeather", L"Rain", L"", rain, 16, manifest.c_str());
+    GetPrivateProfileStringW(L"TimeWeather", L"Environment", L"", environment, 16, manifest.c_str());
+    return TrackTimeWeather::ParsePreset(enabled, hours, freeze, atmosphere, rain, environment,
+                                         preset, error);
+}
+// Optional [PauseMap]: <pack>\map\pausemap.swatchbin (low tile) and map\pausemap-high.bin (4x7 high
+// tiles, concatenated row-major) replace the pause and full-screen map backgrounds while on track.
+static bool g_pauseMapPublished = false;
+static void ReadPauseMap(const std::wstring& manifest, int id, TrackPauseMap::Preset& preset) {
+    preset = {};
+    wchar_t enabled[16] = {}, size[32] = {}, x[32] = {}, z[32] = {};
+    GetPrivateProfileStringW(L"PauseMap", L"Enabled", L"0", enabled, 16, manifest.c_str());
+    if (!wcscmp(enabled, L"0")) return;
+    GetPrivateProfileStringW(L"PauseMap", L"Size", L"", size, 32, manifest.c_str());
+    GetPrivateProfileStringW(L"PauseMap", L"OffsetX", L"", x, 32, manifest.c_str());
+    GetPrivateProfileStringW(L"PauseMap", L"OffsetZ", L"", z, 32, manifest.c_str());
+    TrackPauseMap::Preset parsed;
+    parsed.enabled = true;
+    std::string error;
+    const auto slash = manifest.find_last_of(L'\\');
+    if (wcscmp(enabled, L"1") || !TrackTimeWeather::ParseFloat(size, parsed.size) ||
+        !TrackTimeWeather::ParseFloat(x, parsed.offsetX) || !TrackTimeWeather::ParseFloat(z, parsed.offsetZ) ||
+        !parsed.Valid()) {
+        error = "PauseMap needs Enabled=1 and Size (100-12000), OffsetX, OffsetZ";
+    } else if (g_pauseMapPublished) {
+        error = "only one track may replace the pause map background";
+    } else if (slash == std::wstring::npos ||
+               !TrackPauseMap::Publish(g_api, g_mod, manifest.substr(0, slash) + L"\\map\\pausemap.swatchbin",
+                                       ManifestText(manifest, L"PauseMap", L"Sha256"),
+                                       manifest.substr(0, slash) + L"\\map\\pausemap-high.bin",
+                                       ManifestText(manifest, L"PauseMap", L"HighSha256"), error)) {
+        if (error.empty()) error = "pause map publication failed";
+    } else {
+        g_pauseMapPublished = true;
+        preset = parsed;
+        return;
+    }
+    Log("error: track " + std::to_string(id) + " pause map disabled: " + error);
 }
 static bool VerifyDatabase(const Track& track, std::string& error) {
     std::wstring path = std::wstring(g_api->game_dir) + L"\\mediaoverride\\stripped\\gamedbRC.slt";
@@ -353,12 +405,12 @@ static DWORD WINAPI StartSession(void*) {
 #endif
     auto driver = g_session.load();
     if (!driver || !driver->Initialize(g_api, g_mod, g_protectedBase, cooperation, first->id, first->arrival, error,
-                                      first->restoreSavingOnReturn, first->lifecycle)) {
+                                      first->restoreSavingOnReturn, first->lifecycle, first->saveDuringVisit)) {
         if (!driver) error = "early native protection driver unavailable";
         Log("error: " + error);
         return 0;
     }
-    g_api->set_notice(g_mod, first->restoreSavingOnReturn ?
+    if (!first->saveDuringVisit) g_api->set_notice(g_mod, first->restoreSavingOnReturn ?
         "Custom tracks: SAVING DISABLED\nSaving resumes after verified mainland return" :
         "Custom tracks: SAVING DISABLED\nDisable track activation and restart to restore saving");
     return 0;
@@ -451,7 +503,8 @@ static void Commands(void*, const char* command, const char* args, char* reply, 
             std::string error;
             result = !session ? "error: experimental native startup is not available" :
                 session->QueueEntry(found->id, found->arrival, found->lifecycle,
-                                    found->restoreSavingOnReturn, error) ?
+                                    found->restoreSavingOnReturn, found->timeWeather, found->pauseMap, error,
+                                    found->saveDuringVisit) ?
                     "native entry queued; saving protected during custom visit" :
                                               "error: " + error;
         } else result = found ? "error: " + found->name + " (" + std::to_string(found->id) +
@@ -501,9 +554,18 @@ static void DiscoverTracks(const std::wstring& root) {
             }
             std::string label = Utf8(name), detail = Utf8(reason);
             bool experimental = !wcscmp(state, L"experimental");
+            TrackTimeWeather::Preset timeWeather;
             if (invalidId || invalidDlc || duplicate || label.empty() || detail.empty() ||
                 (wcscmp(state, L"blocked") && !experimental)) {
                 Log("error: invalid or duplicate diagnostic manifest: " + Utf8(entry.cFileName));
+                continue;
+            }
+            std::string timeWeatherError;
+            if (experimental && !ReadTimeWeather(path, timeWeather, timeWeatherError)) {
+                detail = "invalid time/weather preset: " + timeWeatherError;
+                g_tracks.push_back({id, label, detail, environmentId, mediaName, nullptr, nullptr, false});
+                g_tracks.back().manifest = path;
+                Log("error: track " + std::to_string(id) + ": " + detail);
                 continue;
             }
             std::unique_ptr<TrackMedia::Package> package;
@@ -557,6 +619,7 @@ static void DiscoverTracks(const std::wstring& root) {
             std::unique_ptr<TrackMedia::Package> visit;
             TrackPose::Pose arrival = {};
             bool restoreSavingOnReturn = false;
+            bool saveDuringVisit = false;
             std::string visitDigest;
             if (experimental) {
                 wchar_t sessionOnly[16] = {}, visitDirectory[80] = {}, visitHash[80] = {},
@@ -576,15 +639,17 @@ static void DiscoverTracks(const std::wstring& root) {
                     continue;
                 }
                 arrival.position[3] = 1;
-                wchar_t restore[16] = {};
+                wchar_t restore[16] = {}, duringVisit[16] = {};
                 GetPrivateProfileStringW(L"Experimental", L"RestoreSavingOnReturn", L"0", restore, 16, path.c_str());
+                GetPrivateProfileStringW(L"Experimental", L"SaveDuringVisit", L"0", duringVisit, 16, path.c_str());
                 std::string error;
                 bool valid = localDlc && package && !wcscmp(sessionOnly, L"1") &&
                     !wcscmp(visitDirectory, L"visit") && Vector(position, arrival.position) &&
                     Vector(facing, arrival.facing) && TrackPose::Valid(arrival) &&
                     g_api->wait_for_mods && g_api->get_interface && g_api->wait_for_code &&
                     g_api->add_sql && g_api->apply_database && g_api->set_notice;
-                valid = valid && (!wcscmp(restore, L"0") || !wcscmp(restore, L"1"));
+                valid = valid && (!wcscmp(restore, L"0") || !wcscmp(restore, L"1")) &&
+                    (!wcscmp(duringVisit, L"0") || !wcscmp(duringVisit, L"1"));
                 visitDigest = Utf8(visitHash);
                 for (const auto& track : g_tracks) {
                     if (track.experimental && track.lifecycle.group == lifecycle.group) {
@@ -614,8 +679,11 @@ static void DiscoverTracks(const std::wstring& root) {
                 std::string statements(static_cast<const char*>(sql.data), sql.size);
                 g_api->add_sql(g_mod, statements.c_str());
                 if (!g_experimentalId) g_experimentalId = id;
-                restoreSavingOnReturn = !wcscmp(restore, L"1");
-                if (restoreSavingOnReturn)
+                saveDuringVisit = !wcscmp(duringVisit, L"1");
+                restoreSavingOnReturn = saveDuringVisit || !wcscmp(restore, L"1");
+                if (saveDuringVisit)
+                    Log("native saving stays enabled, including on this track; track saves are rewritten to resume at the mainland Airport");
+                else if (restoreSavingOnReturn)
                     Log("warning: saving resumes after verified mainland return; career/profile changes are NOT audited (explicit pack opt-in)");
             }
             g_tracks.push_back({id, label, detail, environmentId, mediaName, std::move(package), std::move(visit), experimental});
@@ -623,7 +691,10 @@ static void DiscoverTracks(const std::wstring& root) {
             added.arrival = arrival;
             added.lifecycle = lifecycle;
             added.restoreSavingOnReturn = restoreSavingOnReturn;
+            added.saveDuringVisit = saveDuringVisit;
+            added.timeWeather = timeWeather;
             added.manifest = path;
+            if (experimental && added.media) ReadPauseMap(path, id, added.pauseMap);
             Log("reserved track " + std::to_string(id) + ": " + label +
                 (experimental ? "; experimental: " : "; blocked: ") + detail);
         } while (FindNextFileW(search, &entry));
@@ -641,7 +712,7 @@ FH2MOD_EXPORT int fh2mod_init(const FH2ModApi* api) {
     FH2ModInfo info = {};
     info.size = sizeof info;
     info.name = ModName;
-    info.version = "0.6.0-dev";
+    info.version = "0.6.0-dev-beta3";
     info.platform_version = "2.8.0";
     info.description = "Persistent experimental multi-map travel with verified mainland return.";
     info.offline_only = 1;
@@ -663,6 +734,13 @@ FH2MOD_EXPORT int fh2mod_init(const FH2ModApi* api) {
     const std::wstring mods = std::wstring(api->azimuth_dir) + L"\\fh2-mods";
     DiscoverTracks(mods + L"\\CustomTracks");
     DiscoverTracks(mods + L"\\TrackPacks");
+    for (const auto& track : g_tracks) {
+        if (!track.experimental || !track.saveDuringVisit) continue;
+        if (!api->request_save_snapshot ||
+            !api->request_save_snapshot(g_mod, "TrackLoader keeps native saving on during custom track visits", 3))
+            Log("warning: no save snapshot will be taken this session (see platform log)");
+        break;
+    }
     RegisterBrowser(mods);
     if (!api->add_command(g_mod, "list", "staged custom tracks and compatibility blockers", Commands, nullptr))
         Log("error: could not register list command");

@@ -127,6 +127,9 @@ def flow(media_name):
     node(resume, "global.reset_camera_to_player")
     node(resume, "global.enable_track_streaming")
     node(resume, "global.wait_for_streaming_around_local_human_car")
+    # Like stock fast travel and free_roam_start.finalise_free_roam_offline: the visit switched
+    # spawning off, so turn traffic/drivatars back on once the world around the car is streamed.
+    node(resume, "global.ai_spawning_enable_immediate")
     node(resume, "global.clear_mulligan_key_frames", start_recording_replay="false")
     node(resume, "global.start_time")
     node(resume, "global.unpause_weather")
@@ -301,7 +304,7 @@ def build(stateflow, entitymodel, output, media_name="TopGearCPS", lifecycle_nam
         "return_startup": GROUP + ".resume_mainland",
         "return_route_group": MAINLAND_FILE,
         "stock_mainland_startup_used": False,
-        "return_ai_enabled": False, "mulligan_recording_enabled": False,
+        "return_ai_enabled": True, "mulligan_recording_enabled": False,
         "required_runtime": [
             "Verify native save hooks and hold the save gate before dispatch; keep it held after flow abort.",
             "Capture live mainland facing and retain profile ownership; native return stages Mainland career location.",

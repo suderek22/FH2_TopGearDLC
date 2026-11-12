@@ -10,6 +10,24 @@ NAV_LINKS = ((0, 0, 3), (0, 8, 4), (1, 0, 2), (1, 8, 4),
 FIRST_TEST_PROPERTIES = {"ai_disabled": "true", "display_name": "Top Gear (CPS)",
                          "profile_name": "none_10000", "road_type": "none",
                          "traffic_density_name": "none", "traffic_disabled": "true"}
+# MapProfileHud*.xml draw nav roads only for these road_type values ("none" is not drawn).
+HUD_ROAD_TYPES = ("none", "dirt", "b", "a", "freeway")
+
+
+def road_properties(road_type="none"):
+    if road_type not in HUD_ROAD_TYPES:
+        raise ValueError("Unsupported custom navigation road_type: " + str(road_type))
+    return dict(FIRST_TEST_PROPERTIES, road_type=road_type)
+
+
+def fm5_route_positions(positions):
+    """FM5 Track.geo stores route points as (x, z, height); FH2 NAVW uses world (x, y, z)."""
+    return [[float(p[0]), float(p[2]), float(p[1])] for p in positions]
+
+
+def grid_covers(grid, points):
+    size, cells = grid["cell_size"], {tuple(row) for row in grid["coordinates"]}
+    return all((math.floor(p[0] / size), math.floor(p[2] / size)) in cells for p in points)
 
 
 def envelope(data, magic, version):
@@ -123,11 +141,11 @@ def write_owwf(world):
     return result
 
 
-def closed_road(positions, stamp):
+def closed_road(positions, stamp, road_type="none"):
     if not 2 <= len(positions) <= 1000000 or any(
             len(row) != 3 or any(not math.isfinite(value) for value in row) for row in positions):
         raise ValueError("Invalid custom navigation road positions")
-    properties = FIRST_TEST_PROPERTIES
+    properties = road_properties(road_type)
     names, values = sorted(properties), sorted(set(properties.values()))
 
     def strings(rows):
@@ -157,11 +175,11 @@ def closed_road(positions, stamp):
     struct.pack_into("<9i", header, 72, *counts)
     world = {"stamp": stamp, "header": header.hex(), "counts": counts,
              "tables": [{"data": bytes(row).hex(), "padding": bytes((-len(row)) % 16).hex()} for row in data]}
-    validate_closed_road(world, positions)
+    validate_closed_road(world, positions, road_type)
     return world
 
 
-def validate_closed_road(world, positions):
+def validate_closed_road(world, positions, road_type=None):
     tables = [bytes.fromhex(row["data"]) for row in world["tables"]]
     count = len(positions)
     if world["counts"][:4] != [count, 1, count + 1, count + 1]:
@@ -186,7 +204,9 @@ def validate_closed_road(world, positions):
         if not 0 <= name < len(names) or not 0 <= value < len(values) or names[name] in properties:
             raise ValueError("Invalid custom navigation road property")
         properties[names[name]] = values[value]
-    if properties != FIRST_TEST_PROPERTIES:
+    if road_type is None:
+        road_type = properties.get("road_type")
+    if road_type not in HUD_ROAD_TYPES or properties != road_properties(road_type):
         raise ValueError("Custom navigation road does not preserve disabled AI/traffic metadata")
     seen = set()
     for index, position in enumerate(positions):

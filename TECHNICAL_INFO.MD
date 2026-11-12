@@ -75,6 +75,13 @@ Some persisted builder reports still contain `engine_validated=false`,
 conservative build-time reports, not a live certification database. Do not edit
 them to manufacture success or treat their old prose as the current runtime state.
 The older [README history](README.txt) also contains explicitly superseded stages.
+Generated component provenance in `media.json` and `session.json` uses component
+directory names, not machine-specific absolute paths; these fields are reports,
+not runtime path configuration.
+Top Gear's generated manifest also carries an optional entry time/weather preset.
+The driver applies it only after verified custom-track arrival and restores the
+captured mainland values after verified return; this live override is separate
+from static environment conversion and does not add clouds or weather assets.
 
 ## 2. Source, destination, and identities
 
@@ -423,6 +430,36 @@ This follows the actual zero-count reader path. It does not fabricate a version
 or transplant unrelated stock dynamic-object definitions. Ground/road collision
 remains present; visual cones/barrels do not thereby gain movable-prop physics.
 
+### Cone-free movable-prop test profile
+
+`build_prop_test.py` derives a separate test pack from the static-only pack. It
+matches each `PhysicsType="Cone"` object to its exact source-world draw by
+position, identifies the three cone models (14, 21, 22), then removes all 318
+placements of those models from all 288 native PVS zones. The collision catalog
+contains only 192 cones; another 126 cone visuals lack collision registrations.
+The first test filtered only the 192 registered placements and therefore left
+those 126 cones visible. A guard rejects models shared with retained props.
+The source draw table remains intact so PVS draw indices and root references do
+not shift. It filters cone entries from `ribbon_00\CollObjs.xml`, retains all
+29 other prop registrations, and replaces the eight-byte zero-definition
+catalog with the same-build native FH2 `physicsdefinitions.bin` (270
+definitions). Traffic-sign and pole entries are retained.
+
+The build verifies every cone has exactly one source and converted draw, every
+zone omits all cone draw references, and the media catalog and track metadata
+checksums agree. Native physics is registered, but whether individual props
+collide and break as desired is still an in-game validation requirement; the
+test builder does not claim engine-verified destruction.
+
+```powershell
+python .\build_prop_test.py `
+  --source-track ".\path\to\CustomTracks\TopGear" `
+  --source-objects ".\path\to\Mount\media\tracks\topgear\ribbon_00\CollObjs.xml" `
+  --source-pvs ".\path\to\Mount\media\tracks\topgear\ribbon_00\TopGear_00.pvs" `
+  --physics-definitions ".\path\to\Mount\media\tracks\anthem\physicsdefinitions.bin" `
+  --output ".\work\TopGear-cone-free-test"
+```
+
 ## 8. Archive encoding and mounting
 
 ### GeoChunk PGZP v100 is not an ordinary ZIP
@@ -598,6 +635,18 @@ The initial pass changed 208 programs and 126 baked-shadow samples.
 This intentionally removes that authored baked direct-shadow contribution; it
 does not recreate FM5 lighting exactly.
 
+The FH2 and FM5 Top Gear screenshots expose the visual consequence: the sampled
+FH2 grass/asphalt region is about twice as bright, while sky brightness is much
+closer. This points to ground-light/shadow response rather than fog or global
+exposure. A test-only `--scale-baked-shadow-fallback <0..1> --fm5-bin-zip
+<FM5-TOPGEAR-BIN.ZIP>` pass uses the original FM5 shaders to identify only those
+replaced t3 samples, then scales their full-visibility fallback. This does not
+rebind the original Direct0 lightmap or restore FH2 shadow maps; it is a
+measured diagnostic approximation and requires live review. A value of 0.45
+visibly improved the screenshot, though surfaces remained too bright. The
+visually approved Top Gear brightness target is 0.15; the prior 0.45 package is preserved under
+`CustomTracks\TopGear\shadow-profile-045` for rollback.
+
 Other source input roles include t0/t1 probes, t5 projected shadow, t6 legacy AO,
 material inputs around t16..t22, and packed depth maps at t104.
 Native FH2 uses different terrain-AO/shadow resources, including t107 and
@@ -696,6 +745,294 @@ The initial union had 1,905 textures; 148 group/instance/material dependencies
 were added in v26. Keeping the map resident was user-accepted for this small
 track. It increases memory/VRAM/rendering cost and masks, rather than fixes, the
 unresolved resource eviction/reload/upload problem.
+
+### Conservative performance comparison: resident assets, selective draws
+
+`build_performance_test.py` separates render visibility from that residency
+workaround. All model/texture arrays, quality requests, physics dependencies,
+and non-zone archive payloads remain unchanged. Root draw indices are never
+renumbered, so cone-free visibility stays cone-free.
+
+Only translated draws whose entire linked LOD family fits a conservative 20 m
+sphere qualify. The sphere includes group-center translation and draw-transform
+scale (using the Frobenius norm as a conservative bound). Zero-translation
+world-space meshes and larger scenery are protected. Qualifying draws receive
+a 500 m final cull; the first three bands are preserved except values exceeding
+450 m, which become 450 m. This makes source 0,1,10000,10000 bands reach their
+existing final LOD at 450 m instead of never reaching it on this map.
+Repaired signed LOD metadata and original draw flags are preserved and checked.
+No new mesh LODs or fade shaders are generated.
+
+Zone pruning retains a qualifying draw whenever its placement is within
+500 m + HEXY cell radius + conservative mesh radius of the cell center.
+This avoids center-only pruning that could hide a prop near a cell boundary.
+All protected draws remain in their original zones. Asset dependencies stay
+resident even when no draw of a model is currently visible.
+
+The first cone-free test profile changes 1,344 of 3,249 visible draws; 1,905 are
+protected. Across 288 zones, draw references fall from 935,712 to 608,814
+(about 35%). Individual zone lists contain 1,905-3,082 draws. These are offline
+candidate-list counts, not GPU draw-call counts or an FPS measurement.
+The shaders, accepted 0.15 shadow fallback, time/weather, and prop physics are
+unchanged. Live FPS, distant pop-in, cell crossings, and revisit stability
+still require comparison by the user. Texture eviction/reload remains unresolved.
+
+**User result: rejected.** The 500 m comparison produced visible prop pop-in
+without an observable performance improvement. Its candidate-list reduction is
+not evidence of an FPS improvement. Restore the cone-free pre-performance pack
+for subsequent LOD diagnosis; do not treat this profile as an accepted baseline.
+
+### Aircraft LOD diagnosis
+
+The user observes excessive distant plane detail during ordinary driving as well
+as Photo Mode, with both car and camera far from the plane. Different camera
+modes therefore do not explain the entire observation.
+
+The 747 family is root draw 3166-3169 / model 517,545,937,1153. Embedded model
+names identify LOD0 through LOD3. The four installed model resources are distinct
+and byte-identical to FM5: sizes 425332,257020,169856,99552 bytes, with IndB
+index counts 21486,11874,7500,3858. Their signed sibling offsets are
+00010203,ff000102,feff0001,fdfeff00 and their bands are
+350/550/750/5000 m. The 500 m small-prop test did not touch these plane records.
+Native Anthem comparison confirms that these field layouts, LOD bits, sibling
+patterns, and Modl 1.1 LOD metadata occur in native FH2 assets too.
+This establishes that the lower-detail meshes exist, NOT that live switching
+is working correctly.
+
+Native LOD visibility evaluates distance to an oriented bounding box
+(0x1251FE0), then selects/tests bands in 0x1139200. Main draw processing calls
+that selector at 0x135464A. Draw flag bit 37 bypasses this distance path; it is
+not set in the on-disk plane records. Native zone draw words also carry upper
+bits 30/31, unlike the converted plain indices; their presence alone is not
+proof that they fix LOD switching and they have not been fabricated.
+
+`TRACKLOADER_LOD_DIAGNOSTICS` opts into two log-only instruction probes:
+0x1353A50 records the live plane descriptor, bands, flags and OBB extents;
+0x135464F records the selected band, view/pass, computed distance, and rejection
+result immediately after the native selector. Hooks validate exact instruction
+bytes before registering. Callbacks do not alter registers or scene data.
+Filtering uses the four plane draw IDs and its known OBB center so other loaded
+presentations with coincident draw ordinals are excluded. Sampling is limited
+to once per five seconds per plane/view, with a separate 2048-message budget.
+
+The diagnostic build is temporary and can add callback overhead. Do not compare
+FPS with it enabled. Drive near and far from the plane without Photo Mode first,
+then repeat in Photo Mode if useful. `lod-trace entry` without corresponding
+`selection` samples is meaningful (a skipped path), not proof of working LODs.
+Band 0/1/2/3 is the selected family level; `rejected=1` means that particular
+sibling draw failed the native band/cull test. Read all four siblings together.
+A live trace is still required before assigning the runtime root cause or
+claiming a fix.
+
+First live trace (about 85 s of driving, pass 18): all four siblings reached the
+selector with bypass=0, live bands 350/550/750/5000 and the expected OBB.
+Measured OBB distances were 33-185 m. In every sample, LOD0 was accepted and
+LOD1-3 were rejected, which is correct for those bands. That run never exceeded
+350 m. FM5 AI routes place 13-74% of each layout's waypoints at least 350 m
+from the plane's OBB, with a 403-1209 m maximum. A far-side trace is still needed
+to decide whether LOD1+ is selected.
+
+Second trace: the distance again peaked at 193 m, holding there for about 15 s,
+and LOD0 stayed correct. Disassembly shows the selector input is
+`squared OBB distance * xmm10`. For pass 18, xmm10 is the constant 1.0
+(rdata 0x236358C); passes 0x14/0x15 use per-scene scales, and passes 0-5 use
++0x1B18. The r12b call at 0x13545B3 passes only the final band; the lower
+thresholds become 0. Only pass 18 reached the hooked full-band site. Diagnostic
+v2 also hooks 0x13545B8 and logs xmm9 (pass view position) and xmm10, to
+confirm whether pass 18's view is the gameplay camera.
+
+v2 trace result: the pass-18 view follows the camera along the circuit, reaching
+(-707.5, 2.2, 39.9). The pack OBB (group 517 rows, center and extents) gives
+true distances of 157-769 m for the logged views. After the first sample, every
+native distance was exactly 0.250 of that value (15/15 samples). The first sample,
+taken before descriptor bit 0x01 / instance matrices were written, matched exactly.
+xmm10 = 1.0, the single-threshold path was never reached, and descriptor packing
+(writer 0x1352438-0x13524C2, unpack 0x13544D1) is standard. Effective LOD and
+cull bands are therefore x4 on this track: LOD1 at about 1.4 km and the 5 km cull
+at about 20 km. This is a strong render-cost candidate. Diagnostic v3 dumps the
+live descriptor (+0x00..+0xAF) and the native closest point once to identify the
+scaled input before any fix.
+
+v3 trace result: the live descriptor is correct (identity packed inverse and
+world matrices, OBB rows/center/extents equal to the pack's group record). At
+view (288.4, 1.6, 195.6) the native closest point is (95.121, 1.555, -107.465),
+so the true distance is 359.3 m, while the native distance is 89.87 m (exactly
+1/4). The same-hash on-disk executable predicts the correct value, and the
+platform thunk preserves all XMM registers. The 1/4 factor therefore comes from
+runtime behavior outside the track data. The Azimuth configuration
+(`data\azimuth.ini`) uses `scenery_detail=ultra` and `car_detail=ultra`; its cached
+`Global.xml` uses `CarLODTransDist` 60/100/200/300, exactly 4x FM5's 15/25/50/75.
+The working hypothesis is that Azimuth's `ultra` detail applies a 4x LOD-distance
+scale. Anthem's native bands tolerate this, but Top Gear's 5 km map-wide bands
+become about 20 km.
+
+`scenery_detail=default` trace: the native/true distance ratio becomes exactly 1.0
+(22/22 samples), and the plane switches to LOD1 (model 545) at about 370 m. Azimuth
+`scenery_detail=ultra` is therefore confirmed as the 4x LOD-distance source. The
+user measured only 1-2 FPS gain, so LOD/draw distance is not the main Top Gear cost.
+
+Static per-zone comparison (zone candidate lists; uncompressed resource bytes):
+
+| Per zone | Anthem median (max) | Top Gear (every zone) |
+|---|---|---|
+| Draws | 896 (4,010) | 3,249 |
+| Model data | 70 MB (156 MB) | 252 MB |
+| Texture data | 323 MB (825 MB) | 1,325 MB |
+
+The rejected 500 m prop profile reduced candidate references by 35% without an FPS
+change, and TrackLoader's non-diagnostic hooks are load-time or once-per-frame only.
+The next step is a GPU-bound vs CPU-bound split (ShowFPS GPU%, render-height test).
+
+FM5 comparison: FM5's 61 route views list a median of 1,468 draws (max 1,840),
+not all 3,567, and authored final culls are short (870 draws at 25 m, 277 at
+100 m, 165 at 160 m, 229 at 600 m). Draw flag classes match native Anthem
+classes, so per-pass masks are not the difference.
+
+The largest geometry class is static grass: 277 world-space draws
+(`grass_topg_001`, flags `0410ff0f00007c00`, bands 100/100/100) holding 145 MB of
+model data. FM5 culls these at 100 m, and `--bake-grass-fade 75 100` makes the
+shader output fully transparent by 100 m. The map-wide profile kept them to
+5,000 m, so all invisible grass was still submitted every frame.
+
+`build_grass_cull.py` (test: `tests/test_grass_cull.py`) sets only these draws'
+final cull band to 120 m. Zone lists, residency, shaders, lighting, cones, and
+physics are byte-identical; only the root, catalog, media.json and track.ini
+change. OBB distance at or below the per-pixel distance keeps any visible fragment
+drawn. Under Azimuth `scenery_detail=ultra`, the effective cull is about 480 m
+(still after the fade).
+Pack catalog `4bf75056...e4b4`; previous pack backed up to
+`test-backups\TopGear-pre-grass-cull`. In-game result: confirmed by the user
+as fixing the Top Gear FPS loss.
+
+### Collidable-object props: zero culling bounds and no collision
+
+The yellow "H" post beside the runway is FM5 model 26 (`CO_TOPG_H_001`), placed
+three times at the exact positions of the three `SilvPole` CollObjs. FM5
+`GraphicsName="#n"` is the **secondary draw index** n (`#330`..`#332` are
+model 26). All 28 FM5 collidable-object models (models 12-35 and 50-53: H posts,
+KA brake boards, runway/tall yellow lights, barrels, landmarks, cones) have an
+all-zero PVS group OBB in FM5, because FM5 renders them through its dynamic
+object system. After promotion to FH2 primary draws, FH2 culls them by that
+zero-size box, so they appear only close to the player. Normal promoted models
+store a model-space OBB (4x4 transform, then half-extents) equal to the union of
+their Mesh `BBox` metadata, for example model 1007, a positioned barrier, and
+model 1224, a world-space sign. Mesh LOD encoding is not the cause: native
+Anthem uses the same `ffff/1e/ff` all-LOD Mesh form on 487 meshes.
+
+`build_object_bounds.py` (test: `tests/test_object_bounds.py`) rewrites only
+used zero-OBB groups with an identity-oriented model-space box from the union
+of Mesh `BBox` metadata. Draws, zones, residency, lighting and physics are
+unchanged; only the root, catalog, media.json and track.ini differ. Test pack
+catalog `ef0c25a2...8069`; previous grass-cull pack backed up to
+`test-backups\TopGear-grass-cull-v1`. In-game result: **no change**; the props
+still popped in at about 100-120 m, so the zero OBB was not the cause.
+
+Second hypothesis: draw flag bit `0x400`. In FM5 it appears only on secondary
+draws (357 of 380) and never on the 3,187 primary draws. Native Anthem sets it on
+none of 88,240 draws. Every popping prop carries it (`1406`, `0404`, `0514`
+classes), while the `1402` SIGN_TOPG signs that do not pop lack it. LOD bands are
+ruled out: Anthem gives standalone LOD0-only models bands such as
+100/200/400/400. `build_object_flags.py` (test: `tests/test_object_flags.py`)
+clears only that bit on those 357 draws (exactly the 28 CO models); every other
+byte is verified unchanged. It is built on top of the bounds pack. Catalog
+`2290538f...da6a`; bounds pack backed up to `test-backups\TopGear-object-bounds-v1`.
+In-game result: **no change**; the flag was not the cause.
+
+Third hypothesis: group attribute 2. All 44 FM5 secondary/CO groups (models
+11-54) set `attributes[2]` (`[T,T,T,F,F]` or `[F,T,T,F,F]`), copied unchanged
+into the port. Native Anthem never sets it on any of 17,221 groups (`[T,T,F,F,F]`
+16,572, `[F,F,F,F,F]` 584, `[F,T,F,F,F]` 65), and the non-popping Top Gear signs
+use `[F,F,F,F,F]`. `build_object_attributes.py` (test:
+`tests/test_object_attributes.py`) clears only that attribute on those 44
+groups; every other root table and group field is verified unchanged. It is built
+on the bounds pack (without the flag change). Catalog `e7a02675...2c12`; flag
+pack backed up to `test-backups\TopGear-object-flags-v1`. In-game result:
+**no change**.
+
+Fourth hypothesis: LOD band gaps. A draw's `source_record[18:26]` holds four
+half-float distance bands (LOD0, LOD1, LOD2, final cull); the grass cull proved
+that `band[3]` is honoured. Model headers (`Modl` blob) store the max LOD at
+byte 9, the min LOD at byte 10 and an LOD mask at u16 12; mesh payloads store
+their LOD mask at u16 4 (bit LOD+1), then min and max LOD bytes. Draws of split
+LOD models carry a per-draw band mask in the flags' high u16 (record bytes
+10..11: `0x0400` LOD0, `0x0800` LOD1, `0x3000` LOD2+3, `0x3C00` all). The 19
+H/KA draws have mask 0, no linked LOD models and the generic 100/200/350/5000
+bands, but model 26 (H post) has only LOD0 (its mesh mask is `0xFFFF`) and
+models 50-53 (KA boards) only LOD0/LOD1. `build_prop_fix.py` (test:
+`tests/test_prop_fix.py`) sets the bands from the model's last LOD onwards to
+the final cull distance (H 5000/5000/5000/5000, KA 100/5000/5000/5000). It is
+built on the approved grass-cull pack, without the bounds, flag or attribute
+edits. Catalog `87ebaaf6...3a36`; the attribute pack is backed up to
+`test-backups\TopGear-object-attr-v1`. It is installed together with the prop LOD
+diagnostic (`/DTRACKLOADER_LOD_DIAGNOSTICS`, targets draws 3516-3518, 3550 and
+control sign 1508). The diagnostic logs the entry bands/OBB and the selected band,
+distance and rejection per pass to `fh2-mods\platform.log`. In-game result:
+**no change**. The diagnostic logged entries for every target every 5 s at all
+distances but **no band-selection lines**, not even for the control sign. In
+`0x1353A50` the band selection is reached only when the per-draw LOD mask
+(`flags & 0x3C000000000000`) is non-zero. Draws without a mask (props `0xFFF0614`,
+control sign `0xFFF0214`) skip it, so the bands never apply to them.
+
+Root cause: the small-object screen-size cull. For mask-less draws the
+per-pass visibility function `0x133ADC0` rejects a draw when
+`|sphere_centre(desc+0xCC) - camera|^2 * k1 > size(desc+0xC8) * k2`. The
+factors `k1`/`k2` come from the renderer context (`+0x90`/`+0x98`), and the
+shadow branch in `0x1353E3B` uses the same test. The test is skipped only if
+descriptor flag bit 13 (`0x2000`) is set. Descriptor flags (`desc+0xB8`) are
+copied unchanged from record bytes 4..12; this was confirmed against the
+logged values. The thin H posts and small KA boards fail the size test at about
+100-120 m; larger signs pass it. Native Anthem never sets bit 13.
+`build_prop_nocull.py` (test: `tests/test_prop_nocull.py`) sets only `0x2000`
+on the 357 promoted FM5 prop draws (flag `0x400`, models 12-35 and 50-53). It is
+built on the approved grass-cull pack with no other prop edits, and the
+`build_prop_fix.py` static boxes are removed. Catalog `8994fbd2...9fef`; the
+prop-fix pack is backed up to `test-backups\TopGear-prop-fix-v1`, and the normal
+`TrackLoader.dll` is restored. In-game result: **fixed** (props stay visible,
+performance unchanged).
+
+Collision: FH2 does not use `CollObjs.xml` for props. Native Anthem's file holds
+7,241 empty placeholders (`PhysicsType=""`, `GraphicsName="#0"`). Native FH2
+smashables are defined by `instancetemplates\objects\SMASHABLETEMPLATE.plib`
+and `physicsdefinitions.bin`. The retained FM5 `SilvPole`/`BrakeMarker`
+entries therefore give no collision, and these posts are not in the static
+`.col` mesh.
+
+Static prop collision (`build_prop_fix.py`): for each H/KA draw, one oriented
+box is built from the union of the model's mesh `BBox` metadata. Thin axes are
+widened to a 0.1 m half-thickness, and the bottom is extended 0.2 m below the
+model origin. A draw's `rotation_rows` are the world directions of its local
+axes, so `world = position + x*row0 + y*row1 + z*row2`; this was verified
+against FM5 `CollObjs.xml` axes, where `row2 = -ZAxis` because of the
+handedness flip. The 12 triangles use the converted collision's winding
+(`cross(v1-v0, v2-v0)` along the stored normal), surface `BrakeMarkerMetal`,
+flag byte 0 and vertex word `0x7F800000`. That word is the most common one; its
+meaning is not decoded. Each box is appended to every streamed physics cell
+template whose inner area it touches. Its triangles are added to the row-major
+subcells it overlaps (`iz*nx+ix`), and the template bounds and the matching
+collision-root record min/max are widened. No templates, root ordinals or zone
+bindings are added. The props are solid and immovable, not knock-over. In-game
+result: the collision works, but solid posts are not the wanted behaviour, so it is
+not included in the size-cull pack. Destructible props need FH2's smashable
+system. No Anthem primary draw uses one of the 515 `smashable_*` models, so
+smashables are placed and drawn by a separate dynamic system. Its placement
+format is not yet decoded.
+
+### Headlight investigation: missing FH2 lighting path
+
+Native Anthem `diff1norm1_roadTrackLightScenario.pc.pso` binds clustered-light
+resources g_Cluster3D at t96, g_ClusterBuffer at t97, light data at t98/t99,
+projected texture at t100, shadow at t101, and Forward+ samplers s6/s7.
+Converted FM5 `road_2blend_threshold_001TrackLightScenario.pc.pso` contains
+neither these bindings nor the FH2 clustered-light path. Existing b3 row
+remapping and baked-shadow replacement do not add dynamic light evaluation.
+
+This is evidence for missing headlight reception in imported road materials,
+not proof that vehicle volumetric beams/flares have the same cause. A native
+Forward+ shader integration or compatible material translation needs separate
+work and validation; no headlight fix is included in the performance profile.
+Wholesale substitution of the native road material would risk losing FM5's
+multi-blend textures and the accepted lighting. TrackSettings alone cannot
+add missing pixel-shader light evaluation.
 
 ## 12. Pavement, missing paint, and normal instability
 
@@ -1026,6 +1363,29 @@ Enabled=1 remains enabled across launches; the loader no longer disarms or rewri
 the manifest after one session. Enabled=0 disables activation next launch.
 Legacy SessionOnly is read only when Enabled is absent.
 
+### Top Gear entry time and weather
+
+The generated `[TimeWeather]` preset sets the clock to 13:30, freezes it, and
+sets live atmosphere, rain, and environment to 0. It is applied only after the
+owned custom entry is verified. High live atmosphere caused rain despite Rain=0.
+Static lighting/fog is instead baked into that environment's TrackSettings.xml,
+so different tracks can have independent visuals without changing live weather.
+
+`build_environment.py` defaults all visual scales to 1 (preserve source values).
+Per-environment `--ambient-scale`, `--direct-scale`, `--fog-density-scale` and
+`--fog-distance-scale` scale RGB ambient light, SH directional light, enabled
+fog FarDensity and enabled fog Far distance, respectively. The FM5 Top Gear
+ambient and directional values are preserved (scales 1.0); only active fog is
+tuned in the initial profile (density 2.0, distance 0.85). The profile is
+rain-free, but the fog appearance still needs in-game review. `[TrackVisual]`
+records the baked values in `track.ini`; it is descriptive, not a runtime
+lighting override.
+
+The runtime captures the pre-entry clock/weather, releases overrides before
+the mainland return flow, and restores the snapshot after verified Airport
+arrival. Preset writes require the checked FH2 signatures; an unsupported
+build refuses the preset.
+
 ### Recorded custom arrival
 
 Top Gear:
@@ -1133,6 +1493,23 @@ poster panel, metadata, thumbnails, and native FZMaterial images.
 Storm Island 549 is always first; other entries sort by name and ID.
 Author/version come from the manifest. GitHub update checking is **not**
 implemented: repository text is informational, not a completed network check.
+
+The page's native loaded handler focuses `FirstItem`. Naming the CommonListBox
+itself left focus on the container, so the first direction press only entered
+the selected thumbnail. The first explicit ListBoxItem now owns that name.
+Metadata/status text have dark panel backgrounds and selected thumbnails use
+an orange bottom border. `TrackBrowser::Help()` supplies the native
+DefaultButtonBar with A/B, horizontal D-pad, LB/RB, and the conditional Y return
+action, instead of embedding controller instructions in the content.
+
+Browser artwork publication is confined to `UI\textures\data_bound\TrackLoader`.
+The observed Panama/Porsche blank tiles were not TrackLoader texture swaps:
+the active override zipmanifest described a different Panama.zip (directory
+offset 3550249, size 1387, 14 entries), beyond the installed 2009184-byte archive.
+Its actual central directory is at 2007877, size 1285, with 13 entries including
+Autoshow, BucketList and Rivals. Repair only that archive's entry in the active
+override manifest; leave the stock archive, textures and other entries intact.
+These numbers describe this test installation, not every Panama.zip build.
 
 On mainland the button opens the gallery. On other settled maps, its dynamic
 title becomes Return to mainland and A requests direct return instead.
@@ -1327,7 +1704,9 @@ python .\build_openworld.py --source-ai .\work\TopGear\source\ribbon_00\AI.zip `
   --source-collision .\work\TopGear\source\ribbon_00\TopGear_track_00.col --output <NEW-NAVIGATION>
 python .\build_environment.py --source .\work\TopGear\source `
   --native-settings <FH2-MOUNT>\media\tracks\Anthem\TrackSettings.xml `
-  --physics <NEW-PHYSICS> --static-test --output <NEW-ENVIRONMENT>
+  --physics <NEW-PHYSICS> --static-test --ambient-scale 1 `
+  --direct-scale 1 --fog-density-scale 2 --fog-distance-scale 0.85 `
+  --output <NEW-ENVIRONMENT>
 python .\build_media.py --root <NEW-ROOT> --navigation <NEW-NAVIGATION> `
   --environment <NEW-ENVIRONMENT> --mediaoverride --native-bin-zip --output <NEW-BASE-MEDIA>
 ```
@@ -1348,6 +1727,7 @@ Important supported operations:
 --stream-probe-diffuse
 --zone-collision
 --patch-shaders
+--baked-shadow-visibility 0.15
 --remap-surfaces <FM5-surfaceTypes.xml> <FH2-surfaceTypes.xml>
 --min-draw-distance 500
 --bake-grass-fade 75 100

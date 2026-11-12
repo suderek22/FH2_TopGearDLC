@@ -7,6 +7,7 @@ never binds, so static geometry receives no sunlight. This module remaps cb3
 register indices to FH2's layout and replaces the static t3 sample with full light.
 FH2 also appends a reflection plane to instanced poses (288 bytes instead of 272).
 """
+import math
 import struct
 
 # FM5 cb3 register -> FH2 cb3 register (16-byte rows; layouts from both games' RDEF).
@@ -27,6 +28,7 @@ _TYPE_IMMEDIATE32 = 4
 _TYPE_RESOURCE = 7
 _TYPE_CONSTANT_BUFFER = 8
 _ONE = struct.unpack("<I", struct.pack("<f", 1.0))[0]
+DEFAULT_BAKED_SHADOW_VISIBILITY = 0.15
 
 
 def remap_cb3(register):
@@ -349,8 +351,8 @@ def neutralize_texture_rgb(data, slot):
     return _rewrite_instructions(data, rewrite), replaced
 
 
-def _neutralize_texture_samples(data, slot):
-    """Replace one texture input with white while retaining each destination mask."""
+def _neutralize_texture_samples(data, slot, value=_ONE):
+    """Replace one texture input with a constant (white by default), keeping destination masks."""
     replaced = 0
 
     def rewrite(instruction):
@@ -377,16 +379,114 @@ def _neutralize_texture_samples(data, slot):
         if destination is None or destination["kind"] != 0:
             raise ValueError("Neutralized texture sample must write a temporary register")
         target = instruction[destination["start"]:destination["end"]]
-        literal = [2 | (_TYPE_IMMEDIATE32 << 12), _ONE, _ONE, _ONE, _ONE]
+        literal = [2 | (_TYPE_IMMEDIATE32 << 12), value, value, value, value]
         replaced += 1
         return [_OP_MOV | ((1 + len(target) + len(literal)) << 24)] + target + literal
 
     return _rewrite_instructions(data, rewrite), replaced
 
 
+_HALF = 0x3F000000
+
+NORMAL_TEXTURE_RESOURCES = (
+    b"RoadNormalTextureTexture", b"Ch5RoadLinesNormalTextureTexture", b"Gravel_NormalTexture",
+    b"NormalTexture", b"NormalATexture", b"MacroNormalTexture", b"Ch2NormalMapTexture",
+    b"NormalMapTexture")
+
+
+def flatten_normal_samples(data, resource_names=NORMAL_TEXTURE_RESOURCES):
+    """Replace tangent-space normal map samples with 0.5 (a flat normal after *2-1 decoding)."""
+    total = 0
+    for resource_name in resource_names:
+        slot = _named_texture_slot(data, resource_name)
+        if slot is not None:
+            data, count = _neutralize_texture_samples(data, slot, _HALF)
+            total += count
+    return data, total
+
+
 def neutralize_legacy_ao(data):
     """Replace FM5's t6 baked AO samples; FH2 uses terrain AO at t107 instead."""
     return _neutralize_texture_samples(data, 6)
+
+
+def _neutralize_texture_channel(data, slot, channel):
+    """Force one source channel of a texture to 1 after each sample; other channels are kept."""
+    replaced = 0
+
+    def rewrite(instruction):
+        nonlocal replaced
+        if instruction[0] & 0x7FF not in _SAMPLES:
+            return instruction
+        first = 1
+        while instruction[first - 1] & 0x80000000:
+            first += 1
+        operands = []
+        position = first
+        while position < len(instruction):
+            position, info = _operand(instruction, position, len(instruction), lambda _: None)
+            operands.append(info)
+        resources = [info for info in operands[1:] if info and info["kind"] == _TYPE_RESOURCE]
+        if not resources:
+            return instruction
+        resource = resources[0]
+        if len(resource["indices"]) != 1 or resource["indices"][0][0] != "imm":
+            raise ValueError("Unsupported neutralized texture resource index")
+        if instruction[resource["indices"][0][1]] != slot:
+            return instruction
+        destination = operands[0]
+        if destination is None or destination["kind"] != 0:
+            raise ValueError("Neutralized texture sample must write a temporary register")
+        target = list(instruction[destination["start"]:destination["end"]])
+        if target[0] & 3 != 2 or (target[0] >> 2) & 3 != 0:
+            raise ValueError("Neutralized texture destination must use a component mask")
+        source = instruction[resource["start"]]
+        if (source >> 2) & 3 != 1:
+            raise ValueError("Neutralized texture resource must use a swizzle")
+        mask = (target[0] >> 4) & 15
+        selected = 0
+        for component in range(4):
+            if mask & (1 << component) and (source >> (4 + 2 * component)) & 3 == channel:
+                selected |= 1 << component
+        if not selected:
+            return instruction
+        target[0] = (target[0] & ~(15 << 4)) | (selected << 4)
+        literal = [2 | (_TYPE_IMMEDIATE32 << 12), _ONE, _ONE, _ONE, _ONE]
+        replaced += 1
+        return instruction + [_OP_MOV | ((1 + len(target) + len(literal)) << 24)] + target + literal
+
+    return _rewrite_instructions(data, rewrite), replaced
+
+
+def _named_texture_slot(data, resource_name):
+    chunks = [offset for offset in _chunks(data) if data[offset:offset + 4] == b"RDEF"]
+    if len(chunks) != 1:
+        raise ValueError("Expected one shader reflection chunk")
+    offset = chunks[0]
+    size = struct.unpack_from("<I", data, offset + 4)[0]
+    reflection = data[offset + 8:offset + 8 + size]
+    count, start = struct.unpack_from("<2I", reflection, 8)
+    slots = []
+    for index in range(count):
+        name_offset, kind, _, dimension, _, slot, length, _ = struct.unpack_from(
+            "<8I", reflection, start + index * 32)
+        end = reflection.find(b"\0", name_offset)
+        if reflection[name_offset:end] == resource_name and kind == 2 and dimension == 4:
+            slots.append(slot)
+    if len(slots) > 1:
+        raise ValueError("Duplicate texture resource binding")
+    return slots[0] if slots else None
+
+
+def neutralize_ao_mask_channel(data, resource_names=(b"AOMaskTextureTexture",)):
+    """Force the AO (red) channel of AO mask textures to 1, keeping decal alpha in other channels."""
+    total = 0
+    for resource_name in resource_names:
+        slot = _named_texture_slot(data, resource_name)
+        if slot is not None:
+            data, count = _neutralize_texture_channel(data, slot, 0)
+            total += count
+    return data, total
 
 
 def _neutralize_named_texture(data, resource_name):
@@ -448,6 +548,126 @@ def guard_marking_normal(data):
     return patched, replaced
 
 
+def guard_normal_reconstructions(data):
+    """Clamp every `sqrt(1 - x*x - y*y)` normal-Z reconstruction input to a small positive value.
+
+    Filtered/mipped normal-map texels can have x*x + y*y > 1; the negative radicand turns the
+    reconstructed normal into NaN and the whole lit pixel black, depending on view distance/angle.
+    """
+    epsilon = struct.unpack("<I", struct.pack("<f", 0.000001))[0]
+    previous = None
+    replaced = 0
+
+    def temp_component(token, index, selector):
+        if (token >> 12) & 0xFF != 0 or (token >> 20) & 3 != 1 or (token >> 22) & 7 or (token >> 31):
+            return None
+        if selector:
+            return (index, (token >> 4) & 3) if (token >> 2) & 3 == 2 and token & 3 == 2 else None
+        mask = (token >> 4) & 0xF
+        if (token >> 2) & 3 != 0 or token & 3 != 2 or mask not in (1, 2, 4, 8):
+            return None
+        return index, mask.bit_length() - 1
+
+    def rewrite(instruction):
+        nonlocal previous, replaced
+        last, previous = previous, instruction
+        if instruction[0] & 0x7FF != 75 or len(instruction) != 5 or instruction[0] & 0x80003800:
+            return instruction
+        radicand = temp_component(instruction[3], instruction[4], True)
+        if radicand is None or last is None or last[0] & 0x7FF != 50 or last[0] & 0x80003800:
+            return instruction
+        if last[1] >> 31 or temp_component(last[1], last[2], False) != radicand:
+            return instruction
+        if not (last[3] >> 31 and last[4] & 0x3F == 1 and (last[4] >> 6) & 0xFF == 1):
+            return instruction
+        register, component = radicand
+        guard = [52 | (7 << 24), 0x00100002 | (0x10 << component), register,
+                 0x0010000A | (component << 4), register, 0x4001, epsilon]
+        replaced += 1
+        return guard + instruction
+
+    return _rewrite_instructions(data, rewrite), replaced
+
+
+def diagnostic_output_color(data, rgb):
+    """Diagnostic only: force o0.rgb to a flat colour after every write to o0 (alpha kept)."""
+    literal = [struct.unpack("<I", struct.pack("<f", value))[0] for value in (*rgb, 1.0)]
+    replaced = 0
+
+    def rewrite(instruction):
+        nonlocal replaced
+        first = 1
+        while instruction[first - 1] & 0x80000000:
+            first += 1
+        if first >= len(instruction):
+            return instruction
+        token = instruction[first]
+        if (token >> 12) & 0xFF != 2 or (token >> 20) & 3 != 1 or (token >> 22) & 7:
+            return instruction
+        if instruction[first + 1] != 0 or not (token >> 4) & 7:
+            return instruction
+        replaced += 1
+        force = [_OP_MOV | (8 << 24), 0x00102072, 0, 2 | (_TYPE_IMMEDIATE32 << 12)] + literal
+        return instruction + force
+
+    return _rewrite_instructions(data, rewrite), replaced
+
+
+def _temp_count(data):
+    offsets = [offset for offset in _chunks(data) if data[offset:offset + 4] in (b"SHEX", b"SHDR")]
+    size = struct.unpack_from("<I", data, offsets[0] + 4)[0]
+    tokens = struct.unpack_from("<%dI" % (size // 4), data, offsets[0] + 8)
+    at = 2
+    while at < len(tokens):
+        opcode = tokens[at] & 0x7FF
+        if opcode == 104:
+            return offsets[0] + 8 + 4 * (at + 1), tokens[at + 1]
+        at += tokens[at + 1] if opcode == _OP_CUSTOMDATA else (tokens[at] >> 24) & 0x7F
+    return None, 0
+
+
+def diagnostic_nan_output(data, rgb=(0.0, 1.0, 0.0)):
+    """Diagnostic only: pixels whose o0.rgb would be NaN are written as a flat colour instead."""
+    position, temps = _temp_count(data)
+    if position is None:
+        return data, 0
+    value, flag = temps, temps + 1
+    literal = [struct.unpack("<I", struct.pack("<f", v))[0] for v in (*rgb, 0.0)]
+    replaced = 0
+
+    def rewrite(instruction):
+        nonlocal replaced
+        first = 1
+        while instruction[first - 1] & 0x80000000:
+            first += 1
+        if first >= len(instruction) or instruction[0] & 0x7FF in (_OP_CUSTOMDATA,):
+            return instruction
+        token = instruction[first]
+        if (token >> 12) & 0xFF != 2 or (token >> 20) & 3 != 1 or (token >> 22) & 7:
+            return instruction
+        mask = (token >> 4) & 0xF
+        if instruction[first + 1] != 0 or token & 0xC or not mask & 7:
+            return instruction
+        replaced += 1
+        redirected = list(instruction)
+        redirected[first] = token & ~(0xFF << 12)
+        redirected[first + 1] = value
+        all_value = [0x00100E46, value]
+        test = [57 | (7 << 24), 0x00100072, flag] + all_value + all_value
+        merge = [60 | (7 << 24), 0x00100012, flag, 0x0010000A, flag, 0x0010001A, flag,
+                 60 | (7 << 24), 0x00100012, flag, 0x0010000A, flag, 0x0010002A, flag]
+        select = [55 | (12 << 24), 0x00102002 | (mask << 4), 0, 0x00100006, flag,
+                  2 | (_TYPE_IMMEDIATE32 << 12)] + literal + all_value
+        return redirected + test + merge + select
+
+    patched = bytearray(_rewrite_instructions(data, rewrite))
+    if replaced:
+        position, _ = _temp_count(bytes(patched))
+        struct.pack_into("<I", patched, position, temps + 2)
+        patched[4:20] = dxbc_checksum(patched)
+    return bytes(patched), replaced
+
+
 def neutralize_skid_mask(data):
     """Disable the FM5 pavement skid mask, resolving its slot from DXBC reflection."""
     return _neutralize_named_texture(data, b"SkidmaskTextureTexture")
@@ -458,8 +678,262 @@ def neutralize_pavement_ao_mask(data):
     return _neutralize_named_texture(data, b"AOMaskTextureTexture")
 
 
-def patch_program(data, replace_baked_shadow):
+def _baked_shadow_destinations(data):
+    offsets = _chunks(data)
+    shaders = [offset for offset in offsets if data[offset:offset + 4] in (b"SHEX", b"SHDR")]
+    if len(shaders) != 1:
+        raise ValueError("Expected one shader bytecode chunk")
+    chunk = shaders[0]
+    chunk_size = struct.unpack_from("<I", data, chunk + 4)[0]
+    tokens = list(struct.unpack_from("<%dI" % (chunk_size // 4), data, chunk + 8))
+    if tokens[1] != len(tokens):
+        raise ValueError("Shader token count mismatch")
+    if (tokens[0] >> 16) != 0:
+        return []
+    destinations = []
+    at = 2
+    while at < len(tokens):
+        opcode_token = tokens[at]
+        opcode = opcode_token & 0x7FF
+        length = tokens[at + 1] if opcode == _OP_CUSTOMDATA else (opcode_token >> 24) & 0x7F
+        if not length or at + length > len(tokens):
+            raise ValueError("Invalid instruction length")
+        instruction = tokens[at:at + length]
+        if opcode in _SAMPLES:
+            position = 1
+            while instruction[position - 1] & 0x80000000:
+                position += 1
+            operands = []
+            while position < length:
+                position, info = _operand(instruction, position, length, lambda _: None)
+                operands.append(info)
+            resources = [info for info in operands[1:]
+                         if info and info["kind"] == _TYPE_RESOURCE]
+            if resources:
+                resource = resources[0]
+                if (len(resource["indices"]) != 1 or
+                        resource["indices"][0][0] != "imm"):
+                    raise ValueError("Unsupported baked-shadow resource index")
+                if instruction[resource["indices"][0][1]] == BAKED_SHADOW_SLOT:
+                    destination = operands[0]
+                    if destination is None:
+                        raise ValueError("Unexpected baked shadow sample form")
+                    destinations.append(tuple(instruction[destination["start"]:destination["end"]]))
+        at += length
+    return destinations
+
+
+def scale_baked_shadow_fallback(original_data, patched_data, visibility):
+    """Scale only the full-visibility MOVs inserted for original t3 shadow samples."""
+    if (isinstance(visibility, bool) or not isinstance(visibility, (int, float)) or
+            not math.isfinite(visibility) or not 0 <= visibility <= 1):
+        raise ValueError("Baked-shadow visibility must be finite and in [0, 1]")
+    targets = _baked_shadow_destinations(original_data)
+    if not targets:
+        return patched_data, 0
+    remaining = list(targets)
+    scalar = struct.unpack("<I", struct.pack("<f", float(visibility)))[0]
+    changed = [0]
+
+    def rewrite(instruction):
+        if instruction[0] & 0x7FF != _OP_MOV:
+            return instruction
+        position, destination = _operand(instruction, 1, len(instruction), lambda _: None)
+        if destination is None:
+            return instruction
+        target = tuple(instruction[destination["start"]:destination["end"]])
+        if target not in remaining:
+            return instruction
+        if position >= len(instruction) or (instruction[position] >> 12) & 0xFF != _TYPE_IMMEDIATE32:
+            return instruction
+        source_token = instruction[position]
+        if source_token & 3 != 2 or position + 5 != len(instruction):
+            return instruction
+        values = instruction[position + 1:position + 5]
+        if len(set(values)) != 1:
+            return instruction
+        current_value = struct.unpack("<f", struct.pack("<I", values[0]))[0]
+        if not math.isfinite(current_value) or not 0 <= current_value <= 1:
+            return instruction
+        del remaining[remaining.index(target)]
+        if values == [scalar] * 4:
+            return instruction
+        changed[0] += 1
+        return instruction[:position + 1] + [scalar] * 4
+
+    patched = _rewrite_instructions(patched_data, rewrite)
+    if remaining:
+        raise ValueError("Could not uniquely locate every baked-shadow fallback in patched shader")
+    return patched, changed[0]
+
+
+def _code_instructions(data):
+    data = bytes(data)
+    shader = [offset for offset in _chunks(data) if data[offset:offset + 4] in (b"SHEX", b"SHDR")]
+    if len(shader) != 1:
+        raise ValueError("Expected one shader bytecode chunk")
+    chunk_size = struct.unpack_from("<I", data, shader[0] + 4)[0]
+    tokens = list(struct.unpack_from("<%dI" % (chunk_size // 4), data, shader[0] + 8))
+    rows, at = [], 2
+    while at < len(tokens):
+        opcode = tokens[at] & 0x7FF
+        length = tokens[at + 1] if opcode == _OP_CUSTOMDATA else (tokens[at] >> 24) & 0x7F
+        if not length or at + length > len(tokens):
+            raise ValueError("Invalid instruction length")
+        if opcode not in _DECLARATIONS and opcode != _OP_CUSTOMDATA:
+            rows.append(tokens[at:at + length])
+        at += length
+    return rows
+
+
+def _sample_info(instruction):
+    """(destination tokens, resource slot) for a sample instruction, else None."""
+    if instruction[0] & 0x7FF not in _SAMPLES:
+        return None
+    position = 1
+    while instruction[position - 1] & 0x80000000:
+        position += 1
+    operands = []
+    while position < len(instruction):
+        position, info = _operand(instruction, position, len(instruction), lambda _: None)
+        operands.append(info)
+    resources = [info for info in operands[1:] if info and info["kind"] == _TYPE_RESOURCE]
+    if not resources or operands[0] is None or resources[0]["indices"][0][0] != "imm":
+        return None
+    return (tuple(instruction[operands[0]["start"]:operands[0]["end"]]),
+            instruction[resources[0]["indices"][0][1]])
+
+
+def _uniform_mov(instruction):
+    """(destination tokens, literal bits) for `mov rN.m, l(v,v,v,v)`, else None."""
+    if instruction[0] & 0x7FF != _OP_MOV or instruction[0] & 0x80000000:
+        return None
+    position, destination = _operand(instruction, 1, len(instruction), lambda _: None)
+    if destination is None or position + 5 != len(instruction):
+        return None
+    token = instruction[position]
+    values = instruction[position + 1:position + 5]
+    if (token >> 12) & 0xFF != _TYPE_IMMEDIATE32 or token & 3 != 2 or len(set(values)) != 1:
+        return None
+    return tuple(instruction[destination["start"]:destination["end"]]), values[0]
+
+
+def realign_baked_shadow_fallback(original_data, patched_data, visibility):
+    """Repair fallbacks that scale_baked_shadow_fallback put on the wrong replaced sample.
+
+    That pass matched t3 destinations by register only, so in shaders where an earlier
+    neutralized sample (e.g. the skid mask) wrote the same register it scaled that one:
+    the skid/AO input became `visibility` (darkening diffuse) and the real t3 stayed 1.0.
+    Original and patched instructions are aligned in order (later passes only replace
+    samples with MOVs or insert extra instructions); each replaced t3 sample gets
+    `visibility`, every other replaced sample that holds `visibility` is reset to 1.0.
+    Returns (data, {"shadow": n, "restored": n}).
+    """
+    original = _code_instructions(original_data)
+    patched = _code_instructions(patched_data)
+    scalar = struct.unpack("<I", struct.pack("<f", float(visibility)))[0]
+    fixes, j = {}, 0
+    for row in original:
+        sample = _sample_info(row)
+        while j < len(patched):
+            candidate = patched[j]
+            if candidate == row or (candidate[0] & 0x7FF == row[0] & 0x7FF and
+                                    len(candidate) == len(row) and sample is None):
+                break
+            mov = _uniform_mov(candidate)
+            if sample and mov and mov[0] == sample[0]:
+                break
+            if sample and _sample_info(candidate) and _sample_info(candidate)[1] == sample[1]:
+                break
+            j += 1
+        if j >= len(patched):
+            raise ValueError("Could not align patched shader with its FM5 original")
+        mov = _uniform_mov(patched[j]) if sample else None
+        if mov:
+            wanted = scalar if sample[1] == BAKED_SHADOW_SLOT else (_ONE if mov[1] == scalar else mov[1])
+            if wanted != mov[1]:
+                fixes[j] = wanted
+        j += 1
+    if not fixes:
+        return bytes(patched_data), {"shadow": 0, "restored": 0}
+    counts = {"shadow": 0, "restored": 0}
+    index = [-1]
+
+    def rewrite(instruction):
+        index[0] += 1
+        if index[0] not in fixes:
+            return instruction
+        counts["shadow" if fixes[index[0]] == scalar else "restored"] += 1
+        return instruction[:-4] + [fixes[index[0]]] * 4
+
+    return _rewrite_instructions(patched_data, rewrite), counts
+
+
+def set_uniform_mov_literal(data, old_value, new_value):
+    """Replace every MOV whose immediate source is a uniform `old_value` with `new_value`."""
+    old = struct.unpack("<I", struct.pack("<f", float(old_value)))[0]
+    new = struct.unpack("<I", struct.pack("<f", float(new_value)))[0]
+    replaced = 0
+
+    def rewrite(instruction):
+        nonlocal replaced
+        mov = _uniform_mov(instruction)
+        if not mov or mov[1] != old:
+            return instruction
+        replaced += 1
+        return instruction[:-4] + [new] * 4
+
+    return _rewrite_instructions(data, rewrite), replaced
+
+
+SUN_COLOUR_ROW = 1
+_OP_MAD, _OP_MUL = 50, 56
+
+
+def neutral_sun_colour(data):
+    """Read the lit-scenario sun colour (cb3[1].rgb) as its green channel (neutral grey).
+
+    FH2's global time-of-day sun is yellow (~0.69/0.60/0.43 at 13:30); green tracks its
+    luminance, so this removes the tint without changing brightness. Only mul/mad sources
+    with a 4-component swizzle are touched (depth scenarios reuse cb3[1].x as a flag).
+    """
+    replaced = 0
+
+    def rewrite(instruction):
+        nonlocal replaced
+        if instruction[0] & 0x7FF not in (_OP_MAD, _OP_MUL):
+            return instruction
+        first = 1
+        while instruction[first - 1] & 0x80000000:
+            first += 1
+        operands = []
+        position = first
+        while position < len(instruction):
+            position, info = _operand(instruction, position, len(instruction), lambda info: None)
+            operands.append(info)
+        patched = list(instruction)
+        for info in operands[1:]:
+            if (not info or info["kind"] != _TYPE_CONSTANT_BUFFER or len(info["indices"]) != 2 or
+                    any(kind != "imm" for kind, _ in info["indices"]) or
+                    [instruction[at] for _, at in info["indices"]] != [LIGHT_LAYOUT_SLOT, SUN_COLOUR_ROW]):
+                continue
+            token = instruction[info["start"]]
+            if token & 3 != 2 or (token >> 2) & 3 != 1:
+                raise ValueError("Sun colour read must use a 4-component swizzle")
+            patched[info["start"]] = (token & ~(0xFF << 4)) | (0x55 << 4)
+            replaced += 1
+        return patched
+
+    return _rewrite_instructions(data, rewrite), replaced
+
+
+def patch_program(data, replace_baked_shadow,
+                  baked_shadow_visibility=DEFAULT_BAKED_SHADOW_VISIBILITY):
     """Return (patched DXBC, stats). Raises ValueError on unsupported bytecode."""
+    if (isinstance(baked_shadow_visibility, bool) or
+            not isinstance(baked_shadow_visibility, (int, float)) or
+            not math.isfinite(baked_shadow_visibility) or not 0 <= baked_shadow_visibility <= 1):
+        raise ValueError("Baked-shadow visibility must be finite and in [0, 1]")
     data = bytearray(data)
     offsets = _chunks(data)
     shader = [offset for offset in offsets if data[offset:offset + 4] in (b"SHEX", b"SHDR")]
@@ -524,7 +998,8 @@ def patch_program(data, replace_baked_shadow):
                 if operands[0] is None:
                     raise ValueError("Unexpected baked shadow sample form")
                 destination = instruction[operands[0]["start"]:operands[0]["end"]]
-                source = [(2 | (_TYPE_IMMEDIATE32 << 12)), _ONE, _ONE, _ONE, _ONE]
+                visibility = struct.unpack("<I", struct.pack("<f", float(baked_shadow_visibility)))[0]
+                source = [(2 | (_TYPE_IMMEDIATE32 << 12)), visibility, visibility, visibility, visibility]
                 saturate = opcode_token & (1 << 13)
                 length = 1 + len(destination) + len(source)
                 instruction = [_OP_MOV | saturate | (length << 24)] + destination + source

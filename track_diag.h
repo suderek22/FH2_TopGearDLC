@@ -5,6 +5,9 @@
 #include <cstdio>
 #include <cstring>
 #include <vector>
+#ifdef TRACKLOADER_LOD_DIAGNOSTICS
+#include "track_lod_diag.h"
+#endif
 
 // Log-only probes for the track presentation load/stream path. They never alter
 // registers; a refused site is skipped so the visit hooks are unaffected.
@@ -54,6 +57,11 @@ inline void Describe(const char* event, uintptr_t presentation, int result = -1)
     }
     for (char& c : name) if (c && (c < 32 || c > 126)) c = '?';
     if (!strcmp(name, "TopGearCPS")) Shared().custom = true;
+#ifdef TRACKLOADER_LOD_DIAGNOSTICS
+    if (!strcmp(name, "TopGearCPS") && strcmp(event, "unload") &&
+        TrackLodDiag::Shared().presentation.load() != presentation)
+        TrackLodDiag::Activate(presentation);
+#endif
     uint64_t models = (Value<uint64_t>(presentation + 0xF620) - Value<uint64_t>(presentation + 0xF618)) / 8;
     uint64_t textureBegin = Value<uint64_t>(presentation + 0x1AA68);
     uint64_t textures = textureBegin ? (Value<uint64_t>(presentation + 0x1AA70) - textureBegin) / 0x2B8 : 0;
@@ -69,17 +77,33 @@ inline void Describe(const char* event, uintptr_t presentation, int result = -1)
         Value<uint8_t>(presentation + 0xF370), Value<uint8_t>(presentation + 0x198A8),
         state.textures.load(), state.models.load(), state.releases.load());
 }
+inline void Collections(const char* when);
 inline void Count(std::atomic<unsigned>& counter, const char* name) {
     unsigned value = counter.fetch_add(1) + 1;
-    if ((value & (value - 1)) == 0) Log("diag %s count=%u", name, value);
+    if ((value & (value - 1)) == 0) {
+        Log("diag %s count=%u", name, value);
+        if (value >= 256) Collections(name);
+    }
+}
+// Live resource vectors of the "Instance Resources" (0x36E6858) and "Procedural Resources" (0x36E6938)
+// collections (see their count virtuals 0xF9D660 / 0xF9D840).
+inline void Collections(const char* when) {
+    uintptr_t base = Shared().base;
+    auto size = [base](uintptr_t rva) {
+        return (Value<uint64_t>(base + rva + 8) - Value<uint64_t>(base + rva)) / 8;
+    };
+    Log("diag collections %s instance=%llu procedural=%llu", when, static_cast<unsigned long long>(size(0x36E6858)),
+        static_cast<unsigned long long>(size(0x36E6938)));
 }
 inline void ReadyCode(FH2Context* c, void* user) {
     static std::atomic<int> last{-1};
     static std::atomic<unsigned> repeats{0};
     int code = user ? static_cast<int>(reinterpret_cast<uintptr_t>(user)) : static_cast<int>(c->rax);
     unsigned count = repeats.fetch_add(1) + 1;
-    if (last.exchange(code) != code || (count & (count - 1)) == 0)
+    if (last.exchange(code) != code || (count & (count - 1)) == 0) {
         Log("diag ready-code %d t=%p evaluations=%u", code, reinterpret_cast<void*>(c->r15), count);
+        Collections("ready");
+    }
 }
 inline void Counts(FH2Context* c, void*) {
     uintptr_t p = c->r15;
@@ -91,7 +115,12 @@ inline void BeginLoad(FH2Context* c, void*) { Describe("begin-load", c->rdi); }
 inline void Loaded(FH2Context* c, void*) { Describe("load-callback", c->rsi); }
 inline void Sky(FH2Context* c, void*) { Describe("sky-request", c->rdi, static_cast<uint8_t>(c->rax)); }
 inline void Probe(FH2Context* c, void*) { Describe("probe-request", c->rbp, static_cast<uint8_t>(c->rax)); }
-inline void Unload(FH2Context* c, void*) { Describe("unload", c->rcx); }
+inline void Unload(FH2Context* c, void*) {
+    Describe("unload", c->rcx);
+#ifdef TRACKLOADER_LOD_DIAGNOSTICS
+    TrackLodDiag::Deactivate(c->rcx);
+#endif
+}
 inline void Texture(FH2Context*, void*) { Count(Shared().textures, "texture-request"); }
 inline void Model(FH2Context*, void*) { Count(Shared().models, "model-request"); }
 inline void Release(FH2Context*, void*) { Count(Shared().releases, "model-release"); }
@@ -135,10 +164,22 @@ constexpr uintptr_t ResourceFailSiteC = 0x13D70FB; // after SetState(6); message
 constexpr uintptr_t ResourceFailSiteD = 0x13D044E; // request path after SetState(6); message at [rbp+0xB0]
 inline void ResourceFailed(FH2Context* c, void* user) {
     static std::atomic<unsigned> failures{0};
+    static std::atomic<unsigned> named{0};
     unsigned count = failures.fetch_add(1) + 1;
     auto& shared = Shared();
+    char site = *static_cast<const char*>(user);
+    uintptr_t message0 = c->rbp + (site == 'C' ? 0x28 : site == 'D' ? 0xB0 : 0x38);
+    uintptr_t text = message0;
+    uint64_t size = Value<uint64_t>(message0 + 0x10);
+    if (Value<uint64_t>(message0 + 0x18) >= 16) text = Value<uintptr_t>(message0);
+    char message[300] = {};
+    TrackOwnership::Read(text, message, size < sizeof message - 1 ? static_cast<size_t>(size) : sizeof message - 1);
+    for (char& ch : message) if (ch && (ch < 32 || ch > 126)) ch = '?';
+    // Nameless "File Resources" failures are known noise; anything else after a custom load is always logged.
+    bool noise = !strcmp(message, "Failed to load  (File Resources)");
+    bool always = shared.custom && !noise && named.fetch_add(1) < 200;
     bool customFailure = false;
-    if (shared.custom && shared.customFailures.fetch_add(1) < 48) {
+    if (shared.custom && !noise && shared.customFailures.fetch_add(1) < 48) {
         customFailure = true;
         uintptr_t res = c->rsi;
         uint64_t q[16] = {};
@@ -149,15 +190,7 @@ inline void ResourceFailed(FH2Context* c, void* user) {
         Log("diag custom-fail #%u f60=%llx %llx %llx %llx %llx %llx %llx %llx", count, q[8], q[9], q[10], q[11], q[12],
             q[13], q[14], q[15]);
     }
-    if (!customFailure && count > 24 && (count & (count - 1))) return;
-    char site = *static_cast<const char*>(user);
-    uintptr_t message0 = c->rbp + (site == 'C' ? 0x28 : site == 'D' ? 0xB0 : 0x38);
-    uintptr_t text = message0;
-    uint64_t size = Value<uint64_t>(message0 + 0x10);
-    if (Value<uint64_t>(message0 + 0x18) >= 16) text = Value<uintptr_t>(message0);
-    char message[300] = {};
-    TrackOwnership::Read(text, message, size < sizeof message - 1 ? static_cast<size_t>(size) : sizeof message - 1);
-    for (char& ch : message) if (ch && (ch < 32 || ch > 126)) ch = '?';
+    if (!customFailure && !always && count > 24 && (count & (count - 1))) return;
     Log("diag resource-failed%s #%u res=%p: %s", static_cast<const char*>(user), count,
         reinterpret_cast<void*>(c->rsi), message);
 }
@@ -176,6 +209,88 @@ inline void SpatialSet(FH2Context* c, void*) {
     Log("diag spatial t=%p object=%p vt=+%llx a968=%p", reinterpret_cast<void*>(p), reinterpret_cast<void*>(object),
         static_cast<unsigned long long>(object ? Value<uintptr_t>(object) - Shared().base : 0),
         reinterpret_cast<void*>(Value<uintptr_t>(p + 0xA968)));
+}
+
+// InstanceTemplates loader 0x186BDF0: enumerates Objects\*.plib (rsi dir) then Placement\*.plib (r15 dir)
+// and requests each file. Logged without the shared event budget so late track loads stay visible.
+constexpr uintptr_t PlibObjectsCountSite = 0x186BE89;   // [rsp+0x78] = enumerated file count
+constexpr uintptr_t PlibObjectsRequestSite = 0x186BF5A; // std::string path at rbp+0xC0
+constexpr uintptr_t PlibPlacementCountSite = 0x186C02B; // [rsp+0x38] = enumerated file count
+constexpr uintptr_t PlibPlacementRequestSite = 0x186C0E7; // std::string path at rbp+0xE8
+inline void ReadText(uintptr_t address, bool stdString, char (&out)[260]) {
+    memset(out, 0, sizeof out);
+    uintptr_t text = address;
+    size_t size = sizeof out - 1;
+    if (stdString) {
+        uint64_t length = Value<uint64_t>(address + 0x10);
+        if (Value<uint64_t>(address + 0x18) >= 16) text = Value<uintptr_t>(address);
+        if (length < size) size = static_cast<size_t>(length);
+    }
+    TrackOwnership::Read(text, out, size);
+    for (char& ch : out) if (ch && (ch < 32 || ch > 126)) ch = '?';
+}
+inline void PlibLog(const char* format, ...) {
+    static std::atomic<unsigned> lines{0};
+    auto& state = Shared();
+    if (!state.api || !state.api->log || lines.fetch_add(1) >= 200) return;
+    char text[512];
+    va_list args;
+    va_start(args, format);
+    vsnprintf(text, sizeof text, format, args);
+    va_end(args);
+    state.api->log(state.mod, text);
+}
+inline void PlibCount(FH2Context* c, void* user) {
+    bool objects = *static_cast<const char*>(user) == 'O';
+    char dir[260];
+    ReadText(objects ? c->rsi : c->r15, true, dir);
+    PlibLog("diag plib %s dir=%s files=%llu", objects ? "objects" : "placement", dir,
+            static_cast<unsigned long long>(Value<uint64_t>(c->rsp + (objects ? 0x78 : 0x38))));
+    Collections(objects ? "plib-objects" : "plib-placement");
+}
+inline void PlibRequest(FH2Context* c, void* user) {
+    bool objects = *static_cast<const char*>(user) == 'O';
+    char path[260];
+    ReadText(c->rbp + (objects ? 0xC0 : 0xE8), true, path);
+    PlibLog("diag plib request %s", path);
+}
+
+// ChunkMap key -> archive index lookup 0x1330940 (rcx = TrackPresentation, edx = key) and the FileChunk
+// resource index writers (eax = archive index). Logs type-0/flagged key lookups and FileChunk creations
+// for index 0 or the appended smashable cell (>= 6600) after a custom track load.
+constexpr uintptr_t ChunkLookupSite = 0x1330940;
+constexpr uintptr_t FileChunkIndexSiteA = 0x13D359F;
+constexpr uintptr_t FileChunkIndexSiteB = 0x13D56EF;
+inline void Callers(uintptr_t rsp, char (&out)[200]) {
+    uintptr_t base = Shared().base;
+    int used = 0, found = 0;
+    out[0] = 0;
+    for (int i = 0; i < 96 && found < 8; ++i) {
+        uintptr_t value = Value<uintptr_t>(rsp + 8ull * i);
+        if (value > base + 0x1000 && value < base + 0x2200000) {
+            used += snprintf(out + used, sizeof out - used, " %llx", static_cast<unsigned long long>(value - base));
+            ++found;
+            if (used >= static_cast<int>(sizeof out) - 12) break;
+        }
+    }
+}
+inline void ChunkLookup(FH2Context* c, void*) {
+    static std::atomic<unsigned> lines{0}, reference{0};
+    uint32_t key = static_cast<uint32_t>(c->rdx);
+    if ((key & 0x7F000000) != 0) return;
+    if (Shared().custom ? lines.fetch_add(1) >= 60 : reference.fetch_add(1) >= 15) return;
+    char callers[200];
+    Callers(c->rsp, callers);
+    PlibLog("diag chunk-lookup key=%08x t=%p callers:%s", key, reinterpret_cast<void*>(c->rcx), callers);
+}
+inline void FileChunkIndex(FH2Context* c, void* user) {
+    static std::atomic<unsigned> lines{0};
+    int index = static_cast<int>(c->rax);
+    if (!Shared().custom || (index != 0 && index < 6600) || lines.fetch_add(1) >= 60) return;
+    char callers[200];
+    Callers(c->rsp, callers);
+    PlibLog("diag filechunk-%s index=%d bc=%08x res=%p callers:%s", static_cast<const char*>(user), index,
+            Value<uint32_t>(c->rbp - 0x4D), reinterpret_cast<void*>(c->rsi), callers);
 }
 
 inline void Install(const FH2ModApi* api, FH2Mod* mod, uintptr_t base) {
@@ -205,6 +320,13 @@ inline void Install(const FH2ModApi* api, FH2Mod* mod, uintptr_t base) {
         {ResourceFailSiteD, "TrackLoaderCPS diag resource failure D", ResourceFailed, "D"},
         {HexReadySite, "TrackLoaderCPS diag hex grid ready", HexReady},
         {SpatialSetSite, "TrackLoaderCPS diag spatial query object", SpatialSet},
+        {PlibObjectsCountSite, "TrackLoaderCPS diag plib objects count", PlibCount, "O"},
+        {PlibObjectsRequestSite, "TrackLoaderCPS diag plib objects request", PlibRequest, "O"},
+        {PlibPlacementCountSite, "TrackLoaderCPS diag plib placement count", PlibCount, "P"},
+        {PlibPlacementRequestSite, "TrackLoaderCPS diag plib placement request", PlibRequest, "P"},
+        {ChunkLookupSite, "TrackLoaderCPS diag chunk key lookup", ChunkLookup},
+        {FileChunkIndexSiteA, "TrackLoaderCPS diag filechunk index A", FileChunkIndex, "A"},
+        {FileChunkIndexSiteB, "TrackLoaderCPS diag filechunk index B", FileChunkIndex, "B"},
     };
     unsigned installed = 0;
     for (const auto& site : sites)
@@ -214,5 +336,8 @@ inline void Install(const FH2ModApi* api, FH2Mod* mod, uintptr_t base) {
         else
             Log("diag site refused: %s", site.name);
     Log("diag presentation probes registered: %u/%u", installed, static_cast<unsigned>(sizeof sites / sizeof *sites));
+#ifdef TRACKLOADER_LOD_DIAGNOSTICS
+    TrackLodDiag::Install(api, mod, base);
+#endif
 }
 }

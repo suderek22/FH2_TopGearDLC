@@ -1,5 +1,6 @@
 #pragma once
 #include "..\CarPackStudio\native\include\fh2mod.h"
+#include <atomic>
 #include <cstdint>
 #include <mutex>
 #include <string>
@@ -38,7 +39,13 @@ class Gate {
     uint64_t blockedProfiles = 0;
     bool unexpectedModule = false;
     bool sessionOnly = false;
+    // SaveDuringVisit: ownership bookkeeping stays intact, but native saves are not suppressed.
+    std::atomic<bool> passThrough{false};
+    std::atomic<uint64_t> passed{0};
 public:
+    void PassThrough(bool enabled) { passThrough.store(enabled); }
+    bool PassingThrough() const { return passThrough.load(); }
+    uint64_t Passed() const { return passed.load(); }
     bool ProtectSession(std::string& error) {
         std::lock_guard<std::mutex> lock(mutex);
         if (module || sessionOnly) {
@@ -71,6 +78,10 @@ public:
         std::lock_guard<std::mutex> lock(mutex);
         if (!module && !sessionOnly) return;
         if (module && context.rbp != module) unexpectedModule = true;
+        if (passThrough.load()) {
+            ++passed;
+            return;
+        }
         // Force only the native JE to its normal no-submission epilogue.
         context.rflags |= ZeroFlag;
         ++blocked;
@@ -79,6 +90,10 @@ public:
         std::lock_guard<std::mutex> lock(mutex);
         if (!module && !sessionOnly) return;
         if (module && context.rcx != profile) unexpectedModule = true;
+        if (passThrough.load()) {
+            ++passed;
+            return;
+        }
         // Both save and early cleanup branches lead to the native false-return epilogue.
         context.rflags |= ZeroFlag;
         ++blockedProfiles;

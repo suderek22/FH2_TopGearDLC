@@ -1,6 +1,7 @@
 """FH2 PGZP version-100 streaming archives and resource lookup records."""
 from dataclasses import dataclass
 from pathlib import Path
+import bisect
 import struct
 import math
 import zlib
@@ -294,8 +295,13 @@ class MiniZip:
         return result
 
 
-def write_minizip(path, resources, read_resource):
-    """Write one root-folder archive; callers provide bytes one resource at a time."""
+def write_minizip(path, resources, read_resource, folder_starts=(0,)):
+    """Write a MiniZip archive; callers provide bytes one resource at a time.
+
+    ``folder_starts`` lists the first resource index of each folder. FH2 streams a
+    folder as one FileChunk, so resources requested through their folder (such as
+    placement cells) must live in a small folder of their own.
+    """
     path = Path(path)
     count = len(resources)
     if not 1 <= count <= 65535:
@@ -303,9 +309,17 @@ def write_minizip(path, resources, read_resource):
     lookups = [resource.lookup() for resource in resources]
     if len(set(lookups)) != len(lookups):
         raise ValueError("Duplicate resource lookup key")
+    folder_starts = list(folder_starts)
+    if (not folder_starts or folder_starts[0] != 0 or folder_starts[-1] >= count or len(folder_starts) > 65535 or
+            any(a >= b for a, b in zip(folder_starts, folder_starts[1:]))):
+        raise ValueError("Invalid MiniZip folder starts")
+    boundaries = folder_starts + [count]
+    folder_table = struct.pack("<%dI" % len(boundaries), *boundaries)
+    folder_table += bytes((-len(folder_table)) % 8)
+    parents = [bisect.bisect_right(folder_starts, index) - 1 for index in range(count)]
     per_chunk = 512
     chunks = (count + per_chunk - 1) // per_chunk
-    directory_size = 8 + chunks * 8 + (count + 1) * 12
+    directory_size = len(folder_table) + chunks * 8 + (count + 1) * 12
     data_start = 32 + directory_size
     path.parent.mkdir(parents=True, exist_ok=True)
     partial = path.with_name(path.name + ".partial")
@@ -331,14 +345,14 @@ def write_minizip(path, resources, read_resource):
                 if relative > 0xFFFFFFFF:
                     raise ValueError("MiniZip subchunk exceeds relative offset range")
                 padding = (-len(packed)) % 4
-                entries.append((relative, len(raw), method | (padding << 14), 0))
+                entries.append((relative, len(raw), method | (padding << 14), parents[index]))
                 file.write(packed + bytes(padding))
             end = file.tell()
             if end - offsets[-1] > 0xFFFFFFFF:
                 raise ValueError("MiniZip end sentinel exceeds relative offset range")
             file.seek(0)
-            file.write(struct.pack("<8I", 0x505A4750, 100, 32, count, 1, per_chunk, chunks, 1))
-            file.write(struct.pack("<II", 0, count))
+            file.write(struct.pack("<8I", 0x505A4750, 100, 32, count, len(folder_starts), per_chunk, chunks, 1))
+            file.write(folder_table)
             for chunk, offset in enumerate(offsets):
                 file.write(struct.pack("<Q", offset))
                 for entry in entries[chunk * per_chunk:(chunk + 1) * per_chunk]:

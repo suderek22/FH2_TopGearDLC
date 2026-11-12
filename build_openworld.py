@@ -8,16 +8,16 @@ import zipfile
 
 from collision import read_collision
 from navigation import geometry
-from openworld_navigation import closed_road, read_navw, read_owwf, validate_closed_road, waypoint_grid, write_navw, write_owwf
+from openworld_navigation import closed_road, fm5_route_positions, read_navw, read_owwf, validate_closed_road, waypoint_grid, write_navw, write_owwf
 
 
-def build(source_ai, source_collision, output):
+def build(source_ai, source_collision, output, road_type="none"):
     output = Path(output).resolve()
     if output.exists():
         raise ValueError("Choose a new native navigation component directory: " + str(output))
     with zipfile.ZipFile(source_ai) as archive:
         data = archive.read("Track.geo")
-    positions = geometry(data)["positions"]
+    positions = fm5_route_positions(geometry(data)["positions"])
     collision_data = Path(source_collision).read_bytes()
     collision = read_collision(collision_data)
     vertices = [row[:3] for cell in collision["cells"] for row in cell["vertices"]]
@@ -25,7 +25,7 @@ def build(source_ai, source_collision, output):
         raise ValueError("Custom navigation coverage needs source collision geometry")
     generation = hashlib.sha256(data + collision_data).digest()
     stamp = int.from_bytes(generation[:4], "little")
-    nav = write_navw(closed_road(positions, stamp))
+    nav = write_navw(closed_road(positions, stamp, road_type))
     grid = waypoint_grid(positions + vertices, stamp)
     oww = write_owwf(grid)
     validate_closed_road(read_navw(nav), positions)
@@ -43,7 +43,7 @@ def build(source_ai, source_collision, output):
         "engine_validated": False, "first_test_ready": False, "playable_map": False,
         "waypoint_count": len(positions), "road_count": 1, "closed_road": True,
         "source_waypoint_order_and_positions_verified": True,
-        "ai_disabled": True, "traffic_disabled": True, "road_profile": "none_10000",
+        "ai_disabled": True, "traffic_disabled": True, "road_profile": "none_10000", "road_type": road_type,
         "waypoint_cell_count": len(grid["coordinates"]), "waypoint_cell_size": grid["cell_size"],
         "generation_stamp": stamp, "source_geometry_sha256": hashlib.sha256(data).hexdigest(),
         "source_collision_sha256": hashlib.sha256(collision_data).hexdigest(),
@@ -66,9 +66,11 @@ def main():
     parser.add_argument("--source-ai", type=Path, required=True)
     parser.add_argument("--source-collision", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--road-type", default="none", choices=("none", "dirt", "b", "a", "freeway"),
+                        help="nav road_type; HUD minimap profiles draw every value except none")
     args = parser.parse_args()
     try:
-        report = build(args.source_ai, args.source_collision, args.output)
+        report = build(args.source_ai, args.source_collision, args.output, args.road_type)
     except (OSError, ValueError, KeyError, zipfile.BadZipFile) as error:
         print("error: " + str(error), file=sys.stderr)
         return 1

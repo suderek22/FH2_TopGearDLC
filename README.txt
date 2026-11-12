@@ -1,4 +1,4 @@
-TrackLoader / TrackLoaderCPS 0.6.0-dev -- PERSISTENT EXPERIMENTAL MULTI-MAP TRAVEL
+TrackLoader / TrackLoaderCPS 0.6.0-dev-beta3 -- PERSISTENT EXPERIMENTAL MULTI-MAP TRAVEL
 
 STANDALONE RUNTIME
 
@@ -89,6 +89,15 @@ Requires the existing CPS swatch reader/XG, Pillow and converter dependencies.
 
 The 0.6.0-dev loader registers an autoshow-style gallery, publishes verified
 native artwork, renames the parent tab DLC, and displays author/version metadata.
+The first thumbnail itself is named FirstItem, so initial native page focus
+does not consume the first direction press just to enter the list. Metadata
+and status text stay on dark panels; selected thumbnails have an orange
+underline. Travel, Back, directional navigation and bumper hints use the
+native controller help bar, not instructions over the scene background.
+TrackLoader publishes artwork only under data_bound\TrackLoader; it does not
+replace Panama/Porsche autoshow, bucket-list or rivals tile textures. If these
+fail to load, check the Panama.zip central-directory metadata in zipmanifest.xml
+against the installed archive before changing any textures.
 Use --install-pack <track.ini> --track TopGear|StormIsland --output <artwork>
 to install the staged browser images and their manifest hashes.
 Top Gear metadata is Author=suderek, Version=0.3.2-beta.
@@ -146,6 +155,20 @@ Assemble a verified world/visit package with build_session.py:
 Existing media/visit/database/source-database/output arguments remain required.
 This packages an already converted native world; it is not an automatic converter
 for arbitrary source maps. World and visit media namespaces must match.
+The default Top Gear build applies 13:30, freezes the clock, and leaves live
+atmosphere, rain, and environment at 0. Track lighting and directional fog are
+baked into that environment's TrackSettings.xml to avoid the rain observed with
+high live atmosphere. The verified mainland return restores the captured
+pre-entry time/weather. Use
+--no-time-weather to omit the entry preset; --entry-time-hours, --no-freeze-entry-time,
+--atmosphere, --rain and --environment override its defaults.
+
+The per-environment build options --ambient-scale, --direct-scale,
+--fog-density-scale and --fog-distance-scale tune static lighting/fog in
+TrackSettings.xml. Defaults of 1 preserve source values. The current Top Gear
+test profile preserves FM5 Top Gear ambient and directional lighting (scales 1),
+with 2.0 fog density and 0.85 fog range. The fog values need in-game visual
+review.
 
 Use TrackLoaderCPS travel <ID> to select a map from settled mainland free roam.
 Return to mainland Airport and wait for verified return before selecting another
@@ -160,6 +183,8 @@ bin\native_host.exe with the existing MSVC environment, then run:
   python -m unittest discover -s tests -p test_session.py
 Native track_flow, track_group and track_binding tests cover independent second-map
 dispatch, ignored first-map parsing, arrival/target binding and mainland resume.
+tests\test_track_time_weather.cpp verifies preset parsing, signature checks,
+snapshot capture, application, hold, release, and restoration.
 The catalog host uses synthetic archive payloads; it verifies publication and
 fail-closed startup, not engine loading or rendering of a second map.
 The 0.4.0-test runtime completed two live Top Gear entry/Airport-return cycles.
@@ -233,6 +258,18 @@ TOP GEAR MEDIA POST-PROCESSES
 Run repack_media.py with --source and a NEW --output directory. Apply one
 post-process per invocation; each output includes a refreshed catalog hash
 for track.ini. Close the game before deploying media.
+
+  --baked-shadow-visibility <0..1>
+    Optional value for --patch-shaders. Defaults to 0.15, the visually approved
+    Top Gear brightness setting. Use 0..1 to choose fallback visibility for
+    FM5's unbound Direct0 shadow samples; 1 restores the brighter full-light setting.
+  --scale-baked-shadow-fallback <0..1> --fm5-bin-zip <original FM5 Top Gear bin.zip>
+    Diagnostic post-pass for an already-patched package. Scales only the replaced
+    Direct0 samples and uses original FM5 shaders to identify them. The Top Gear
+    screenshot test improved at 0.45 but remained too bright. The test install
+    now uses 0.15; the prior package is kept in
+    CustomTracks\TopGear\shadow-profile-045 for rollback. This is not native FH2
+    shadow-map integration.
 
   --min-draw-distance 500
     Extends short final prop cull distances (not texture streaming quality).
@@ -973,6 +1010,62 @@ not engine-tested. Dynamic registration omits source cones/barrels;
 their original visual placements remain, but movable-prop collisions
 are intentionally unavailable. The 210 streamed road/ground physics
 templates and all arrival footprint checks remain unchanged.
+
+The separate cone-free props test builder removes all 318 cone placements from
+zone visibility (192 registered cones plus 126 visual-only instances of the
+same three models), preserves the other 29 dynamic prop entries
+(including traffic signs and poles), and uses the installed game's native
+PhysicsDefinitions.bin. This enables the native movable-prop physics path;
+actual collision/destruction behavior still needs an in-game check. It builds
+a separate pack and does not overwrite the source:
+
+  python .\build_prop_test.py `
+    --source-track ".\path\to\CustomTracks\TopGear" `
+    --source-objects ".\path\to\Mount\media\tracks\topgear\ribbon_00\CollObjs.xml" `
+    --source-pvs ".\path\to\Mount\media\tracks\topgear\ribbon_00\TopGear_00.pvs" `
+    --physics-definitions ".\path\to\Mount\media\tracks\anthem\physicsdefinitions.bin" `
+    --output ".\work\TopGear-cone-free-test"
+
+Conservative performance comparison (separate pack; no automatic installation):
+
+  python .\build_performance_test.py `
+    --source-track ".\path\to\CustomTracks\TopGear" `
+    --output ".\work\TopGear-performance-test"
+
+This keeps every model/texture and highest-mip residency request, the accepted
+brightness, shaders, physics, and cone omissions. Only small translated prop
+draws qualify: the conservative sphere enclosing all linked LOD models must be
+at most 20 m. Their final draw range becomes 500 m. Earlier bands are preserved
+unless above 450 m, allowing a final LOD before culling. Existing signed LOD
+offsets must already be repaired; this does not generate new LOD meshes.
+Large objects and zero-translation world-space road/terrain/decals stay intact.
+Zone draw pruning includes a whole-cell plus mesh-sphere safety margin and never
+prunes model/texture dependencies. Builds verify non-zone archive payloads
+byte-for-byte and write a new media catalog and track.ini checksum.
+
+The first cone-free comparison optimized 1,344 of 3,249 visible draw records,
+reducing total zone draw references from 935,712 to 608,814. This is an offline
+visibility-workload measurement, NOT a measured FPS gain. The 500 m final cull
+can still cause distant small props to disappear; no seamless fade is promised.
+Test the same camera/car/settings, drive around, revisit earlier locations,
+and check texture stability, scenery pop-in, mirrors, and reflections.
+Headlight shader changes are deliberately excluded from this FPS comparison.
+
+User testing rejected the first performance profile: prop pop-in increased but
+FPS did not observably improve. Do not adopt it as the default working profile.
+
+Temporary plane LOD diagnostics:
+Compile standalone TrackLoaderCPS.cpp with TRACKLOADER_STANDALONE and
+TRACKLOADER_LOD_DIAGNOSTICS defined to enable two log-only, signature-checked
+probes. Normal builds do not enable these probes. The diagnostic loader writes
+"lod-trace" entries to the platform log, capturing live plane LOD thresholds,
+bypass flags, selected band, view/pass, computed distance, and rejection result.
+It does not change rendering decisions or control gameplay. These callbacks
+can affect performance: use this build to diagnose LOD switching, not measure FPS.
+Drive close to the plane, then to the far end of the track, pause briefly at each
+location (sampling is every five seconds), and exit the game normally to preserve
+the log. Test normal driving before Photo Mode. Restore the backed-up normal
+TrackLoader.dll after diagnosis. No shader/brightness/physics edits are involved.
 
 python .\build_environment.py `
   --source ".\work\TopGear\source" `

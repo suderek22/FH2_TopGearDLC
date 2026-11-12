@@ -351,16 +351,20 @@ def build(component, output, navigation=None, environment=None, mediaoverride=Fa
                   "TrackSettings, native navigation/integrity, locators and environment companion resources remain to be integrated.",
                   "No database registration, file override, custom travel or game installation is enabled.",
               ]}
+    if "baked_shadow_visibility" in report:
+        result["baked_shadow_visibility"] = report["baked_shadow_visibility"]
     if navigation_report:
-        result["navigation_component"] = str(navigation)
+        result["navigation_component"] = navigation.name
         result["remaining"] += navigation_report["remaining"]
         result["remaining"].remove(
             "TrackSettings, native navigation/integrity, locators and environment companion resources remain to be integrated.")
         result["remaining"].append("TrackSettings, locators and environment companion resources remain to be integrated.")
     if environment_report:
-        result["environment_component"] = str(environment)
+        result["environment_component"] = environment.name
         result["arrival"] = environment_report["arrival"]
         result["settings_and_locators_present"] = True
+        if "lighting_fog" in environment_report:
+            result["lighting_fog"] = environment_report["lighting_fog"]
         if "static_test" in environment_report:
             result["static_test"] = environment_report["static_test"]
         result["remaining"] += environment_report["remaining"]

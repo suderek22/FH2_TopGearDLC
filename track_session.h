@@ -4,6 +4,10 @@
 #include "track_flow.h"
 #include "track_diag.h"
 #include "track_visit.h"
+#include "track_time_weather.h"
+#include "track_pause_map.h"
+#include "track_save_sanitize.h"
+#include "track_mod_save.h"
 #include <mutex>
 
 namespace TrackSession {
@@ -21,6 +25,18 @@ class Driver {
     TrackPose::Pose arrival = {};
     TrackLifecycle::Names lifecycle;
     bool restoreSaving = false;
+    // Native saving stays on (mainland and track); on the track only once the save sanitizer is armed.
+    bool saveDuringVisit = false;
+    bool trackSaving = false;
+    ULONGLONG saveWait = 0;
+    TrackModSave::Store modSave;
+    TrackTimeWeather::Preset timeWeather;
+    TrackTimeWeather::Snapshot originalTimeWeather;
+    bool timeWeatherCaptured = false;
+    bool timeWeatherApplied = false;
+    TrackPauseMap::Preset pauseMap;
+    TrackPauseMap::Swap pauseSwap;
+    bool pauseMapTried = false;
     TrackLive::CarState departure;
     TrackLive::CarState mainlandArrival;
     TrackSave::Gate saves;
@@ -59,14 +75,60 @@ class Driver {
         return self->flows.Ensure(group, error, self->lifecycle);
     }
     void Fail(const std::string& error) {
+        saves.PassThrough(false);
+        TrackSaveSanitize::Disarm();
+        RestorePauseMap();
         state = State::Failed;
         detail = error;
         api->log(mod, ("error: " + error +
             (saves.Held() ? "; experimental saving remains disabled; restart required" :
                                    "; no custom visit started")).c_str());
     }
+    // An in-flight native save must finish before a transition holds the save gate.
+    bool SavesIdle(std::string& error) {
+        TrackLive::MicroSaveState micro;
+        if (!TrackLive::CaptureMicroSave(base, owners.Module(), micro, error)) return false;
+        if (!micro.Idle()) {
+            error = "native microsave job remains pending; job=" + std::to_string(micro.job) +
+                " control=" + std::to_string(micro.control);
+            return false;
+        }
+        return bridge.SessionProfileReady(owners.ProfileAddress(), error);
+    }
+    bool WaitForSaves(const char* phase) {
+        if (!saveWait) {
+            saveWait = GetTickCount64();
+            api->log(mod, (std::string(phase) + " waits for the in-flight native save to finish").c_str());
+        }
+        return GetTickCount64() - saveWait < 20000;
+    }
+    void MarkVisited() {
+        std::string error;
+        if (!modSave.Ready()) return;
+        if (modSave.Get("FirstVisit") == "1") return;
+        if (modSave.Set("FirstVisit", "1", error))
+            api->log(mod, ("mod save " + modSave.Path() + ": FirstVisit=1").c_str());
+        else api->log(mod, ("error: mod save: " + error).c_str());
+    }
     bool GameplayReady(void* pause) const {
         return pause && reinterpret_cast<bool(*)(void*)>(base + 0x963560)(pause);
+    }
+    // The pause-map background is cosmetic: failures are logged and never block the visit.
+    void ApplyPauseMap() {
+        if (pauseMapTried || !pauseMap.enabled) return;
+        pauseMapTried = true;
+        std::string error;
+        if (pauseSwap.Apply(base, pauseMap, error)) {
+            TrackPauseMap::Hooks::Activate(pauseMap.size, pauseMap.offsetX, pauseMap.offsetZ);
+            api->log(mod, ("track " + std::to_string(track) + ": pause map background active").c_str());
+        } else
+            api->log(mod, ("error: pause map background unavailable: " + error).c_str());
+    }
+    void RestorePauseMap() {
+        TrackPauseMap::Hooks::Deactivate();
+        std::string error;
+        if (!pauseSwap.Restore(error))
+            api->log(mod, ("error: mainland pause map background restoration failed: " + error).c_str());
     }
     bool Dispatch(TrackBinding::Visit& visit) {
         std::string error;
@@ -85,8 +147,8 @@ class Driver {
         std::string error;
         if (state == State::Ready) {
             if (!request) return;
-            request = 0;
             if (!canEnter) {
+                request = 0;
                 detail = "entry refused: native mainland free roam is not idle/eligible";
                 api->log(mod, ("error: " + detail).c_str());
                 return;
@@ -106,30 +168,53 @@ class Driver {
                     " pending=" + std::to_string(map.pendingJob));
                 return;
             }
-            if (!micro.Idle()) {
+            if (saveDuringVisit) {
+                saves.PassThrough(false);
+                if (!SavesIdle(error)) {
+                    owners.Reset();
+                    if (WaitForSaves("track entry")) return;
+                    request = 0;
+                    saveWait = 0;
+                    saves.PassThrough(true);
+                    detail = "entry refused: native save did not finish: " + error;
+                    api->log(mod, ("error: " + detail).c_str());
+                    return;
+                }
+                saveWait = 0;
+            } else if (!micro.Idle()) {
                 Fail("native departure microsave job remains pending; job=" +
                     std::to_string(micro.job) + " control=" + std::to_string(micro.control));
                 return;
-            }
-            if (!bridge.SessionProfileReady(owners.ProfileAddress(), error)) {
+            } else if (!bridge.SessionProfileReady(owners.ProfileAddress(), error)) {
                 Fail(error);
                 return;
+            }
+            request = 0;
+            if (timeWeather.enabled) {
+                if (!TrackTimeWeather::Capture(base, originalTimeWeather, error)) {
+                    Fail("time/weather preset preflight failed: " + error);
+                    return;
+                }
+                timeWeatherCaptured = true;
+                timeWeatherApplied = false;
             }
             char message[512] = {};
             if (!cooperation->acquire(message, sizeof message)) {
                 detail = message;
                 api->log(mod, message);
                 owners.Reset();
+                saves.PassThrough(saveDuringVisit);
                 return;
             }
             if (!saves.Hold(owners.Module(), owners.ProfileAddress(), 0, 0, error)) {
                 Fail(error);
                 return;
             }
-            api->set_notice(mod, restoreSaving ?
+            mainlandArrival = TrackLive::AirportReturn(departure);
+            trackSaving = saveDuringVisit && TrackSaveSanitize::Arm(mainlandArrival.pose);
+            api->set_notice(mod, trackSaving ? nullptr : restoreSaving ?
                 "Custom tracks: SAVING DISABLED\nSaving resumes after verified mainland return" :
                 "Custom tracks: SAVING DISABLED\nDisable track activation and restart to restore saving");
-            mainlandArrival = TrackLive::AirportReturn(departure);
             entry.target = {542, 542, track,
                 {arrival.position[0], arrival.position[1], arrival.position[2], 1}, 0};
             entry.pose = arrival;
@@ -147,11 +232,64 @@ class Driver {
         if (!TrackLive::CaptureMap(base, map, error)) { Fail(error); return; }
         if (state == State::Driving) {
             if (!map.Settled() || map.current != track) {
-                Fail("native custom map changed outside the owned visit");
+                std::string message = "native custom map changed outside the owned visit";
+                if (timeWeatherApplied && map.Settled() && map.current == 542) {
+                    std::string restoreError;
+                    if (TrackTimeWeather::Restore(base, originalTimeWeather, restoreError)) {
+                        timeWeatherApplied = false;
+                        timeWeatherCaptured = false;
+                    } else {
+                        message += "; time/weather restoration failed: " + restoreError;
+                    }
+                }
+                Fail(message);
                 return;
             }
+            if (timeWeather.enabled) {
+                if (!timeWeatherCaptured) {
+                    Fail("time/weather preset has no captured mainland state");
+                    return;
+                }
+                if (!timeWeatherApplied) {
+                    if (!TrackTimeWeather::Apply(base, timeWeather, error)) {
+                        std::string restoreError;
+                        if (!TrackTimeWeather::Restore(base, originalTimeWeather, restoreError))
+                            error += "; original time/weather restoration failed: " + restoreError;
+                        Fail("time/weather preset failed: " + error);
+                        return;
+                    }
+                    timeWeatherApplied = true;
+                    detail = "native custom map ready; entry time/weather preset active";
+                    api->log(mod, ("track " + std::to_string(track) + ": " + detail).c_str());
+                } else if (!TrackTimeWeather::HoldWeather(base, timeWeather, error)) {
+                    std::string restoreError;
+                    if (!TrackTimeWeather::Restore(base, originalTimeWeather, restoreError))
+                        error += "; original time/weather restoration failed: " + restoreError;
+                    else timeWeatherApplied = false;
+                    Fail("time/weather hold failed: " + error);
+                    return;
+                }
+            }
+            ApplyPauseMap();
             if (!request) return;
+            if (trackSaving) {
+                saves.PassThrough(false);
+                if (!SavesIdle(error) && WaitForSaves("mainland return")) return;
+                saveWait = 0;
+            }
             request = 0;
+            RestorePauseMap();
+            if (timeWeatherApplied && !TrackTimeWeather::ReleaseForReturn(base, error)) {
+                std::string message = "could not release time/weather preset for mainland return: " + error;
+                std::string restoreError;
+                if (TrackTimeWeather::Restore(base, originalTimeWeather, restoreError)) {
+                    timeWeatherApplied = false;
+                } else {
+                    message += "; original time/weather restoration failed: " + restoreError;
+                }
+                Fail(message);
+                return;
+            }
             returned.target = {track, 542, 542,
                 {mainlandArrival.pose.position[0], mainlandArrival.pose.position[1], mainlandArrival.pose.position[2], 1}, 0};
             returned.pose = mainlandArrival.pose;
@@ -179,7 +317,21 @@ class Driver {
             state = State::Driving;
             detail = "native custom map/car/flow ready; rendering and driving require in-game observation";
             api->log(mod, ("track " + std::to_string(track) + ": " + detail).c_str());
+            MarkVisited();
+            if (trackSaving) {
+                saves.PassThrough(true);
+                api->log(mod, ("track " + std::to_string(track) +
+                    ": native saving enabled; saves resume at the mainland Airport (swap track seen=" +
+                    std::to_string(TrackSaveSanitize::Track()) + ")").c_str());
+            }
         } else {
+            if (timeWeatherApplied) {
+                if (!TrackTimeWeather::Restore(base, originalTimeWeather, error)) {
+                    detail = "time/weather restoration failed after mainland arrival: " + error;
+                    return;
+                }
+                timeWeatherApplied = false;
+            }
             bool finished = false;
             if (restoreSaving) {
                 TrackSave::ReturnState observed = {owners.Module(), owners.ProfileAddress(),
@@ -202,8 +354,20 @@ class Driver {
             ResetVisit(returned);
             departure = {};
             mainlandArrival = {};
+            timeWeather = {};
+            originalTimeWeather = {};
+            timeWeatherCaptured = false;
+            timeWeatherApplied = false;
+            pauseMap = {};
+            pauseMapTried = false;
+            trackSaving = false;
             state = State::Ready;
-            detail = restoreSaving ?
+            saves.PassThrough(saveDuringVisit);
+            api->log(mod, ("save sanitizer: LastTrackVisited rewrites=" + std::to_string(TrackSaveSanitize::Rewrites()) +
+                " pose reads=" + std::to_string(TrackSaveSanitize::Poses()) +
+                " native saves passed=" + std::to_string(saves.Passed())).c_str());
+            detail = saveDuringVisit ? "mainland Airport arrival verified; saving enabled; repeat entry ready" :
+                restoreSaving ?
                 "mainland Airport arrival verified; saving enabled; repeat entry ready; career changes not audited" :
                 "mainland Airport arrival verified; repeat entry ready; saving disabled until game restart";
             api->set_notice(mod, restoreSaving ? nullptr : "Custom tracks: SAVING DISABLED\nDisable track activation and restart to restore saving");
@@ -232,7 +396,8 @@ public:
             !flows.Initialize(base, error) ||
             !bridge.SetGroupPreparation(PrepareGroupCallback, this, error) ||
             !bridge.Install(api, mod, base, error) ||
-            (TrackDiag::Install(api, mod, base), !bridge.Enable(error, true))) {
+            (TrackDiag::Install(api, mod, base), TrackPauseMap::Hooks::Install(api, mod, base),
+             TrackSaveSanitize::Install(api, mod, base), !bridge.Enable(error, true))) {
             Fail(error);
             return false;
         }
@@ -248,7 +413,7 @@ public:
     bool Initialize(const FH2ModApi* platform, FH2Mod* owner, uintptr_t image,
                     const TrackVisit::Api* services, int id, const TrackPose::Pose& pose,
                     std::string& error, bool restoreSavingOnReturn = false,
-                    const TrackLifecycle::Names& names = {}) {
+                    const TrackLifecycle::Names& names = {}, bool saveDuringTrackVisit = false) {
         std::lock_guard<std::mutex> lock(mutex);
         if (state != State::Unavailable || api != platform || mod != owner || base != image ||
             !bridge.SessionProtectionActive() ||
@@ -262,7 +427,8 @@ public:
         track = id;
         arrival = pose;
         lifecycle = names;
-        restoreSaving = restoreSavingOnReturn;
+        saveDuringVisit = saveDuringTrackVisit;
+        restoreSaving = restoreSavingOnReturn || saveDuringVisit;
         TrackVisit::Client client{sizeof client, this, TickCallback};
         char message[512] = {};
         if (!cooperation->attach(&client, message, sizeof message)) {
@@ -271,7 +437,20 @@ public:
             return false;
         }
         state = State::Ready;
-        detail = restoreSaving ?
+        std::string saveError;
+        if (!modSave.Open(api->azimuth_dir ? api->azimuth_dir : L"", saveError) ||
+            (!modSave.Has("FirstVisit") && !modSave.Set("FirstVisit", "0", saveError)))
+            api->log(mod, ("error: mod save unavailable: " + saveError).c_str());
+        else api->log(mod, ("mod save " + modSave.Path() + " (user " + modSave.User() + "): FirstVisit=" +
+                            modSave.Get("FirstVisit")).c_str());
+        if (saveDuringVisit) {
+            saves.PassThrough(true);
+            api->set_notice(mod, nullptr);
+        }
+        detail = saveDuringVisit ? (TrackSaveSanitize::Installed() ?
+            "native entry ready; saving enabled on mainland and custom tracks (track saves resume at the mainland Airport)" :
+            "native entry ready; saving enabled on mainland; save sanitizer unavailable, so saving pauses on custom tracks") :
+            restoreSaving ?
             "native entry ready; saving disabled until verified mainland return; career changes not audited" :
             "native entry ready; all profile saving disabled until restart";
         api->log(mod, detail.c_str());
@@ -287,17 +466,23 @@ public:
         return true;
     }
     bool QueueEntry(int id, const TrackPose::Pose& pose, const TrackLifecycle::Names& names,
-                    bool restoreSavingOnReturn, std::string& error) {
+                    bool restoreSavingOnReturn, const TrackTimeWeather::Preset& preset,
+                    const TrackPauseMap::Preset& pause, std::string& error, bool saveDuringTrackVisit = false) {
         std::lock_guard<std::mutex> lock(mutex);
         if (request || state != State::Ready || id < 10000 ||
-            !TrackPose::Valid(pose) || !TrackLifecycle::Valid(names.group)) {
+            !TrackPose::Valid(pose) || !TrackLifecycle::Valid(names.group) || !preset.Valid() || !pause.Valid()) {
             error = "track entry refused: " + detail;
             return false;
         }
+        if (preset.enabled && !TrackTimeWeather::Supported(base, error)) return false;
         track = id;
         arrival = pose;
         lifecycle = names;
-        restoreSaving = restoreSavingOnReturn;
+        saveDuringVisit = saveDuringTrackVisit;
+        restoreSaving = restoreSavingOnReturn || saveDuringVisit;
+        timeWeather = preset;
+        pauseMap = pause;
+        pauseMapTried = false;
         request = 1;
         return true;
     }
