@@ -11,9 +11,13 @@ RESOURCE_MODEL = 4
 RESOURCE_TEXTURE = 5
 RESOURCE_PVS_ZONE = 12
 
+PVS_DRAW_INDEX_MASK = 0x3FFFFFFF
+PVS_DRAW_MIRROR = 0x40000000
+PVS_DRAW_CUBEMAP = 0x80000000
+
 
 def read_pvs_zone60(data):
-    """Read the binary v60 PVSZ form consumed by FH2's 0x114D230 serializer."""
+    """Read v60 PVSZ, preserving the draw entries' high-bit secondary-view flags."""
     offset = 5
     if data[:5] != b"PVSZ\0":
         raise ValueError("Invalid FH2 PVSZone binary tag")

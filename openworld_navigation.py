@@ -7,7 +7,7 @@ NAV_WIDTHS = (40, 24, 8, 16, 16, 8, 8, 1, 1)
 NAV_LINKS = ((0, 0, 3), (0, 8, 4), (1, 0, 2), (1, 8, 4),
              (2, 0, 0), (3, 0, 1), (4, 0, 5), (4, 8, 6),
              (5, 0, 7), (6, 0, 8))
-FIRST_TEST_PROPERTIES = {"ai_disabled": "true", "display_name": "Top Gear (CPS)",
+FIRST_TEST_PROPERTIES = {"ai_disabled": "true", "display_name": "Dunsfold Aerodrome",
                          "profile_name": "none_10000", "road_type": "none",
                          "traffic_density_name": "none", "traffic_disabled": "true"}
 # MapProfileHud*.xml draw nav roads only for these road_type values ("none" is not drawn).
@@ -206,7 +206,9 @@ def validate_closed_road(world, positions, road_type=None):
         properties[names[name]] = values[value]
     if road_type is None:
         road_type = properties.get("road_type")
-    if road_type not in HUD_ROAD_TYPES or properties != road_properties(road_type):
+    expected = road_properties(road_type) if road_type in HUD_ROAD_TYPES else {}
+    legacy = dict(expected, display_name="Top Gear (CPS)")
+    if road_type not in HUD_ROAD_TYPES or properties not in (expected, legacy):
         raise ValueError("Custom navigation road does not preserve disabled AI/traffic metadata")
     seen = set()
     for index, position in enumerate(positions):

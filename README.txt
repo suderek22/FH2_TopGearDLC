@@ -1,4 +1,4 @@
-TrackLoader / TrackLoaderCPS 0.6.0-dev-beta3 -- PERSISTENT EXPERIMENTAL MULTI-MAP TRAVEL
+TrackLoader / TrackLoaderCPS 0.7.0-beta.4 -- PERSISTENT EXPERIMENTAL MULTI-MAP TRAVEL
 
 STANDALONE RUNTIME
 
@@ -71,11 +71,11 @@ Forza\SwatchbinConverter converts them to native FH2 BC7 using the game's
 StormIsland_Large/Small destination templates. Conversion and preview decoding
 verify an exact tiled/linear round trip; the native bundle header is preserved.
 Transparent letterboxing retains the poster/logo aspect ratio.
-Storm Island currently uses those unmodified native destination placeholders
-(the game's named StormIsland artwork actually shows generic mainland scenery).
+Storm Island artwork is loaded directly from the game's The_Island archive:
+Destinations\9.swatchbin and loading_watermark.swatchbin. It is not shipped.
 
 Generated output: work\browser-artwork-v1
-  TopGear_Large/Small.swatchbin, StormIsland_Large/Small.swatchbin
+  TopGear_Large/Small.swatchbin
   decoded PNG previews and thumbnails.json (hashes, logical paths, DXGI/tile mode)
 All four decoded previews and native runtime images were visually verified:
 Storm Island placeholder poster/logo and Top Gear poster/logo switch correctly.
@@ -98,9 +98,9 @@ TrackLoader publishes artwork only under data_bound\TrackLoader; it does not
 replace Panama/Porsche autoshow, bucket-list or rivals tile textures. If these
 fail to load, check the Panama.zip central-directory metadata in zipmanifest.xml
 against the installed archive before changing any textures.
-Use --install-pack <track.ini> --track TopGear|StormIsland --output <artwork>
+Use --install-pack <track.ini> --track TopGear --output <artwork>
 to install the staged browser images and their manifest hashes.
-Top Gear metadata is Author=suderek, Version=0.3.2-beta.
+Dunsfold Aerodrome metadata is Author=suderek, Version=0.7.0-beta.4.
 Pressing A queues custom travel and automatically closes the gallery and pause
 menu through native Back; no manual B/resume step is needed. Stock Storm Island
 549 remains first and uses the native entitlement/install-gated travel flow.
@@ -115,7 +115,7 @@ The standalone build also passed Top Gear entry/Airport return and Storm Island
 entry/native mainland return using only A, with CarPackStudio.dll and
 TrackLoaderCPS.dll excluded. Saving was released after its custom return.
 The real standalone browser also opens without Storm Island installed. Top Gear
-poster/logo and suderek / 0.3.2-beta metadata were visually verified there.
+poster/logo and the then-current metadata were visually verified there.
 Native caption persistence was checked through three consecutive gallery returns
 and full pause reopenings after adding explicit text invalidation; earlier
 template-only and unchanged-value setter attempts failed those repeat checks.
@@ -124,8 +124,9 @@ font style and typed Color resource (a literal hex FZTextBlock.Color rendered
 invisible). Platform file comparisons use bounded chunks to avoid allocating
 and reading the 1.2 GB track archive byte-by-byte during every startup.
 53 targeted loader tests and the isolated platform suite pass.
-GitHub update checking remains pending; repository
-metadata currently says "not checked". A fast/skip-launcher first boot can still
+The browser compares the pack version with the latest published GitHub release,
+including prereleases; failed checks are reported rather than silently ignored.
+A fast/skip-launcher first boot can still
 cache pause XAML before pack validation finishes; restart after initial
 publication when installing/changing this development build.
 
@@ -550,7 +551,7 @@ Start the wrapper/game offline. In the CPS platform-command console run:
   TrackLoaderCPS travel 10000
 
 Expected: reserved_tracks=1, local_dlc_packs=1, registered_tracks=0,
-playable_tracks=0; Top Gear (CPS) [blocked]; registration=disabled.
+playable_tracks=0; Dunsfold Aerodrome [blocked]; registration=disabled.
 Travel MUST return "error: ... is not playable" without starting a load.
 Do not use CPS "track 10000" or teleport expecting a playable custom map.
 If absent from the MODS tab, check fh2-mods\platform.log for the

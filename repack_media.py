@@ -11,7 +11,8 @@ import struct
 import sys
 
 from build_media import media_catalog
-from fh2_world import MiniZip, Resource, write_minizip
+from fh2_world import (MiniZip, PVS_DRAW_CUBEMAP, PVS_DRAW_INDEX_MASK, PVS_DRAW_MIRROR,
+                       Resource, write_minizip)
 
 TRACK_PARAMS_SLOT = 7
 
@@ -838,6 +839,20 @@ def neutralize_legacy_ao(source, output):
     return _rewrite_shader_programs(source, output, transform, "neutralized_legacy_ao")
 
 
+def neutralize_cubemap_ao(source, output):
+    """Opt-in diagnostic: neutralize legacy AO only in cubemap pixel shaders."""
+    from shader_patch import neutralize_cubemap_ao as patch_ao
+
+    def transform(name, data):
+        lower = name.lower()
+        if not lower.endswith(("cubemaplightscenario.pc.pso", "cubemaplightscenario.durango.pso")):
+            return data, {}
+        patched, count = patch_ao(data)
+        return patched, {"ao_samples": count} if count else {}
+
+    return _rewrite_shader_programs(source, output, transform, "neutralized_cubemap_ao")
+
+
 def patch_instancing_poses(source, output):
     """Repair the FM5/FH2 instanced pose stride, including compiled instruction extensions."""
     from shader_patch import patch_pose_stride
@@ -1279,6 +1294,83 @@ def repair_topgear_markings(source, output, include_runway=False):
     return report
 
 
+def enable_secondary_views(source, output):
+    """Offline reproducer only: enabling these flags caused a native rendering crash."""
+    from build_session import verify_files
+    from fh2_pvs import read_root60
+    from fh2_world import read_pvs_zone60, write_pvs_zone60
+
+    source, output = Path(source).resolve(), Path(output).resolve()
+    if output.exists() or source in output.parents or output in source.parents:
+        raise ValueError("Source and new output media directories must be separate")
+    report = json.loads((source / "media.json").read_text(encoding="utf-8"))
+    catalog = (source / report["catalog_name"]).read_bytes()
+    if (hashlib.sha256(catalog).hexdigest() != report["catalog_sha256"] or
+            catalog != media_catalog(report["media_name"], report["files"])):
+        raise ValueError("Source media catalog checksum mismatch")
+    verify_files(source, report)
+    relative = Path(report["override_relative_path"])
+    folder = source / relative
+    if (folder / "ChunkMap1.dat").exists():
+        raise ValueError("Secondary-view visibility test requires single-chunk media")
+    root = read_root60((folder / "ribbon_00" / (report["media_name"] + "_00.pvs")).read_bytes())
+    assignments = (folder / "ChunkAssign.dat").read_bytes()
+    if assignments != struct.pack("<2I", 100, root["zone_count"]) + bytes(4 * root["zone_count"]):
+        raise ValueError("Secondary-view visibility test requires every zone in chunk zero")
+    lookup = (folder / "ChunkMap0.dat").read_bytes()
+    keys = [key for key, in struct.iter_unpack("<I", lookup)]
+    archive = MiniZip(folder / "GeoChunk0.minizip")
+    if len(keys) != len(archive.entries) or len(set(keys)) != len(keys):
+        raise ValueError("Chunk map/archive counts or resource IDs disagree")
+    if {key for key in keys if key >> 24 == 12} != {
+            0x0C000000 | index for index in range(root["zone_count"])}:
+        raise ValueError("Secondary-view visibility test requires every native zone")
+    mask = PVS_DRAW_CUBEMAP | PVS_DRAW_MIRROR
+    updated = {}
+    changed = 0
+    for index, key in enumerate(keys):
+        if key >> 24 != 12:
+            continue
+        zone = read_pvs_zone60(archive.read(index))
+        indices = [entry & PVS_DRAW_INDEX_MASK for entry in zone["draws"]]
+        if len(set(indices)) != len(indices) or any(
+                draw >= len(root["primary_draws"]) for draw in indices):
+            raise ValueError("Zone references a duplicate or invalid primary draw")
+        entries = [entry | mask for entry in zone["draws"]]
+        changed += sum(a != b for a, b in zip(zone["draws"], entries))
+        if entries != zone["draws"]:
+            updated[index] = write_pvs_zone60(dict(zone, draws=entries))
+    if not changed:
+        raise ValueError("Secondary-view eligibility is already enabled or there are no draws")
+    shutil.copytree(source, output, ignore=shutil.ignore_patterns("GeoChunk0.minizip"))
+    target = output / relative
+    resources = [Resource(str(index), key & 0xFFFFFF, key >> 24)
+                 for index, key in enumerate(keys)]
+    rebuilt_lookup = write_minizip(
+        target / "GeoChunk0.minizip", resources,
+        lambda resource: updated[int(resource.name)] if int(resource.name) in updated
+        else archive.read(int(resource.name)))
+    if rebuilt_lookup != lookup:
+        raise ValueError("Secondary-view test changed resource IDs or ordering")
+    rebuilt = MiniZip(target / "GeoChunk0.minizip")
+    for index in range(len(keys)):
+        expected = updated[index] if index in updated else archive.read(index)
+        if rebuilt.read(index) != expected:
+            raise ValueError("Secondary-view resource verification failed at entry " + str(index))
+    for row in report["files"]:
+        path = output / row["path"]
+        row["bytes"], row["sha256"] = path.stat().st_size, digest(path)
+    (output / report["catalog_name"]).write_bytes(media_catalog(report["media_name"], report["files"]))
+    source_catalog = report["catalog_sha256"]
+    report["catalog_sha256"] = digest(output / report["catalog_name"])
+    report["secondary_view_visibility_test"] = {
+        "source_catalog_sha256": source_catalog, "draw_flag_mask": mask,
+        "zones_changed": len(updated), "draw_references_changed": changed,
+        "non_zone_resource_bytes_preserved": True, "engine_validated": False}
+    (output / "media.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
+    return report
+
+
 def map_wide_visibility(source, output, minimum):
     """Keep the map's draw/model/texture closure requested in every zone."""
     import math
@@ -1316,15 +1408,17 @@ def map_wide_visibility(source, output, minimum):
              for index, key in enumerate(keys) if key >> 24 == 12}
     if set(zones) != {0x0C000000 | i for i in range(root["zone_count"])} or not zones:
         raise ValueError("Map-wide visibility requires every native zone")
-    draws, models, textures = set(), set(), {}
+    draws, models, textures = {}, set(), {}
     for zone in zones.values():
-        draws.update(zone["draws"])
+        for entry in zone["draws"]:
+            index = entry & PVS_DRAW_INDEX_MASK
+            draws[index] = draws.get(index, 0) | (entry & ~PVS_DRAW_INDEX_MASK)
         models.update(zone["models"])
         for index, quality in zip(zone["textures"], zone["qualities"]):
             if not 0 <= index < len(root["textures"]) or quality & 255 != 1:
                 raise ValueError("Invalid map-wide texture request")
             textures[index] = max(textures.get(index, 1), quality)
-    if draws != set(range(len(root["primary_draws"]))):
+    if set(draws) != set(range(len(root["primary_draws"]))):
         raise ValueError("Map-wide source visibility omits a draw")
     available = set(keys)
     for draw in root["primary_draws"]:
@@ -1364,7 +1458,8 @@ def map_wide_visibility(source, output, minimum):
         textures[index] = 1 | (max(levels, default=0) << 8)
     updated = {}
     for key, zone in zones.items():
-        zone.update(draws=sorted(draws), models=sorted(models), textures=sorted(textures),
+        zone.update(draws=[index | draws[index] for index in sorted(draws)],
+                    models=sorted(models), textures=sorted(textures),
                     qualities=[textures[index] for index in sorted(textures)])
         updated[key] = write_pvs_zone60(zone)
     root["zone_maxima"] = [len(textures), len(models), len(draws)]
@@ -1441,6 +1536,9 @@ def main():
     parser.add_argument("--neutralize-legacy-ao", action="store_true",
                         help="experimental diagnostic: replace FM5 baked AO samples at unbound t6 "
                              "with full ambient visibility; preserves diffuse and specular textures")
+    parser.add_argument("--neutralize-cubemap-ao", action="store_true",
+                        help="experimental diagnostic: neutralize named legacy AO only in cubemap "
+                             "pixel shaders; preserves normal track rendering")
     parser.add_argument("--neutralize-pavement-skid", action="store_true",
                         help="replace named pavement skid-mask samples with white on all shader "
                              "families; preserves base textures and overlays but removes baked skids")
@@ -1514,6 +1612,9 @@ def main():
     parser.add_argument("--map-wide-distance", type=float, metavar="METRES",
                         help="extend every final draw band and keep the complete map resource "
                              "closure at highest available texture quality in every zone")
+    parser.add_argument("--secondary-view-visibility", action="store_true",
+                        help="disabled diagnostic: native cubemap/mirror eligibility test "
+                             "caused an ExecuteCommandList object/device mismatch")
     args = parser.parse_args()
     try:
         if args.scale_baked_shadow_fallback is not None:
@@ -1562,6 +1663,10 @@ def main():
             report = repair_topgear_markings(args.source, args.output, include_runway=True)
         elif args.repair_topgear_markings:
             report = repair_topgear_markings(args.source, args.output)
+        elif args.secondary_view_visibility:
+            raise ValueError("Secondary-view visibility test is disabled: native rendering "
+                             "stopped with ExecuteCommandList object/device mismatch at "
+                             "game+0x1385BFB; renderer compatibility is unresolved")
         elif args.map_wide_distance is not None:
             report = map_wide_visibility(args.source, args.output, args.map_wide_distance)
         elif args.default_draw_distances:
@@ -1578,6 +1683,8 @@ def main():
             report = neutralize_pavement_skid(args.source, args.output)
         elif args.neutralize_terrain_macro_tint:
             report = neutralize_terrain_macro_tint(args.source, args.output)
+        elif args.neutralize_cubemap_ao:
+            report = neutralize_cubemap_ao(args.source, args.output)
         elif args.neutralize_legacy_ao:
             report = neutralize_legacy_ao(args.source, args.output)
         elif args.neutralize_macro_tint:

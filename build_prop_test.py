@@ -12,7 +12,8 @@ import xml.etree.ElementTree as ET
 
 from build_media import media_catalog
 from fh2_pvs import read_root60
-from fh2_world import MiniZip, Resource, read_pvs_zone60, write_minizip, write_pvs_zone60
+from fh2_world import (MiniZip, PVS_DRAW_INDEX_MASK, Resource, read_pvs_zone60,
+                       write_minizip, write_pvs_zone60)
 from fm5_world import world_tables
 
 
@@ -87,13 +88,14 @@ def all_cone_draws(cone_rows, source_draws, retained_objects):
 
 def filter_zone_draws(zone, cone_instances):
     draws = zone["draws"]
-    if len(set(draws)) != len(draws):
+    indices = {entry & PVS_DRAW_INDEX_MASK for entry in draws}
+    if len(indices) != len(draws):
         raise ValueError("Zone contains duplicate draw references")
-    removed = set(draws) & set(cone_instances)
+    removed = indices & set(cone_instances)
     if removed != set(cone_instances):
         raise ValueError("Zone does not reference every cone placement")
     result = dict(zone)
-    result["draws"] = [index for index in draws if index not in cone_instances]
+    result["draws"] = [entry for entry in draws if entry & PVS_DRAW_INDEX_MASK not in cone_instances]
     return result
 
 
@@ -300,7 +302,7 @@ def build(source_track, source_objects, source_pvs, physics_definitions, output)
     rebuilt = MiniZip(output_archive)
     for key, index in zone_indexes.items():
         zone = read_pvs_zone60(rebuilt.read(index))
-        if set(zone["draws"]) & set(cone_draws):
+        if {entry & PVS_DRAW_INDEX_MASK for entry in zone["draws"]} & set(cone_draws):
             raise ValueError("Cone draw remains visible in a rebuilt world zone")
     objects_check = ET.fromstring(objects_path.read_bytes())
     if any(row.get("PhysicsType") == "Cone" for row in objects_check):

@@ -10,7 +10,7 @@ import struct
 from build_media import media_catalog
 from build_prop_test import _copy_pack, _update_track_catalog, atomic_write, digest
 from fh2_pvs import read_root60, write_root60
-from fh2_world import (MiniZip, Resource, draw_lod_metadata, read_pvs_zone60,
+from fh2_world import (MiniZip, PVS_DRAW_INDEX_MASK, Resource, draw_lod_metadata, read_pvs_zone60,
                        write_minizip, write_pvs_zone60)
 from spatial import center, read_hex
 
@@ -76,7 +76,8 @@ def cull_zone(zone, root, candidates, grid, index):
     x, z = center(grid, index)
     result = dict(zone)
     result["draws"] = []
-    for draw_index in zone["draws"]:
+    for entry in zone["draws"]:
+        draw_index = entry & PVS_DRAW_INDEX_MASK
         radius = candidates.get(draw_index)
         if radius is not None:
             position = root["primary_draws"][draw_index]["position"]
@@ -84,7 +85,7 @@ def cull_zone(zone, root, candidates, grid, index):
             if math.hypot(position[0] - x, position[2] - z) > (
                     PROP_DISTANCE + grid["radius"] + radius):
                 continue
-        result["draws"].append(draw_index)
+        result["draws"].append(entry)
     return result
 
 
@@ -131,7 +132,7 @@ def build(source_track, output):
              for index, key in enumerate(keys) if key >> 24 == 12}
     if set(zones) != {0x0C000000 | index for index in range(root["zone_count"])}:
         raise ValueError("Archive zone IDs differ from the root")
-    visible = {index for zone in zones.values() for index in zone["draws"]}
+    visible = {entry & PVS_DRAW_INDEX_MASK for zone in zones.values() for entry in zone["draws"]}
     updated_root, candidates = optimize_root(root, visible)
     updated_zones = {
         key: cull_zone(zone, root, candidates, grid, key & 0xFFFFFF)

@@ -489,6 +489,11 @@ def neutralize_ao_mask_channel(data, resource_names=(b"AOMaskTextureTexture",)):
     return data, total
 
 
+def neutralize_cubemap_ao(data):
+    """Neutralize the named legacy AO input, which cubemap shaders bind at t4, not t6."""
+    return _neutralize_named_texture(data, b"AOMap")
+
+
 def _neutralize_named_texture(data, resource_name):
     chunks = [offset for offset in _chunks(data) if data[offset:offset + 4] == b"RDEF"]
     if len(chunks) != 1:

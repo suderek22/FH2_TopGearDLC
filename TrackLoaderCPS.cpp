@@ -17,6 +17,7 @@
 #include "track_mount.h"
 #include "track_browser.h"
 #include "track_artwork.h"
+#include "track_update.h"
 #include <winsqlite\winsqlite3.h>
 #include <atomic>
 #pragma comment(lib, "winsqlite3.lib")
@@ -58,6 +59,9 @@ static HANDLE g_protectionThread = nullptr;
 static uintptr_t g_protectedBase = 0;
 static std::string g_protectionError;
 static std::vector<TrackBrowser::Item> g_browser;
+static std::mutex g_updateMutex;
+static std::string g_updateStatus = "Updates: checking GitHub";
+static std::string g_latestRelease;
 
 static std::string Utf8(const wchar_t* text) {
     int count = WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, text, -1, nullptr, 0, nullptr, nullptr);
@@ -93,6 +97,35 @@ static void BrowserOpen(void*, const char*) {
     auto session = g_session.load();
     if (!g_api->set_page_slot(g_mod, "Tracks", 1, session && session->InCustomTrack() ? 1 : 0))
         Log("error: could not refresh browser Airport action");
+    auto items = g_browser;
+    {
+        std::lock_guard<std::mutex> lock(g_updateMutex);
+        for (auto& item : items) {
+            if (item.repository != "suderek22/FH2_TopGearDLC") continue;
+            int comparison = 0;
+            if (g_latestRelease.empty()) item.updateStatus = g_updateStatus;
+            else if (!TrackUpdate::Compare(g_latestRelease, item.version, comparison))
+                item.updateStatus = "Latest release: " + g_latestRelease + " (version comparison unavailable)";
+            else item.updateStatus = (comparison > 0 ? "Update available: " :
+                                      comparison < 0 ? "Installed version newer; latest: " :
+                                      "Up to date: ") + g_latestRelease;
+        }
+    }
+    if (!g_api->set_page_xaml(g_mod, "Tracks", TrackBrowser::Resources().c_str(),
+                              TrackBrowser::Content(items).c_str(), TrackBrowser::Help().c_str()))
+        Log("error: could not refresh browser update status");
+}
+static DWORD WINAPI CheckTrackUpdates(void*) {
+    std::string tag, error;
+    const bool ok = TrackUpdate::Fetch(tag, error);
+    {
+        std::lock_guard<std::mutex> lock(g_updateMutex);
+        g_latestRelease = ok ? tag : "";
+        g_updateStatus = ok ? "Latest GitHub release: " + tag : "Updates: GitHub check unavailable";
+    }
+    Log(ok ? "GitHub latest published release: " + tag :
+             "error: GitHub release check failed: " + error);
+    return 0;
 }
 static bool BrowserMap(TrackLive::MapState& map, std::string& error) {
     if (!TrackLive::CaptureMap(g_protectedBase, map, error)) return false;
@@ -190,7 +223,7 @@ static int BrowserButton(void*, const char*, int button) {
         Log("error: could not show browser travel result");
     return queued ? FH2_PAGE_RESUME : FH2_PAGE_HANDLED;
 }
-static void RegisterBrowser(const std::wstring& mods) {
+static void RegisterBrowser() {
     if (!g_api->add_page || !g_api->set_page_xaml || !g_api->get_page_slot ||
         !g_api->set_page_slot || !g_api->set_page_tile_text) {
         Log("error: Tracks browser requires platform page services");
@@ -202,7 +235,8 @@ static void RegisterBrowser(const std::wstring& mods) {
     island.author = "Playground Games";
     island.version = "Native DLC";
     island.playable = true;
-    BrowserArtwork(island, mods + L"\\TrackLoaderAssets\\StormIsland\\track.ini");
+    island.poster = "/ForzaUI;component/Textures/Data_Bound/The_Island/Destinations/9.png";
+    island.logo = "/ForzaUI;component/Textures/Data_Bound/The_Island/loading_watermark.png";
     g_browser.push_back(std::move(island));
     for (const auto& track : g_tracks) {
         TrackBrowser::Item item;
@@ -329,9 +363,10 @@ static bool VerifyDatabase(const Track& track, std::string& error) {
 }
 static DWORD WINAPI ProtectSession(void* argument) {
     std::unique_ptr<std::wstring> manifest(static_cast<std::wstring*>(argument));
-    g_protectedBase = reinterpret_cast<uintptr_t>(g_api->wait_for_code(120000));
+    Log("waiting for FH2 game code; time spent in the Azimuth launcher has no timeout");
+    g_protectedBase = reinterpret_cast<uintptr_t>(g_api->wait_for_code(INFINITE));
     if (!g_protectedBase) {
-        g_protectionError = "timed out waiting for early native code protection";
+        g_protectionError = "FH2 game code unavailable for early native protection";
         StartupFailure(g_protectionError);
         return 0;
     }
@@ -351,8 +386,8 @@ static DWORD WINAPI ProtectSession(void* argument) {
 }
 static DWORD WINAPI StartSession(void*) {
     std::string error;
-    if (!g_protectionThread || WaitForSingleObject(g_protectionThread, 125000) != WAIT_OBJECT_0) {
-        StartupFailure("early native protection worker unavailable or timed out");
+    if (!g_protectionThread || WaitForSingleObject(g_protectionThread, INFINITE) != WAIT_OBJECT_0) {
+        StartupFailure("early native protection worker unavailable or wait failed");
         return 0;
     }
     CloseHandle(g_protectionThread);
@@ -410,6 +445,7 @@ static DWORD WINAPI StartSession(void*) {
         Log("error: " + error);
         return 0;
     }
+    driver->EnableDeferredHooks();
     if (!first->saveDuringVisit) g_api->set_notice(g_mod, first->restoreSavingOnReturn ?
         "Custom tracks: SAVING DISABLED\nSaving resumes after verified mainland return" :
         "Custom tracks: SAVING DISABLED\nDisable track activation and restart to restore saving");
@@ -712,7 +748,7 @@ FH2MOD_EXPORT int fh2mod_init(const FH2ModApi* api) {
     FH2ModInfo info = {};
     info.size = sizeof info;
     info.name = ModName;
-    info.version = "0.6.0-dev-beta3";
+    info.version = "0.7.0-beta.4";
     info.platform_version = "2.8.0";
     info.description = "Persistent experimental multi-map travel with verified mainland return.";
     info.offline_only = 1;
@@ -741,7 +777,18 @@ FH2MOD_EXPORT int fh2mod_init(const FH2ModApi* api) {
             Log("warning: no save snapshot will be taken this session (see platform log)");
         break;
     }
-    RegisterBrowser(mods);
+    RegisterBrowser();
+    for (const auto& item : g_browser) {
+        if (item.repository != "suderek22/FH2_TopGearDLC") continue;
+        HANDLE updateThread = CreateThread(nullptr, 0, CheckTrackUpdates, nullptr, 0, nullptr);
+        if (updateThread) CloseHandle(updateThread);
+        else {
+            std::lock_guard<std::mutex> lock(g_updateMutex);
+            g_updateStatus = "Updates: GitHub check unavailable";
+            Log("error: could not start GitHub release check: " + std::to_string(GetLastError()));
+        }
+        break;
+    }
     if (!api->add_command(g_mod, "list", "staged custom tracks and compatibility blockers", Commands, nullptr))
         Log("error: could not register list command");
     if (!api->add_command(g_mod, "status", "native test state and registration; in-game validation pending", Commands, nullptr))

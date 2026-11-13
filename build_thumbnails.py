@@ -137,11 +137,11 @@ def build(fm5_mount, fh2_mount, cps_source, forzatech, converter, output):
             "-SourcePngDir", str(pngs), "-OutputDir", str(converted),
         ], check=True)
         report = {"format": "TLCPS-THUMBNAILS-1", "in_game_validated": False, "tracks": {}}
-        for track in ("StormIsland", "TopGear"):
+        for track in ("TopGear",):
             artwork = {}
             for size in ("Large", "Small"):
                 filename = f"{track}_{size}.swatchbin"
-                data = stock[size] if track == "StormIsland" else (converted / filename).read_bytes()
+                data = (converted / filename).read_bytes()
                 if data[:83] != stock[size][:83] or len(data) != len(stock[size]):
                     raise ValueError(f"native template mismatch: {filename}")
                 tile_mode, preview = decode_native(data, swatch)
@@ -164,7 +164,7 @@ if __name__ == "__main__":
     for option in ("fm5-mount", "fh2-mount", "cps-source", "forzatech", "converter", "output"):
         parser.add_argument("--" + option, type=Path)
     parser.add_argument("--install-pack", type=Path, help="Existing track.ini to receive staged artwork (game stopped)")
-    parser.add_argument("--track", choices=("TopGear", "StormIsland"))
+    parser.add_argument("--track", choices=("TopGear",))
     args = parser.parse_args()
     if args.install_pack:
         if not args.output or not args.track:

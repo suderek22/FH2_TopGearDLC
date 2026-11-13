@@ -60,7 +60,7 @@ def validate_time_weather(preset):
 
 def build(media, visit, database, source_database, output, arrival_position=None, arrival_facing=None,
           restore_saving_on_return=False, track_id=10000, environment_id=10000,
-          display_name="Top Gear (CPS)", source_media_name="topgear",
+          display_name="Dunsfold Aerodrome", source_media_name="topgear",
           time_weather=DEFAULT_TIME_WEATHER, save_during_visit=False):
     media, visit, output = map(lambda p: Path(p).resolve(), (media, visit, output))
     time_weather = validate_time_weather(time_weather)
@@ -118,6 +118,9 @@ def build(media, visit, database, source_database, output, arrival_position=None
                                "Persistent experimental track; saving resumes after verified mainland return; "
                                "career changes not audited." if restore_saving_on_return else
                                "Persistent experimental track; saving disabled until game restart.")}
+    if display_name == "Dunsfold Aerodrome" and source_media_name.casefold() == "topgear":
+        ini["Track"].update({"Author": "suderek", "Version": "0.7.0-beta.4",
+                             "GitHubRepo": "suderek22/FH2_TopGearDLC"})
     ini["LocalDLC"] = {"Format": "1", "EnvironmentId": str(environment_id), "MediaName": name,
                       "Delivery": "mod-managed", "Registration": "registration.sql"}
     ini["Media"] = {"Directory": "media", "CatalogSha256": sha(output / "media" / "media.catalog")}
@@ -176,7 +179,7 @@ if __name__ == "__main__":
     parser.add_argument("--arrival-facing", nargs=3, type=float)
     parser.add_argument("--track-id", type=int, default=10000)
     parser.add_argument("--environment-id", type=int, default=10000)
-    parser.add_argument("--display-name", default="Top Gear (CPS)")
+    parser.add_argument("--display-name", default="Dunsfold Aerodrome")
     parser.add_argument("--source-media-name", default="topgear")
     parser.add_argument("--restore-saving-on-return", action="store_true",
                         help="Opt in to saving after verified return without a career-state audit")

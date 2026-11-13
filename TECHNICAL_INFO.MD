@@ -90,7 +90,7 @@ from static environment conversion and does not add clouds or weather assets.
 Source game:
 
 ```text
-E:\FM5_1.0.0.20_x64\Forza_1.0.0.20_x64__8wekyb3d8bbwe
+<FM5 game folder>
   Mount\media\tracks\topgear
   Mount\media\db\gamedb.slt
   Mount\media\physics\surfaceTypes.xml
@@ -99,7 +99,7 @@ E:\FM5_1.0.0.20_x64\Forza_1.0.0.20_x64__8wekyb3d8bbwe
 Native FH2 reference:
 
 ```text
-E:\forza2port_win\game\Anthem_1.0.0.64_x64__8wekyb3d8bbwe\Mount
+<FH2 game folder>\Mount
   media\tracks\anthem
   media\tracks\homespace02
   media\tracks\test03
@@ -121,7 +121,7 @@ maps the game inside its own process; the preferred game base is `0x140000000`.
 | Top Gear | Track 10000, environment 10000 |
 | Media namespace | TopGearCPS |
 | Default lifecycle namespace | trackloadercps |
-| Top Gear metadata | Author suderek; version 0.3.2-beta |
+| Dunsfold Aerodrome metadata | Author suderek; version 0.7.0-beta.4 |
 | Project | This folder, TrackLoaderCPS |
 | Mod platform source | [FH2-Mod-Platform](../FH2-Mod-Platform) |
 | CPS source | [CarPackStudio](../CarPackStudio) |
@@ -655,6 +655,82 @@ CSM/PSSM resources around t108..t114.
 `--neutralize-legacy-ao` replaces the incompatible t6 AO sample with white.
 It changed 126 programs and improved initial object textures, but did not solve
 their later drive-away/return corruption.
+
+`--neutralize-cubemap-ao` is a separate, opt-in car-reflection diagnostic.
+The source cubemap pixel shaders bind their named `AOMap` at t4, so the t6
+workaround above does not cover them. This pass resolves `AOMap` through shader
+reflection and replaces only its samples with white, in both `.pc` and
+`.durango` cubemap pixel programs. Normal track, debug, shadow and vertex
+programs are unchanged. The installed shader inventory has 66 affected programs
+(33 families on both platforms). The report key is `neutralized_cubemap_ao`;
+the visual test showed no apparent improvement, so this is not a confirmed fix.
+
+### Reflection visibility diagnostic and settings precedence
+
+The native settings resolver at RVA `0x1330AC0` checks
+`game:\media\Tracks\AnthemTrackSettings.xml` before the per-track settings files.
+Live inspection confirmed that both the mainland and custom renderer selected
+this shared file. Publishing a modified custom `TrackSettings.xml` therefore
+does not prove that the renderer uses its values. A custom-renderer-only live
+cockpit hemispherical scalar test from approximately 8 to 32 also showed no
+apparent improvement and was restored.
+
+Native PVSZ draw entries pack the draw index into bits 0-29, mirror eligibility
+into bit 30, and cubemap eligibility into bit 31. Descriptor initialization at
+`0x13520D0` copies these into descriptor flags `0x40` and `0x20`; the cubemap
+predicate at `0x133A4F0` and mirror-pass check at `0x135427A` read those flags.
+The custom track's sampled 3,249 geometry-ready descriptors had neither flag.
+The renderer selects buffered descriptor lists through the view's active index,
+so changing only the first list is not a reliable visibility test.
+
+The offline `enable_secondary_views` reproducer sets both high bits in every
+existing custom-zone draw entry. It preserves low-30-bit
+indices, ordering, zone membership and all non-zone resource bytes, including
+geometry, shaders, textures and physics. The report key is
+`secondary_view_visibility_test`. The repack and draw-filter tools retain the
+flags while decoding indices for validation, merging and culling. This test
+survives descriptor-buffer rebuilds and zone travel, but caused a native render
+failure: `ExecuteCommandList object/device mismatch` at `game+0x1385BFB`.
+Both the live-flag test session and the persistent-test session logged this
+failure. The persistent test was rolled back from both the installed pack and
+its published override. The `--secondary-view-visibility` CLI option now fails
+explicitly without creating output; the reproducer remains for offline binary
+analysis only. Valid archive roundtrips do not establish renderer compatibility.
+Do not ship these flags as a reflection fix or apply them live again until the
+command-list/device mismatch is understood. No shared settings file, mainland
+data, or player saves were changed by the rollback.
+
+Further read-only inspection confirmed that both populated descriptor buffers
+have the same missing eligibility flags. The cockpit render context nevertheless
+schedules a cubemap face, main view and mirror pass (`17`).
+Both crash dumps preserve view ID `17` in the caller's saved fourth argument
+and command-list selection index `3`. The submitter's separate group argument
+is `0`; that group number is not the render-pass ID.
+Azimuth's immediate-context validator retains a null command-list pointer in
+`r13` through its error-reporting path. Thus the reported device mismatch in
+these captures is a null command-list submission, not evidence that two real
+devices differ. Live material caches also contain four command-list slots with
+slot `3` null for some materials and populated for others. Mirror eligibility
+must not be enabled indiscriminately: the missing material command-list mode
+still needs to be explained and generated or correctly excluded upstream.
+Do not substitute another slot or bypass submission validation.
+
+A subsequent, explicitly approved cubemap-only live test enabled descriptor
+flag `0x20` without setting mirror flag `0x40`. In that session only the active
+buffer was populated; all 3,249 entries retained the cubemap flag during
+verification. Source flag bit 9 separately excluded 491 entries. The user
+observed no improvement in body reflections or cockpit gauges. This verifies
+eligibility bits, not that geometry reached the capture's draw submission.
+The test was not installed persistently; a later game restart cleared it, and
+the fresh session's descriptors were verified unmodified. Read-only bounds
+inspection also found nonzero radius values for all source-flag-eligible draws,
+so uniformly zero descriptor radii do not explain this result.
+
+The native TDAO loader also has an explicit missing-file branch
+(`0x113BCEC`): it sets the disabled byte at `+0x1120`; its caller returns
+without loading grid maps when that byte is set. Missing TDAO files alone
+therefore do not establish the cause of dark cockpit gauges. The actual
+disabled-path shader bindings and cockpit illumination remain unverified.
 
 The accepted media chain also retains an earlier shadow diagnostic:
 t104 packed shadow samples replaced with zero (the source shader computes
@@ -1193,8 +1269,9 @@ world/PVS/navigation converter for this track.
 
 ### Placeholder and runtime publication
 
-Storm Island currently uses the unmodified native destination images as
-placeholders. Despite their names, they depict generic mainland scenery.
+Storm Island uses stock `The_Island.zip` members `Destinations\9.swatchbin`
+and `loading_watermark.swatchbin` directly through their native UI image paths.
+No Storm Island artwork files need to be shipped or published by TrackLoader.
 
 Runtime artwork validation checks native envelope, dimensions, single mip,
 descriptor, length, and SHA256 before platform publication.
@@ -1241,9 +1318,10 @@ separate owned transition described below.
 ```ini
 [Track]
 Id=10000
-Name=Top Gear (CPS)
+Name=Dunsfold Aerodrome
 Author=suderek
-Version=0.3.2-beta
+Version=0.7.0-beta.4
+GitHubRepo=suderek22/FH2_TopGearDLC
 State=experimental
 
 [LocalDLC]
@@ -1428,6 +1506,10 @@ does not receive an Airport position override.
 ### Save protection is not a career rollback
 
 The early protection worker starts before slow pack hashing/publication.
+It waits for game code without a launcher-time deadline, and the startup worker
+waits for that protection worker to finish. Azimuth may remain at its launcher
+for any length of time before FH2 starts. A failed code-readiness result still
+refuses initialization; this does not bypass signature or ownership checks.
 It observes the native profile constructor at 0x2BF410 with the required hooks
 active; a profile that predates observation requires restart. It tracks the
 owned profile, known submission/completion paths, microsave ownership, and jobs.
@@ -1477,6 +1559,30 @@ Import inspection of the standalone loader showed Windows system dependencies
 bcrypt.dll, winsqlite3.dll, and KERNEL32.dll; it does not import CPS.
 The custom browser additionally needs the paired development mod platform.
 
+### Startup hook timing (issue #19)
+
+Pressing A on the title screen too early could build the primary profile before
+the profile observer at RVA **0x2BF410** was live. Session-only travel then
+refuses with "primary profile predates persistence hooks; restart required".
+
+The platform patches every instruction hook separately. Each patch takes a
+thread snapshot and pauses every game thread, costing about 70 ms. Function
+hooks go live together in one MinHook pass after those patches. TrackLoader
+used to enable 49 hooks in one batch: 38 instruction hooks, including 26
+log-only diagnostics. The log showed game code ready, then 4.5 s before
+"enabled 49 hooks". Of that, 3.3 s was spent inside the enable call itself.
+
+Startup now has two phases:
+
+1. In `Driver::Protect`, it registers the session bridge, the standalone
+   dispatch hook, and the save sanitizer. `Runtime::Enable` turns on the
+   profile-constructor hook by itself first, then enables the rest of that set.
+   A failure still rolls back everything and leaves saving protected.
+2. After "native entry ready", `Driver::EnableDeferredHooks` registers and
+   enables the diagnostic probes and the pause-map hooks. These hooks are only
+   needed in-game. If they fail, only a log message is written; travel and
+   saving are not affected.
+
 ## 18. Native DLC browser and automatic travel
 
 Primary implementation: [track_browser.h](track_browser.h),
@@ -1491,8 +1597,11 @@ The parent tab reads DLC.
 The gallery uses native HUD options framing, CommonListBox, selection slots, a
 poster panel, metadata, thumbnails, and native FZMaterial images.
 Storm Island 549 is always first; other entries sort by name and ID.
-Author/version come from the manifest. GitHub update checking is **not**
-implemented: repository text is informational, not a completed network check.
+Author/version come from the manifest. The loader checks the latest published
+GitHub release, including prereleases, on a background thread. On opening the
+browser it compares the tag with the installed manifest version and reports
+the result; a failed check is logged and shown as unavailable. It does not
+download or install updates.
 
 The page's native loaded handler focuses `FirstItem`. Naming the CommonListBox
 itself left focus on the container, so the first direction press only entered
@@ -1790,7 +1899,7 @@ assets only after validating the artwork report.
 ### Native DLLs and deployment
 
 ```powershell
-& $env:ComSpec /c 'E:\forza2port_win\project_data\TrackLoaderCPS\build.bat'
+.\build.bat
 ```
 
 The batch file sets vcvars64 and builds both variants in the same cmd.exe

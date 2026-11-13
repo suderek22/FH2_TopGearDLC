@@ -265,7 +265,7 @@ inline bool Supported(uintptr_t base) {
         TrackOwnership::Read(base + ElementTag, actual, sizeof tag) && !memcmp(actual, tag, sizeof tag) &&
         TrackOwnership::Read(base + ControllerVtable + 3 * 8, &type, sizeof type) && type == base + ControllerType;
 }
-// Registered with the session hooks (enabled together); inert until Activate.
+// Registered and enabled after native entry is ready (Driver::EnableDeferredHooks); inert until Activate.
 inline void Install(const FH2ModApi* api, FH2Mod* mod, uintptr_t base) {
     State& state = Get();
     if (state.installed || !api || api->api_version < 7 || !api->hook_function || !api->hook_instruction || !base)

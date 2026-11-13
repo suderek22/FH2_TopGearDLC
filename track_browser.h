@@ -6,7 +6,7 @@
 namespace TrackBrowser {
 struct Item {
     int id = 0;
-    std::string name, author, version, repository, reason, poster, logo;
+    std::string name, author, version, repository, updateStatus, reason, poster, logo;
     bool playable = false;
 };
 inline std::string Escape(const std::string& value) {
@@ -41,7 +41,7 @@ inline std::string Text(const std::string& value, int size = 25) {
 }
 inline std::string Image(const std::string& path, int width, int height) {
     if (path.empty()) return Text("Artwork not supplied");
-    return "<local:FZMaterial ImageSource=\"" + Escape(path) + "\" Width=\"" +
+    return "<local:FZMaterial Stretch=\"Uniform\" ImageSource=\"" + Escape(path) + "\" Width=\"" +
         std::to_string(width) + "\" Height=\"" + std::to_string(height) + "\" />";
 }
 inline std::string Resources() {
@@ -78,7 +78,9 @@ inline std::string Content(const std::vector<Item>& items) {
             Text(item.name, 35) + Text("Track " + std::to_string(item.id)) +
             Text("Author: " + (item.author.empty() ? "Not specified" : item.author)) +
             Text("Version: " + (item.version.empty() ? "Not specified" : item.version)) +
-            Text(item.repository.empty() ? "Updates: no GitHub repository supplied" : "Updates: not checked") +
+            Text(item.updateStatus.empty() ?
+                (item.repository.empty() ? "Updates: no GitHub repository supplied" : "Updates: not checked") :
+                item.updateStatus) +
             Text(item.playable ? "Available for travel" : item.reason, 21) +
             "</StackPanel></Border></Grid>";
     }

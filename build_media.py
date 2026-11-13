@@ -16,7 +16,7 @@ from build_bindings import validate_bindings
 from build_environment import collision_arrival, locators, validate_static_companions
 from collision import read_physics
 from fh2_pvs import read_root60
-from fh2_world import MiniZip, read_pvs_zone60
+from fh2_world import MiniZip, PVS_DRAW_INDEX_MASK, read_pvs_zone60
 from shader_scenes import program_members, shader_scenes
 from openworld_navigation import read_navw, read_owwf, validate_closed_road
 from spatial import read_hex
@@ -161,7 +161,8 @@ def validate_media(directory, media_name, arrival_report=None):
     validate_bindings(zones, lookup, nodes, physics_count)
     visible = set()
     for zone in zones:
-        for index in zone["draws"]:
+        for entry in zone["draws"]:
+            index = entry & PVS_DRAW_INDEX_MASK
             if not 0 <= index < len(root["primary_draws"]):
                 raise ValueError("Native spatial draw ordinal is out of bounds")
             model = root["primary_draws"][index]["model_id"]
@@ -175,7 +176,7 @@ def validate_media(directory, media_name, arrival_report=None):
             level = quality >> 8
             if level and (0x05000000 | (texture << 4) | (level - 1)) not in geometry:
                 raise ValueError("Native zone requires a missing streamed texture")
-        visible.update(zone["draws"])
+        visible.update(entry & PVS_DRAW_INDEX_MASK for entry in zone["draws"])
     if visible != set(range(len(root["primary_draws"]))):
         raise ValueError("Native media visibility omits a placement")
     if root["header_fields"][1] < len(nodes):

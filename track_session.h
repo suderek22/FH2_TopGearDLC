@@ -27,6 +27,7 @@ class Driver {
     bool restoreSaving = false;
     // Native saving stays on (mainland and track); on the track only once the save sanitizer is armed.
     bool saveDuringVisit = false;
+    bool deferredHooks = false;
     bool trackSaving = false;
     ULONGLONG saveWait = 0;
     TrackModSave::Store modSave;
@@ -396,8 +397,7 @@ public:
             !flows.Initialize(base, error) ||
             !bridge.SetGroupPreparation(PrepareGroupCallback, this, error) ||
             !bridge.Install(api, mod, base, error) ||
-            (TrackDiag::Install(api, mod, base), TrackPauseMap::Hooks::Install(api, mod, base),
-             TrackSaveSanitize::Install(api, mod, base), !bridge.Enable(error, true))) {
+            (TrackSaveSanitize::Install(api, mod, base), !bridge.Enable(error, true))) {
             Fail(error);
             return false;
         }
@@ -409,6 +409,19 @@ public:
         detail = "early native protection active; pack validation/publication pending; saving disabled until restart";
         api->log(mod, detail.c_str());
         return true;
+    }
+    // Log-only probes and pause-map hooks are only needed in-game; enabling them after startup keeps
+    // their per-hook thread pauses out of the window before the title screen loads the profile.
+    void EnableDeferredHooks() {
+        {
+            std::lock_guard<std::mutex> lock(mutex);
+            if (deferredHooks || !api || !bridge.SessionProtectionActive()) return;
+            deferredHooks = true;
+        }
+        TrackDiag::Install(api, mod, base);
+        TrackPauseMap::Hooks::Install(api, mod, base);
+        if (!api->enable_hooks(mod, nullptr))
+            api->log(mod, "error: some diagnostic or pause map hooks could not be enabled; travel and saving are unaffected");
     }
     bool Initialize(const FH2ModApi* platform, FH2Mod* owner, uintptr_t image,
                     const TrackVisit::Api* services, int id, const TrackPose::Pose& pose,

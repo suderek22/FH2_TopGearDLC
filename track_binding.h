@@ -266,7 +266,9 @@ public:
             return false;
         }
         if (sessionOnly && !saves.ProtectSession(error)) return false;
-        if (!api->enable_hooks(mod, nullptr)) {
+        // Each instruction hook pauses every game thread; the profile observer goes live first so a
+        // title-screen profile load cannot overtake the rest of the batch.
+        if (!api->enable_hooks(mod, hooks.front()) || !api->enable_hooks(mod, nullptr)) {
             bool rolledBack = api->disable_hooks(mod, nullptr) != 0;
             if (!rolledBack) installed = false;
             error = rolledBack ? "native visit hooks failed to enable; disabled again" :
