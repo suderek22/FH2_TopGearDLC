@@ -1,18 +1,32 @@
 import copy
+from contextlib import redirect_stderr
+import io
 import json
 from pathlib import Path
 import struct
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from build_media import media_catalog
+from build_session import verify_files
 from fh2_pvs import read_root60, write_root60
 from fh2_world import MiniZip, Resource, read_pvs_zone60, write_minizip, write_pvs_zone60
-from repack_media import digest, map_wide_visibility, repair_topgear_markings
+from repack_media import digest, enable_secondary_views, main, map_wide_visibility, repair_topgear_markings
 from test_fh2_root import root_fixture
 
 
 class MapVisibilityTests(unittest.TestCase):
+    def test_crashing_secondary_view_cli_is_disabled(self):
+        error = io.StringIO()
+        with patch("sys.argv", ["repack_media.py", "--source", "unused-source",
+                                "--output", "unused-output", "--secondary-view-visibility"]), \
+                patch("repack_media.enable_secondary_views") as transform, redirect_stderr(error):
+            self.assertEqual(main(), 1)
+            transform.assert_not_called()
+        self.assertIn("disabled", error.getvalue())
+        self.assertIn("ExecuteCommandList object/device mismatch", error.getvalue())
+
     def fixture(self, source):
         relative = Path("mediaoverride") / "tracks" / "TopGearCPS"
         folder = source / relative
@@ -108,6 +122,65 @@ class MapVisibilityTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "missing model"):
                 map_wide_visibility(source, output, 5000)
             self.assertFalse(output.exists())
+
+    def test_secondary_view_flags_preserve_indices_resources_and_source(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            source, output = base / "source", base / "output"
+            relative, original, zones, payloads = self.fixture(source)
+            zones[0]["draws"] = [0x40000000]
+            zones[1]["draws"] = [0x80000001]
+            for index, zone in enumerate(zones):
+                payloads[0x0C000000 | index] = write_pvs_zone60(zone)
+            folder = source / relative
+            (folder / "GeoChunk0.minizip").unlink()
+            resources = [Resource(str(key), key & 0xFFFFFF, key >> 24) for key in payloads]
+            lookup = write_minizip(folder / "GeoChunk0.minizip", resources,
+                                   lambda resource: payloads[int(resource.name)])
+            self.assertEqual(lookup, (folder / "ChunkMap0.dat").read_bytes())
+            report = json.loads((source / "media.json").read_text())
+            for row in report["files"]:
+                path = source / row["path"]
+                row["bytes"], row["sha256"] = path.stat().st_size, digest(path)
+            (source / "media.catalog").write_bytes(media_catalog("TopGearCPS", report["files"]))
+            report["catalog_sha256"] = digest(source / "media.catalog")
+            (source / "media.json").write_text(json.dumps(report))
+            hashes = {path: digest(path) for path in source.rglob("*") if path.is_file()}
+
+            result = enable_secondary_views(source, output)
+            self.assertEqual(result["secondary_view_visibility_test"]["zones_changed"], 2)
+            self.assertEqual(result["secondary_view_visibility_test"]["draw_references_changed"], 2)
+            archive = MiniZip(output / relative / "GeoChunk0.minizip")
+            for index, key in enumerate(payloads):
+                if key >> 24 == 12:
+                    zone = zones[key & 0xFFFFFF]
+                    expected = dict(zone, draws=[entry | 0xC0000000 for entry in zone["draws"]])
+                    self.assertEqual(read_pvs_zone60(archive.read(index)), expected)
+                else:
+                    self.assertEqual(archive.read(index), payloads[key])
+            for row in result["files"]:
+                if Path(row["path"]).name != "GeoChunk0.minizip":
+                    self.assertEqual((output / row["path"]).read_bytes(),
+                                     (source / row["path"]).read_bytes())
+            self.assertEqual((output / relative / "ribbon_00" / "TopGearCPS_00.pvs").read_bytes(),
+                             original)
+            verify_files(output, result)
+            self.assertEqual((output / "media.catalog").read_bytes(),
+                             media_catalog("TopGearCPS", result["files"]))
+            self.assertEqual(result["catalog_sha256"], digest(output / "media.catalog"))
+            self.assertEqual(hashes, {path: digest(path) for path in hashes})
+            with self.assertRaisesRegex(ValueError, "already enabled"):
+                enable_secondary_views(output, base / "repeat")
+            self.assertFalse((base / "repeat").exists())
+
+            global_output = base / "global"
+            global_report = map_wide_visibility(output, global_output, 5000)
+            self.assertEqual(global_report["map_wide_visibility"]["draws"], 2)
+            merged = MiniZip(global_output / relative / "GeoChunk0.minizip")
+            for index, key in enumerate(payloads):
+                if key >> 24 == 12:
+                    self.assertEqual(read_pvs_zone60(merged.read(index))["draws"],
+                                     [0xC0000000, 0xC0000001])
 
     def test_marking_flags_preserve_original_payloads_and_other_draws(self):
         def model(materials):

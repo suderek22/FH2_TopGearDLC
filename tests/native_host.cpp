@@ -74,7 +74,8 @@ static void PublishInterface(FH2Mod*, const char* name, uint32_t version, const 
     assert(!strcmp(name, "TrackLoader.RuntimeOwner") && version == 1 && value && !runtimeOwner);
     runtimeOwner = value;
 }
-static void* WaitCode(uint32_t) {
+static void* WaitCode(uint32_t timeout) {
+    assert(timeout == INFINITE);  // Launcher time must not exhaust the initialization window.
     assert(codeRequested);
     SetEvent(codeRequested);
     return nullptr;
@@ -205,7 +206,7 @@ int wmain(int argc, wchar_t** argv) {
         assert(files == 22 && sqlCalls == 1);
         assert(GetFileAttributesW((std::wstring(api.game_dir) +
             L"\\media\\tracks\\TopGearCPS").c_str()) == INVALID_FILE_ATTRIBUTES);
-        assert(Call("list", "").find("10000 Top Gear (CPS) [experimental]") != std::string::npos);
+        assert(Call("list", "").find("10000 Dunsfold Aerodrome [experimental]") != std::string::npos);
         assert(Call("pack", "10000").find("registration=pending-or-failed") != std::string::npos);
         assert(Call("status", "").find("experimental native startup failed") != std::string::npos);
         assert(Call("travel", "10000").find("error:") == 0);
@@ -213,7 +214,7 @@ int wmain(int argc, wchar_t** argv) {
         puts("Experimental DLL host: protection code wait precedes publication; 17 track overrides (no zipmanifest.xml), 5 visit overrides and additive SQL requested; code timeout stays explicit and travel is refused.");
         return 0;
     }
-    assert(Call("list", "").find("10000 Top Gear (CPS) [blocked]") != std::string::npos);
+    assert(Call("list", "").find("10000 Dunsfold Aerodrome [blocked]") != std::string::npos);
     std::string status = Call("status", "");
     assert(status.find("reserved_tracks=1") != std::string::npos);
     assert(status.find("registered_tracks=0") != std::string::npos);
@@ -223,7 +224,7 @@ int wmain(int argc, wchar_t** argv) {
     assert(pack.find("registration=disabled") != std::string::npos);
     assert(pack.find("physical_media=unavailable (game Mount not supplied by platform)") != std::string::npos);
     assert(pack.find("file_mount=disabled") != std::string::npos);
-    assert(Call("travel", "10000").find("error: Top Gear (CPS) (10000) is not playable:") == 0);
+    assert(Call("travel", "10000").find("error: Dunsfold Aerodrome (10000) is not playable:") == 0);
     assert(Call("travel", "542").find("error: unknown reserved track ID") == 0);
     assert(Call("travel", "10000junk").find("error: unknown reserved track ID") == 0);
     assert(Call("return", "").find("error: experimental native runtime is unavailable") == 0);

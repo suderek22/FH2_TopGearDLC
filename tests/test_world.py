@@ -29,6 +29,22 @@ class MiniZipTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             write_minizip(self.path, resources, content)
 
+    def test_separate_folders_set_boundaries_and_parents(self):
+        resources = [Resource("%d.modelbin" % index, index, 4) for index in range(515)]
+        resources.append(Resource("cell", 0, 0))
+        def content(resource):
+            return resource.name.encode() * 50
+        write_minizip(self.path, resources, content, folder_starts=(0, 515))
+        archive = MiniZip(self.path)
+        self.assertEqual(archive.folders, (0, 515, 516))
+        self.assertEqual([entry.parent for entry in archive.entries], [0] * 515 + [1])
+        for index, resource in enumerate(resources):
+            self.assertEqual(archive.read(index), content(resource))
+        for starts in ((), (1,), (0, 0), (0, 516)):
+            self.path.unlink(missing_ok=True)
+            with self.subTest(starts=starts), self.assertRaises(ValueError):
+                write_minizip(self.path, resources, content, folder_starts=starts)
+
     def test_invalid_ids_and_duplicate_keys_are_rejected(self):
         for resources in ([Resource("bad", 0x1000000, 4)],
                           [Resource("a", 0, 4), Resource("b", 0, 4)]):

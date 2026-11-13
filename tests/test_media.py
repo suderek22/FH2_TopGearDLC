@@ -10,7 +10,7 @@ from build_openworld import build as build_navigation
 from build_media import build, validate_media, media_catalog, verify_native_bin_zip, write_native_bin_zip
 from build_root import assemble
 from fh2_pvs import write_root60
-from fh2_world import Resource, write_minizip, write_pvs_zone60
+from fh2_world import MiniZip, Resource, read_pvs_zone60, write_minizip, write_pvs_zone60
 from spatial import write_hex
 from test_bindings import fixture as collision_fixture
 import test_root_builder
@@ -90,7 +90,11 @@ def environment_fixture(path, component, static_test=False):
         rows.append({"name": name, "sha256": hashlib.sha256(data).hexdigest()})
     report = {"component": "native-settings-locators-and-arrival", "media_name": "TopGearCPS",
               "schema_verified": True, "world_source_sha256": "world-source",
-              "source_collision_sha256": physics["source_sha256"], "files": rows,
+              "source_collision_sha256": physics["source_sha256"],
+              "lighting_fog": {"ambient_scale": 1.0, "direct_scale": 1.0,
+                               "fog_far_density_scale": 1.0, "fog_far_distance_scale": 1.0,
+                               "active_fog_settings": []},
+              "files": rows,
               "arrival": arrival((path / "track.col").read_bytes(), path / "physics", locators(locator_data)[0]),
               "remaining": []}
     if static_report is not None:
@@ -117,8 +121,13 @@ class MediaTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory)
             component = fixture(path)
+            root_report_path = component / "root.json"
+            root_report = json.loads(root_report_path.read_text())
+            root_report["baked_shadow_visibility"] = {"visibility": 0.45}
+            root_report_path.write_text(json.dumps(root_report))
             report = build(component, path / "staged", mediaoverride=True)
             self.assertEqual(report["staging_layout"], "mediaoverride")
+            self.assertEqual(report["baked_shadow_visibility"]["visibility"], 0.45)
             self.assertFalse(report["file_mount_enabled"])
             self.assertFalse(report["registration_enabled"])
             catalog = (path / "staged" / "media.catalog").read_bytes()
@@ -166,6 +175,27 @@ class MediaTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "new staged"):
                 build(component, path / "staged")
 
+    def test_native_validation_decodes_packed_secondary_view_draw_entries(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory)
+            report = build(fixture(path), path / "staged")
+            media = path / "staged" / "media" / "tracks" / "TopGearCPS"
+            archive = MiniZip(media / "GeoChunk1.minizip")
+            payloads = []
+            for index in range(len(archive.entries)):
+                zone = read_pvs_zone60(archive.read(index))
+                zone["draws"] = [draw | ((ordinal % 4) << 30)
+                                 for ordinal, draw in enumerate(zone["draws"])]
+                payloads.append(write_pvs_zone60(zone))
+            (media / "GeoChunk1.minizip").unlink()
+            lookup = write_minizip(
+                media / "GeoChunk1.minizip",
+                [Resource(str(index), index, 12) for index in range(len(payloads))],
+                lambda resource: payloads[resource.resource_id])
+            self.assertEqual(lookup, (media / "ChunkMap1.dat").read_bytes())
+            self.assertEqual(validate_media(media, "TopGearCPS")["placement_count"],
+                             report["placement_count"])
+
     def test_checksum_failure_prevents_staging(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory)
@@ -185,6 +215,7 @@ class MediaTests(unittest.TestCase):
             build_navigation(path / "AI.zip", path / "track.col", navigation)
             report = build(component, path / "staged", navigation)
             self.assertTrue(report["navigation_present"])
+            self.assertEqual(report["navigation_component"], navigation.name)
             self.assertEqual(report["navigation_waypoint_count"], 3)
             self.assertFalse(report["first_test_ready"])
             self.assertEqual(len(report["files"]), 18)
@@ -202,6 +233,7 @@ class MediaTests(unittest.TestCase):
             environment = environment_fixture(path, component)
             report = build(component, path / "staged", environment=environment)
             self.assertTrue(report["settings_and_locators_present"])
+            self.assertEqual(report["environment_component"], environment.name)
             self.assertFalse(report["first_test_ready"])
             self.assertEqual(len(report["files"]), 20)
             self.assertEqual(report["arrival"]["candidate_position"], [3.0, 2.8, 3.0])

@@ -120,7 +120,12 @@ static FH2Hook* Function(FH2Mod*, const char*, void* target, void* detour, void*
 static FH2Hook* Instruction(FH2Mod*, const char*, void* target, FH2InstructionFn fn, void*) {
     return Register(reinterpret_cast<uintptr_t>(target), reinterpret_cast<void*>(fn));
 }
-static int Enable(FH2Mod*, FH2Hook* hook) { assert(!hook); ++enabled; return !failEnable; }
+static int Enable(FH2Mod*, FH2Hook* hook) {
+    // The profile observer (registered first) must go live before the rest of the batch.
+    assert(enabled ? !hook : hook == reinterpret_cast<FH2Hook*>(1));
+    ++enabled;
+    return !failEnable;
+}
 static int Disable(FH2Mod*, FH2Hook* hook) { assert(!hook); ++disabled; return 1; }
 static void Component(unsigned char* component, const char* target) {
     uintptr_t vtable = gameBase + TrackBinding::MachineVtable;
@@ -225,7 +230,7 @@ int main(int argc, char** argv) {
         assert(gate.SessionOnly() == session && gate.Held() == session);
         return 0;
     }
-    assert(bridge.Enable(error, session));
+    assert(bridge.Enable(error, session) && enabled == 2);
     unsigned char nativeProfile[0x20] = {};
     uintptr_t profileAddress = 456;
     if (session) {

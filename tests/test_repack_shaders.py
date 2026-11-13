@@ -7,14 +7,29 @@ import zipfile
 
 from build_media import media_catalog
 from repack_media import (bake_default_draw_distances, digest, neutralize_legacy_ao,
+                          neutralize_cubemap_ao,
                           neutralize_macro_tint, neutralize_pavement_skid,
-                          neutralize_terrain_macro_tint, repair_draw_lods, guard_marking_normals)
+                          neutralize_terrain_macro_tint, repair_draw_lods, guard_marking_normals,
+                          repoint_material_textures)
 from fh2_pvs import read_root60, write_root60
 from test_fh2_root import root_fixture
 from test_shader_patch import container, instructions, skid_reflection, RET, SAMPLE
+from shader_patch import dxbc_checksum
 
 
 class RepackShaderTests(unittest.TestCase):
+    def test_material_texture_repoint_only_replaces_missing_mapped_hashes(self):
+        def ref(name, value):
+            return b"\\" + name + b".swatchbin" + struct.pack("<I", value) + b"\x02\x00\xd9\x8c"
+
+        data = (b"head" + ref(b"blank_topg_swatches_mask", 0xDD286753)
+                + ref(b"road_diff", 0x11111111) + ref(b"road_topg_skids_080_mask", 0xE5164915))
+        patched, count = repoint_material_textures(data, {0x9ACB43CD, 0x11111111})
+        self.assertEqual(count, 1)
+        self.assertEqual(len(patched), len(data))
+        self.assertEqual(patched, data.replace(struct.pack("<I", 0xDD286753), struct.pack("<I", 0x9ACB43CD)))
+        with self.assertRaises(ValueError):
+            repoint_material_textures(data, {0x11111111})
     def test_marking_normal_guard_selects_only_normal_lighting_programs(self):
         with tempfile.TemporaryDirectory() as temporary:
             source, output = Path(temporary) / "source", Path(temporary) / "output"
@@ -165,6 +180,57 @@ class RepackShaderTests(unittest.TestCase):
                         self.assertEqual(code[-len(specular) - 1:], specular + [RET])
             with self.assertRaisesRegex(ValueError, "already have"):
                 neutralize_legacy_ao(output, Path(temporary) / "duplicate")
+
+    def test_cubemap_ao_changes_only_named_ao_in_both_platform_pixel_programs(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            source, output = Path(temporary) / "source", Path(temporary) / "output"
+            root = source / "mediaoverride" / "tracks" / "TopGearCPS"
+            root.mkdir(parents=True)
+            ao = SAMPLE.copy()
+            ao[6] = 4
+            original = container(ao + SAMPLE + [RET], reflection=skid_reflection(4, b"AOMap"))
+            members = {
+                "Shaders/test/road_basicCubemapLightScenario.%s.pso" % platform: original
+                for platform in ("pc", "durango")}
+            for scenario in ("TrackLightScenario", "DebugLightingLightScenario",
+                             "ShadowDepthLightScenario"):
+                members["Shaders/test/road_basic%s.durango.pso" % scenario] = original
+            members["Shaders/test/road_basicCubemapLightScenario.durango.vso"] = original
+            members["Shaders/test/diffCubemapLightScenario.pc.pso"] = container(
+                ao + [RET], reflection=skid_reflection(4, b"DiffuseATexture"))
+            members["Materials/test.materialbin"] = b"authored material"
+            path = root / "bin.zip"
+            with zipfile.ZipFile(path, "w") as archive:
+                for name, data in members.items():
+                    archive.writestr(name, data)
+            inventory = [{"path": str(path.relative_to(source)),
+                          "media_path": "tracks\\TopGearCPS\\bin.zip",
+                          "bytes": path.stat().st_size, "sha256": digest(path)}]
+            catalog = source / "media.catalog"
+            catalog.write_bytes(media_catalog("TopGearCPS", inventory))
+            report = {"catalog_name": catalog.name, "catalog_sha256": digest(catalog),
+                      "media_name": "TopGearCPS",
+                      "override_relative_path": str(root.relative_to(source)), "files": inventory}
+            (source / "media.json").write_text(json.dumps(report))
+            hashes = digest(catalog), digest(path), digest(source / "media.json")
+            result = neutralize_cubemap_ao(source, output)
+            self.assertEqual(result["neutralized_cubemap_ao"], {"programs": 2, "ao_samples": 2})
+            self.assertEqual(result["catalog_sha256"], digest(output / catalog.name))
+            self.assertEqual(hashes, (digest(catalog), digest(path), digest(source / "media.json")))
+            with zipfile.ZipFile(output / path.relative_to(source)) as archive:
+                self.assertEqual(archive.namelist(), list(members))
+                for name, data in members.items():
+                    patched = archive.read(name)
+                    if name.startswith("Shaders/test/road_basicCubemap") and name.endswith(".pso"):
+                        self.assertEqual(instructions(patched),
+                                         [54 | (8 << 24), ao[1], ao[2], 0x4002,
+                                          0x3f800000, 0x3f800000, 0x3f800000, 0x3f800000]
+                                         + SAMPLE + [RET])
+                        self.assertEqual(patched[4:20], dxbc_checksum(patched))
+                    else:
+                        self.assertEqual(patched, data)
+            with self.assertRaisesRegex(ValueError, "already have"):
+                neutralize_cubemap_ao(output, Path(temporary) / "duplicate")
 
     def test_default_distances_change_only_all_minus_one_draws(self):
         with tempfile.TemporaryDirectory() as temporary:

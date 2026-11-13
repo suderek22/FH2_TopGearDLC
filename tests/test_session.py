@@ -50,12 +50,30 @@ class SessionTests(unittest.TestCase):
         self.assertFalse(report["one_visit_per_process"])
         self.assertTrue(report["persistent_activation"])
         self.assertFalse(report["in_game_validated"])
+        self.assertEqual(report["media_component"], self.media.name)
+        self.assertEqual(report["visit_component"], self.visit.name)
+        saved_report = json.loads((self.output / "session.json").read_text())
+        self.assertEqual(saved_report["media_component"], self.media.name)
+        self.assertEqual(saved_report["visit_component"], self.visit.name)
         self.assertEqual(before, [(self.root / name).read_bytes() for name in ("fh2.slt", "fm5.slt")])
         ini = configparser.ConfigParser()
         ini.read(self.output / "track.ini")
         self.assertEqual(ini["Track"]["State"], "experimental")
         self.assertEqual(ini["Experimental"]["Enabled"], "1")
         self.assertEqual(ini["Experimental"]["RestoreSavingOnReturn"], "0")
+        self.assertEqual(ini["Experimental"]["SaveDuringVisit"], "0")
+        self.assertEqual(ini["Track"]["Name"], "Dunsfold Aerodrome")
+        self.assertEqual(ini["Track"]["Version"], "0.7.0-beta.4")
+        self.assertEqual(ini["Track"]["GitHubRepo"], "suderek22/FH2_TopGearDLC")
+        self.assertEqual(ini["TimeWeather"]["Enabled"], "1")
+        self.assertEqual(ini["TimeWeather"]["TimeHours"], "13.5")
+        self.assertEqual(ini["TimeWeather"]["Freeze"], "1")
+        self.assertEqual(ini["TimeWeather"]["Atmosphere"], "0")
+        self.assertEqual(ini["TimeWeather"]["Rain"], "0")
+        self.assertEqual(ini["TimeWeather"]["Environment"], "0")
+        self.assertEqual(ini["TrackVisual"]["Profile"], "static-lighting-fog")
+        self.assertEqual(ini["TrackVisual"]["AmbientScale"], "1")
+        self.assertEqual(ini["TrackVisual"]["FogDensityScale"], "1")
         for section, key, relative in (
                 ("Media", "CatalogSha256", "media\\media.catalog"),
                 ("Experimental", "VisitCatalogSha256", "visit\\media.catalog"),
@@ -105,6 +123,17 @@ class SessionTests(unittest.TestCase):
         self.assertEqual(ini["Experimental"]["RestoreSavingOnReturn"], "1")
         self.assertEqual([float(v) for v in ini["Experimental"]["ArrivalPosition"].split(",")], position)
 
+    def test_save_during_visit_implies_restore_on_return(self):
+        report = build(self.media, self.visit, self.root / "fh2.slt", self.root / "fm5.slt",
+                       self.output, save_during_visit=True)
+        self.assertTrue(report["save_during_visit"])
+        self.assertFalse(report["saving_disabled_until_restart"])
+        ini = configparser.ConfigParser()
+        ini.read(self.output / "track.ini")
+        self.assertEqual(ini["Experimental"]["SaveDuringVisit"], "1")
+        self.assertEqual(ini["Experimental"]["RestoreSavingOnReturn"], "1")
+        self.assertIn("mainland Airport", ini["Track"]["Reason"])
+
     def test_invalid_arrival_override_refuses_before_output(self):
         for position, facing in (([1, 2, 3], None), ([1, 2, 3], [0, 0, 0]),
                                  ([1, float("nan"), 3], [0, 0, 1])):
@@ -112,6 +141,31 @@ class SessionTests(unittest.TestCase):
                 build(self.media, self.visit, self.root / "fh2.slt", self.root / "fm5.slt",
                       self.output, position, facing)
             self.assertFalse(self.output.exists())
+
+    def test_time_weather_preset_can_be_disabled_or_rejected(self):
+        built = build(self.media, self.visit, self.root / "fh2.slt", self.root / "fm5.slt",
+                      self.output, time_weather=None)
+        ini = configparser.ConfigParser()
+        ini.read(self.output / "track.ini")
+        self.assertNotIn("TimeWeather", ini)
+        self.assertEqual(built["media_component"], self.media.name)
+        self.output = self.root / "invalid-time-weather"
+        with self.assertRaisesRegex(ValueError, "time/weather"):
+            build(self.media, self.visit, self.root / "fh2.slt", self.root / "fm5.slt",
+                  self.output, time_weather=(24, True, 85, 0, 0))
+        self.assertFalse(self.output.exists())
+
+    def test_shader_visibility_profile_is_recorded_in_track_visual_metadata(self):
+        media_report_path = self.media / "media.json"
+        media_report = json.loads(media_report_path.read_text())
+        media_report["baked_shadow_visibility"] = {"visibility": 0.45}
+        media_report_path.write_text(json.dumps(media_report))
+        report = build(self.media, self.visit, self.root / "fh2.slt", self.root / "fm5.slt",
+                       self.output)
+        ini = configparser.ConfigParser()
+        ini.read(self.output / "track.ini")
+        self.assertEqual(ini["TrackVisual"]["BakedShadowVisibility"], "0.45")
+        self.assertEqual(report["media_component"], self.media.name)
 
     def test_distinct_track_id_namespace_pose_and_display_name(self):
         report_path = self.visit / "visit.json"

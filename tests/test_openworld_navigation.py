@@ -9,7 +9,9 @@ from build_openworld import build
 from test_collision import collision_fixture
 from test_navigation import waypoint_fixture
 
-from openworld_navigation import NAV_WIDTHS, closed_road, nav_links, read_navw, read_owwf, validate_closed_road, waypoint_grid, wrap, write_navw, write_owwf
+from openworld_navigation import NAV_WIDTHS, closed_road, fm5_route_positions, grid_covers, nav_links, read_navw, read_owwf, validate_closed_road, waypoint_grid, wrap, write_navw, write_owwf
+from openworld_navigation import FIRST_TEST_PROPERTIES
+from unittest.mock import patch
 
 
 def nav_fixture():
@@ -79,6 +81,30 @@ class OpenWorldNavigationTests(unittest.TestCase):
             validate_closed_road(world, positions)
         with self.assertRaises(ValueError):
             closed_road([[float("nan"), 0, 0], [0, 0, 0]], 123)
+
+    def test_hud_road_type_keeps_ai_and_traffic_disabled(self):
+        positions = [[0.0, 1.0, 0.0], [20.0, 1.5, 0.0], [20.0, 2.0, 20.0]]
+        world = read_navw(write_navw(closed_road(positions, 123, "a")))
+        validate_closed_road(world, positions)
+        validate_closed_road(world, positions, "a")
+        with self.assertRaisesRegex(ValueError, "disabled AI"):
+            validate_closed_road(world, positions, "none")
+        with self.assertRaises(ValueError):
+            closed_road(positions, 123, "motorway")
+
+    def test_existing_navigation_with_legacy_name_remains_valid(self):
+        positions = [[0.0, 1.0, 0.0], [20.0, 1.5, 0.0]]
+        with patch.dict(FIRST_TEST_PROPERTIES, {"display_name": "Top Gear (CPS)"}):
+            world = read_navw(write_navw(closed_road(positions, 123, "a")))
+        validate_closed_road(world, positions, "a")
+
+    def test_fm5_route_axes_become_fh2_world_axes(self):
+        # FM5 Track.geo route point (x, z, height) from the Top Gear Full Circuit start.
+        route = fm5_route_positions([[280.6, 196.1, -0.02]])
+        self.assertEqual(route, [[280.6, -0.02, 196.1]])
+        grid = waypoint_grid([[0.0, 0.0, 0.0], [399.0, 0.0, 399.0]], 123)
+        self.assertTrue(grid_covers(grid, route))
+        self.assertFalse(grid_covers(grid, [[280.6, 196.1, -0.02]]))
 
     def test_waypoint_grid_covers_negative_and_boundary_coordinates(self):
         points = [[-200.1, 0.0, -0.1], [200.0, 0.0, 200.0]]

@@ -3,8 +3,10 @@ import unittest
 
 from shader_patch import (_chunks, _rewrite_instructions, bake_constants, dxbc_checksum,
                           neutralize_legacy_ao, neutralize_pavement_ao_mask, neutralize_skid_mask,
-                          neutralize_texture_rgb, offset_world_height,
-                          patch_pose_stride, guard_marking_normal)
+                          neutral_sun_colour, neutralize_texture_rgb, offset_world_height,
+                          patch_pose_stride, guard_marking_normal, guard_normal_reconstructions,
+                          patch_program,
+                          scale_baked_shadow_fallback)
 
 
 def container(instructions, tag=b"SHEX", reflection=b"fixture"):
@@ -41,6 +43,31 @@ def skid_reflection(slot=16, name=b"SkidmaskTextureTexture", length=1):
 
 
 class ShaderPatchTests(unittest.TestCase):
+    def test_baked_shadow_fallback_can_be_scaled_without_touching_other_samples(self):
+        shadow = SAMPLE.copy()
+        shadow[6] = 3
+        unrelated = SAMPLE.copy()
+        original = container(shadow + unrelated + [RET])
+        full_visibility, stats = patch_program(original, True)
+        self.assertEqual(stats["baked_shadow_samples"], 1)
+        default_profile, default_stats = patch_program(original, True)
+        self.assertEqual(default_profile, patch_program(original, True, 0.15)[0])
+        self.assertEqual(default_stats["baked_shadow_samples"], 1)
+
+        scaled, count = scale_baked_shadow_fallback(original, full_visibility, 0.45)
+        expected, _ = patch_program(original, True, 0.45)
+        self.assertEqual(count, 1)
+        self.assertEqual(scaled, expected)
+        self.assertEqual(scaled[4:20], dxbc_checksum(scaled))
+        self.assertEqual(scale_baked_shadow_fallback(original, scaled, 0.45),
+                         (scaled, 0))
+        darker, count = scale_baked_shadow_fallback(original, scaled, 0.15)
+        self.assertEqual(count, 1)
+        self.assertEqual(darker, patch_program(original, True, 0.15)[0])
+        for invalid in (-0.1, 1.1, float("nan"), float("inf"), True):
+            with self.subTest(invalid=invalid), self.assertRaisesRegex(ValueError, "visibility"):
+                scale_baked_shadow_fallback(original, full_visibility, invalid)
+
     def test_marking_normal_guard_preserves_samples_alpha_and_later_square_roots(self):
         square_root = [75 | (5 << 24), 0x00100082, 2, 0x0010003A, 2]
         later_root = [75 | (5 << 24), 0x00100082, 1, 0x0010003A, 0]
@@ -67,6 +94,28 @@ class ShaderPatchTests(unittest.TestCase):
                         container(later_root + [RET], reflection=reflection)):
             with self.assertRaises(ValueError):
                 guard_marking_normal(invalid)
+
+    def test_track_normal_guard_only_clamps_reconstructed_normal_z(self):
+        epsilon = struct.unpack("<I", struct.pack("<f", 0.000001))[0]
+        # mad r3.w, -r4.x, r4.x, r3.w ; sqrt r9.z, r3.w  (terrain/2blend form)
+        reconstruct = [50 | (10 << 24), 0x00100082, 3, 0x8010000A, 0x41, 4,
+                       0x0010000A, 4, 0x0010003A, 3]
+        root = [75 | (5 << 24), 0x00100042, 9, 0x0010003A, 3]
+        # dp3 r0.w, r1.xyz, r1.xyz ; sqrt r1.w, r0.w  (view distance, must stay untouched)
+        distance = [16 | (7 << 24), 0x00100082, 0, 0x00100246, 1, 0x00100246, 1]
+        distance_root = [75 | (5 << 24), 0x00100082, 1, 0x0010003A, 0]
+        # unnegated mad is not a normal reconstruction
+        plain = reconstruct.copy()
+        plain[3], plain[4:5] = 0x0010000A, []
+        plain[0] = 50 | (9 << 24)
+        guard = [52 | (7 << 24), 0x00100082, 3, 0x0010003A, 3, 0x4001, epsilon]
+        source = container(reconstruct + root + distance + distance_root + plain + root + [RET])
+        patched, count = guard_normal_reconstructions(source)
+        self.assertEqual(count, 1)
+        self.assertEqual(instructions(patched), reconstruct + guard + root + distance +
+                         distance_root + plain + root + [RET])
+        self.assertEqual(patched[4:20], dxbc_checksum(patched))
+        self.assertEqual(guard_normal_reconstructions(patched), (patched, 0))
 
     def test_pavement_ao_preserves_diffuse_and_threshold_mask(self):
         ao, threshold, diffuse = SAMPLE.copy(), SAMPLE.copy(), SAMPLE.copy()
@@ -199,6 +248,20 @@ class ShaderPatchTests(unittest.TestCase):
             self.assertEqual(patched[4:20], dxbc_checksum(patched))
         with self.assertRaisesRegex(ValueError, "no baked value"):
             bake_constants(source, 7, {2: (0, 0, 0, 0)})
+
+    def test_neutral_sun_swizzles_only_lit_sun_colour_reads(self):
+        mul = lambda row: [56 | (8 << 24), 0x00100072, 1, 0x00100246, 1, 0x00208246, 3, row]
+        flag = [31 | (4 << 24), 0x0020800A, 3, 1]
+        source = container(mul(1) + mul(0) + flag + [RET])
+        patched, count = neutral_sun_colour(source)
+        self.assertEqual(count, 1)
+        code = instructions(patched)
+        self.assertEqual(code[5], (0x00208246 & ~(0xFF << 4)) | (0x55 << 4))
+        self.assertEqual(code[8:], mul(0)[:] + flag + [RET])
+        self.assertEqual(patched[4:20], dxbc_checksum(patched))
+        scalar = container([56 | (8 << 24), 0x00100012, 1, 0x00100006, 1, 0x0020800A, 3, 1, RET])
+        with self.assertRaisesRegex(ValueError, "4-component swizzle"):
+            neutral_sun_colour(scalar)
 
     def test_identity_rewrite_and_invalid_length(self):
         source = container([RET])

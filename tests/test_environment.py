@@ -4,13 +4,19 @@ import tempfile
 import unittest
 import xml.etree.ElementTree as ET
 
-from build_environment import arrival, locators, track_settings, static_test_companions, validate_static_companions
+from build_environment import (apply_lighting_fog, arrival, locators, track_settings,
+                               static_test_companions, validate_static_companions)
 from collision import build_physics
 from test_collision import collision_fixture
 
 
 SOURCE = b'<TrackSettings Version="81"><LightAmbient r="0.2" g="0.3"/><Fog Version="4"><Enabled value="1"/></Fog><FileChunkSize value="4194304"/></TrackSettings>'
 NATIVE = b'<TrackSettings Version="83"><LightAmbient r="0.4" g="0.5"/><Fog Version="4"><Enabled value="0"/></Fog><FileChunkSize value="1048576" limit="4194304"/><screenAreaDistances value="1"/></TrackSettings>'
+LIGHTING_FOG = (b'<TrackSettings Version="83"><LightAmbient r="0.2" g="0.4" b="0.6"/>'
+                b'<SHLighting SHDirRed="0.8" SHDirGreen="0.6" SHDirBlue="0.4"/>'
+                b'<Fog><Settings0><Enabled value="1"/><Far value="660"/>'
+                b'<FarDensity value="0.005"/></Settings0><Settings1><Enabled value="0"/>'
+                b'<Far value="500"/><FarDensity value="0.01"/></Settings1></Fog></TrackSettings>')
 
 
 def locator_xml(position=(2.0, 2.0, 2.0)):
@@ -50,6 +56,42 @@ class EnvironmentTests(unittest.TestCase):
         self.assertEqual(report["native_default_fields"], ["screenAreaDistances"])
         self.assertEqual(report["adapted_fields"], ["FileChunkSize"])
         self.assertEqual(report["preserved_source_fields"], ["LightAmbient", "Fog"])
+
+    def test_lighting_fog_profile_scales_only_track_ambient_directional_and_enabled_fog(self):
+        unchanged, default_report = apply_lighting_fog(LIGHTING_FOG)
+        self.assertEqual(unchanged, LIGHTING_FOG)
+        self.assertEqual(default_report["active_fog_settings"], ["Settings0"])
+
+        data, report = apply_lighting_fog(
+            LIGHTING_FOG, ambient_scale=0.75, direct_scale=0.75,
+            fog_density_scale=2.0, fog_distance_scale=0.85)
+        root = ET.fromstring(data)
+        self.assertEqual(root.find("LightAmbient").attrib,
+                         {"r": "0.150000", "g": "0.300000", "b": "0.450000"})
+        self.assertEqual(root.find("SHLighting").attrib,
+                         {"SHDirRed": "0.600000", "SHDirGreen": "0.450000", "SHDirBlue": "0.300000"})
+        self.assertEqual(root.find("Fog/Settings0/Far").get("value"), "561.000000")
+        self.assertEqual(root.find("Fog/Settings0/FarDensity").get("value"), "0.010000")
+        self.assertEqual(root.find("Fog/Settings1/Far").get("value"), "500")
+        self.assertEqual(root.find("Fog/Settings1/FarDensity").get("value"), "0.01")
+        self.assertEqual(report["active_fog_settings"], ["Settings0"])
+
+        source_lighting, _ = apply_lighting_fog(
+            LIGHTING_FOG, ambient_scale=1.0, direct_scale=1.0,
+            fog_density_scale=2.0, fog_distance_scale=0.85)
+        source_root = ET.fromstring(LIGHTING_FOG)
+        tuned_root = ET.fromstring(source_lighting)
+        self.assertEqual(tuned_root.find("LightAmbient").attrib, source_root.find("LightAmbient").attrib)
+        self.assertEqual(tuned_root.find("SHLighting").attrib, source_root.find("SHLighting").attrib)
+
+    def test_lighting_fog_profile_rejects_invalid_scales_and_fog_overflow(self):
+        for kwargs in ({"ambient_scale": -0.1}, {"direct_scale": 4.1},
+                       {"fog_density_scale": float("inf")}):
+            with self.subTest(kwargs=kwargs), self.assertRaisesRegex(ValueError, "scale"):
+                apply_lighting_fog(LIGHTING_FOG, **kwargs)
+        dense = LIGHTING_FOG.replace(b'value="0.005"', b'value="0.5"')
+        with self.assertRaisesRegex(ValueError, "fog ranges"):
+            apply_lighting_fog(dense, fog_density_scale=4)
 
     def test_unreviewed_fields_and_schema_shifts_fail(self):
         for source, native in (

@@ -84,7 +84,7 @@ class VisitTests(unittest.TestCase):
         self.assertFalse(report["engine_validated"])
         self.assertTrue(report["career_swap_used"])
         self.assertFalse(report["stock_mainland_startup_used"])
-        self.assertFalse(report["return_ai_enabled"])
+        self.assertTrue(report["return_ai_enabled"])
         self.assertFalse(report["mulligan_recording_enabled"])
         self.assertEqual(report["return_startup"], "trackloadercps.resume_mainland")
         route = ET.parse(output / "mediaoverride" / "EntityModel" / (ROUTE_FILE + ".xml")).getroot()
@@ -212,6 +212,11 @@ class VisitTests(unittest.TestCase):
                         calls.index("global.start_driving"))
         self.assertEqual(calls.index("global.start_race") + 1, calls.index("global.start_driving"))
         self.assertEqual(calls.count("global.restore_car_position"), 1)
+        self.assertEqual(calls.index("global.ai_spawning_mode_none"), 0)
+        self.assertEqual(calls.count("global.ai_spawning_enable_immediate"), 1)
+        self.assertLess(calls.index("global.wait_for_streaming_around_local_human_car"),
+                        calls.index("global.ai_spawning_enable_immediate"))
+        self.assertLess(calls.index("global.ai_spawning_enable_immediate"), calls.index("global.fade_in"))
         for node in root.iter("node"):
             target = node.get("state")
             self.assertFalse(target.startswith(("career.", "free_roam_start.", "free_roam_start_ie.")))
